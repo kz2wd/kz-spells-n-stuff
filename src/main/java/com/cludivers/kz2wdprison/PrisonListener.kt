@@ -1,6 +1,8 @@
 package com.cludivers.kz2wdprison
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.event.HoverEvent.hoverEvent
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -150,11 +152,54 @@ class PrisonListener(private val session: Session, private val attributes: List<
         val playerData = PlayerBean.getPlayerInfo(event.player, session)
 
         playerData.currentXp += getBlockValue(event.block.type)
+        handleAchievement(event.player, playerData, event.block.type)
 
         increasePlayerLevel(event.player, playerData)
-
         setPlayerVisualLevel(event.player, playerData)
         transaction.commit()
+    }
+
+
+    private fun sendAchievementMessage(player: Player, playerMinedCount: Int, amount: List<Int>, name: String, action: String, materials: String) {
+        val base = Component.text("${ChatColor.GOLD}${ChatColor.BOLD}SUCCES OBTENU ")
+        val indexToChar = listOf("I", "II", "II", "IV", "V", "VI", "VII", "VIII", "IX", "X")
+        amount.withIndex().forEach{
+            if (it.value == playerMinedCount){
+                val achiev = Component.text("$name ${indexToChar[it.index]}")
+                val hover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("$action ${amount[it.index]} $materials"))
+                player.sendMessage(base.append(achiev).hoverEvent(hover))
+            }
+        }
+
+    }
+    private fun handleAchievement(player: Player, playerData: PlayerBean, brokeBlock: Material){
+        when (brokeBlock){
+            Material.STONE, Material.DEEPSLATE -> {
+                playerData.stoneMined += 1
+                sendAchievementMessage(player, playerData.stoneMined, listOf(10, 100, 500, 1000), "Mineur de Pierre", "Miner", "pierres ou pierres des abîmes")
+            }
+            Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE -> {
+                playerData.coalMined += 1
+                sendAchievementMessage(player, playerData.coalMined, listOf(10, 100, 500, 1000), "Mineur de Charbon", "Miner", "minerais de charbon")
+            }
+            Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE -> {
+                playerData.ironMined += 1
+                sendAchievementMessage(player, playerData.ironMined, listOf(10, 100, 500, 1000), "Mineur de Fer", "Miner", "minerais de fer")
+            }
+            Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE -> {
+                playerData.goldMined += 1
+                sendAchievementMessage(player, playerData.goldMined, listOf(10, 100, 500, 1000), "Mineur d'Or", "Miner", "minerais d'or")
+            }
+            Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE -> {
+                playerData.diamondMined += 1
+                sendAchievementMessage(player, playerData.diamondMined, listOf(10, 100, 500, 1000), "Mineur de diamant", "Miner", "minerais de diamant")
+            }
+            Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE -> {
+                playerData.redstoneMined += 1
+                sendAchievementMessage(player, playerData.redstoneMined, listOf(10, 100, 500, 1000), "Mineur de redstone", "Miner", "minerais de redstone")
+            }
+            else -> Unit
+        }
     }
 
     private fun increasePlayerLevel(player: Player, playerData: PlayerBean) {

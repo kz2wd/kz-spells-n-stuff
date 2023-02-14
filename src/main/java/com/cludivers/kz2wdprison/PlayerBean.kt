@@ -27,6 +27,13 @@ class PlayerBean {
     var miningLevel = 0
     var pickaxeLevel = 0
 
+    var stoneMined = 0
+    var coalMined = 0
+    var ironMined = 0
+    var goldMined = 0
+    var diamondMined = 0
+    var redstoneMined = 0
+
     companion object {
         fun getPlayerInfo(player: Player, session: Session): PlayerBean {
             var playerData = session
@@ -36,7 +43,7 @@ class PlayerBean {
 
             if (playerData == null){
                 playerData = PlayerBean()
-                playerData.uuid = player.uniqueId.toString();
+                playerData.uuid = player.uniqueId.toString()
                 session.persist(playerData)
             }
 
