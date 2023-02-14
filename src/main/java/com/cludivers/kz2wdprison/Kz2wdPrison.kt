@@ -13,10 +13,7 @@ class Kz2wdPrison : JavaPlugin() {
     override fun onEnable() {
         logger.info("Hello World!")
 
-        val configuration = Configuration()
-
-        
-        configuration.addAnnotatedClass(PlayerBean::class.java)
+        val configuration = CustomConfiguration.getConfiguration()
 
         val serviceRegistry: ServiceRegistry =
             StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
