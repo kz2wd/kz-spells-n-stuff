@@ -1,0 +1,7 @@
+name: Kz2wdPrison
+version: '${version}'
+main: com.cludivers.kz2wdprison.Kz2wdPrison
+api-version: 1.19
+commands:
+  xp:
+    description: xp utility
