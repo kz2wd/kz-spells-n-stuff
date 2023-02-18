@@ -19,9 +19,11 @@ import org.bukkit.event.player.PlayerExpChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
 import org.hibernate.Session
 
-class PrisonListener(private val session: Session, private val attributes: List<PlayerAttribute>): Listener {
+class PrisonListener(private val plugin: JavaPlugin, private val session: Session, private val attributes: List<PlayerAttribute>): Listener {
 
     companion object {
         private val pickaxesTypes = listOf(Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE,
@@ -151,7 +153,11 @@ class PrisonListener(private val session: Session, private val attributes: List<
 
         val playerData = PlayerBean.getPlayerInfo(event.player, session)
 
-        playerData.currentXp += getBlockValue(event.block.type)
+        val xpGained = getBlockValue(event.block.type)
+        playerData.currentXp += xpGained
+
+        event.player.sendActionBar(Component.text("${ChatColor.GREEN}+$xpGained"))
+
         handleAchievement(event.player, playerData, event.block.type)
 
         increasePlayerLevel(event.player, playerData)
@@ -208,6 +214,7 @@ class PrisonListener(private val session: Session, private val attributes: List<
             playerData.level += 1
             playerData.skillPoint += 1
             playerLevelUpNotification(player, playerData)
+            player.giveExpLevels(1)
         }
     }
 
@@ -228,6 +235,14 @@ class PrisonListener(private val session: Session, private val attributes: List<
         updatePlayerStats(event.player, playerData)
         updatePlayerPickaxe(event.player, playerData, false)
         event.player.sendMessage(Component.text("${ChatColor.RED}Vous êtes ${ChatColor.BOLD}mort"))
+
+        object: BukkitRunnable() {
+            override fun run(){
+                setPlayerVisualLevel(event.player, playerData)
+                event.player.totalExperience = 0
+                event.player.giveExpLevels(playerData.level)
+            }
+        }.runTaskLater(plugin, 2)
     }
 
 }

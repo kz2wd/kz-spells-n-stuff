@@ -13,9 +13,7 @@ import org.hibernate.service.ServiceRegistry
 @Suppress("unused")
 class Kz2wdPrison : JavaPlugin() {
     override fun onEnable() {
-        logger.info("Hello World!")
-
-        val configuration = CustomConfiguration.getConfiguration()
+        val configuration = ConfigurationHandler.getConfiguration(config)
 
         val serviceRegistry: ServiceRegistry =
             StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
@@ -30,7 +28,6 @@ class Kz2wdPrison : JavaPlugin() {
 
         // Player Attributes
         val successText = Component.text("${ChatColor.GREEN}Amélioration de")
-
 
         val healthAttribute = PlayerAttribute(
             "PV",
@@ -75,7 +72,7 @@ class Kz2wdPrison : JavaPlugin() {
 
         this.getCommand(xpCommandName)?.setExecutor(MainCommandExecutor(xpCommands, xpCmd))
 
-        val prisonListener = PrisonListener(session, allAttributes)
+        val prisonListener = PrisonListener(this, session, allAttributes)
         server.pluginManager.registerEvents(prisonListener, this)
     }
 
