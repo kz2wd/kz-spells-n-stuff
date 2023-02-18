@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.commands.xp
 
-import com.cludivers.kz2wdprison.PlayerBean
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import net.kyori.adventure.text.Component
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

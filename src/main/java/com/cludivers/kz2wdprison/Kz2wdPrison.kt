@@ -1,5 +1,9 @@
 package com.cludivers.kz2wdprison
 
+import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticFactor
+import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticOdd
+import com.cludivers.kz2wdprison.attributes.PlayerAttribute
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.commands.xp.XpShowCommand
@@ -49,23 +53,48 @@ class Kz2wdPrison : JavaPlugin() {
             xpCommandName,
             {p: PlayerBean -> p.pickaxeLevel},
             {p: PlayerBean -> p.pickaxeLevel += 1},
-            {p: PlayerBean -> p.pickaxeLevel + 1},
+            {p: PlayerBean -> (p.pickaxeLevel + 1) * 2},
             {n: Int -> "Pioche en ${pickaxesName[n]}"},
             successText.append(Component.text(" votre ${ChatColor.BOLD}pioche !")))
 
         val miningSpeedAttribute = PlayerAttribute(
             "Minage",
-            5,
+            101,
             "mining",
             xpCommandName,
             {p: PlayerBean -> p.miningLevel},
             {p: PlayerBean -> p.miningLevel += 1},
-            {p: PlayerBean -> 1},
+            {p: PlayerBean -> if (p.miningLevel < 7) p.miningLevel + 1 else 3 },
             {n: Int -> "Efficacité $n" },
             successText.append(Component.text(" votre vitesse de minage !")))
 
+        val criticOddAttribute = PlayerAttribute(
+            "Chance de minage critique",
+            -1,
+            "criticOdd",
+            xpCommandName,
+            {p: PlayerBean -> p.criticOddLevel},
+            {p: PlayerBean -> p.criticOddLevel += 1},
+            {p: PlayerBean -> 1},
+            {n: Int -> "${(getCriticOdd(n) * 100).toInt()}% de Minage Critique"},
+            successText.append(Component.text( " vos chances de minage critique"))
+        )
 
-        val allAttributes = listOf(pickaxeAttribute, miningSpeedAttribute, healthAttribute )
+        val criticFactorAttribute = PlayerAttribute(
+            "Multiplication de minage critique",
+            -1,
+            "criticFactor",
+            xpCommandName,
+            {p: PlayerBean -> p.criticFactorLevel},
+            {p: PlayerBean -> p.criticFactorLevel += 1},
+            {p: PlayerBean -> 1},
+            {n: Int -> "${getCriticFactor(n)} fois plus d'expérience"},
+            successText.append(Component.text( " votre gain d'expérience en cas de minage critique"))
+        )
+
+
+        val allAttributes = listOf(pickaxeAttribute, miningSpeedAttribute, healthAttribute,
+            criticOddAttribute, criticFactorAttribute )
 
         val xpCmd = XpShowCommand(session)
         val xpCommands = allAttributes.associate { it.increaseCommandCallName to IncreaseAttributeCommand(session, it) }

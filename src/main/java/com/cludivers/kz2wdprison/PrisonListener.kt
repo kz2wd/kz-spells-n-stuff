@@ -1,5 +1,9 @@
 package com.cludivers.kz2wdprison
 
+import com.cludivers.kz2wdprison.attributes.PlayerAttribute
+import com.cludivers.kz2wdprison.beans.PlayerBean
+import com.cludivers.kz2wdprison.beans.ores.OreStats
+import com.cludivers.kz2wdprison.beans.ores.Ores
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.hoverEvent
@@ -22,6 +26,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.hibernate.Session
+import java.util.*
+import kotlin.random.Random
 
 class PrisonListener(private val plugin: JavaPlugin, private val session: Session, private val attributes: List<PlayerAttribute>): Listener {
 
@@ -29,7 +35,10 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         private val pickaxesTypes = listOf(Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE,
             Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE)
 
-        private val xpByLevel = listOf(5, 8, 13, 20, 29, 38, 46, 55, 68, 75)
+        private val xpByLevel = listOf(5, 8, 13, 20, 29, 38, 46, 55, 68, 75, 100, 125, 150, 175, 200, 225, 250,
+            250, 250, 250, 250, 250, 250, 275, 275, 275, 275, 275, 300, 300, 300, 300, 300, 350, 350, 350, 350,
+            400, 400, 400, 400, 400, 500, 500, 500, 600, 600, 600, 700, 700, 700, 800, 800, 800, 900, 900, 900,
+            1000)
 
         private fun getXpOfLevel(index: Int): Int{
             val size = xpByLevel.size
@@ -51,7 +60,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         private fun getEnchantedTool(material: Material, enchants: List<Pair<Enchantment, Int>>): ItemStack{
             val item = getUnbreakableItemStack(material)
             enchants.forEach {
-                item.addEnchantment(it.first, it.second)
+                item.addUnsafeEnchantment(it.first, it.second)
             }
             return item
         }
@@ -65,34 +74,46 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         }
 
         private fun setPlayerVisualLevel(player: Player, playerData: PlayerBean){
-            player.exp = playerData.currentXp.toFloat() / getXpOfLevel(playerData.level)
+            player.exp = playerData.currentXp / getXpOfLevel(playerData.level)
         }
 
-        private fun getBlockValue(block: Material): Int{
+        private fun getInRange(min: Int, max: Int): Pair<Float, Float>{
+            val scale = Random.nextFloat()
+            return Pair(min + scale * (max - min), scale)
+        }
+
+        private fun getBlockValue(block: Material, playerData: PlayerBean): Pair<Float, Float>{
             return when(block) {
-                Material.DIRT -> 1
-                Material.STONE -> 2
-                Material.COAL_ORE -> 3
-                Material.IRON_ORE -> 4
-                Material.GOLD_ORE -> 10
-                Material.REDSTONE_ORE -> 5
-                Material.LAPIS_ORE -> 3
-                Material.DIAMOND_ORE -> 50
-                Material.EMERALD_ORE -> 30
-                Material.DEEPSLATE -> 5
-                Material.DEEPSLATE_COAL_ORE -> 8
-                Material.DEEPSLATE_IRON_ORE -> 10
-                Material.DEEPSLATE_GOLD_ORE -> 15
-                Material.DEEPSLATE_LAPIS_ORE -> 8
-                Material.DEEPSLATE_REDSTONE_ORE -> 10
-                Material.DEEPSLATE_DIAMOND_ORE -> 60
-                Material.DEEPSLATE_EMERALD_ORE -> 35
-                else -> 1
+                Material.STONE -> getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp)
+                Material.COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp)
+                Material.IRON_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp)
+                Material.GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp)
+                Material.REDSTONE_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp)
+                Material.LAPIS_ORE -> getInRange(0, 10)
+                Material.DIAMOND_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
+                Material.EMERALD_ORE -> getInRange(0, 30)
+                Material.DEEPSLATE -> getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp + 5)
+                Material.DEEPSLATE_COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp + 5)
+                Material.DEEPSLATE_IRON_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp + 5)
+                Material.DEEPSLATE_GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp + 5)
+                Material.DEEPSLATE_LAPIS_ORE -> getInRange(0, 10)
+                Material.DEEPSLATE_REDSTONE_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp + 5)
+                Material.DEEPSLATE_DIAMOND_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
+                Material.DEEPSLATE_EMERALD_ORE -> getInRange(0, 150)
+                else -> getInRange(0, 1)
             }
         }
 
         fun getHealth(level: Int): Double{
             return (level + 1).toDouble() * 2
+        }
+
+        fun getCriticOdd(level: Int): Float {
+            return (level + 1) / (10 + (level + 1)).toFloat()
+        }
+
+        fun getCriticFactor(level: Int): Int {
+            return (level + 2)
         }
         fun updatePlayerStats(player: Player, playerData: PlayerBean){
             val playerHealth = getHealth(playerData.healthLevel)
@@ -147,64 +168,130 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         transaction.commit()
     }
 
+    private fun getColorEffect(scale: Float): String{
+        return if (scale < .2){
+            "${ChatColor.DARK_GRAY}"
+        } else if (scale < .4){
+            "${ChatColor.GRAY}"
+        } else if (scale < .8){
+            "${ChatColor.GREEN}"
+        } else {
+            "${ChatColor.BOLD}${ChatColor.GOLD}"
+        }
+    }
     @EventHandler
     fun onPlayerBreak(event: BlockBreakEvent){
         val transaction = session.beginTransaction()
 
         val playerData = PlayerBean.getPlayerInfo(event.player, session)
 
-        val xpGained = getBlockValue(event.block.type)
+        var (xpGained, scale) = getBlockValue(event.block.type, playerData)
+        var colorEffect = getColorEffect(scale)
+        // Try to do a critic Hit
+        if (Random.nextFloat() < getCriticOdd(playerData.criticOddLevel)){
+            colorEffect = "${ChatColor.LIGHT_PURPLE}"
+            xpGained *= getCriticFactor(playerData.criticFactorLevel)
+            event.player.world.playSound(event.player, Sound.BLOCK_AMETHYST_BLOCK_BREAK, 1f, .0f)
+        }
+
+        event.player.sendActionBar(Component.text("${colorEffect}+ ${"%.1f".format(xpGained)}"))
         playerData.currentXp += xpGained
 
-        event.player.sendActionBar(Component.text("${ChatColor.GREEN}+$xpGained"))
-
-        handleAchievement(event.player, playerData, event.block.type)
-
         increasePlayerLevel(event.player, playerData)
+        checkAchievements(event.player, playerData, event.block.type)
         setPlayerVisualLevel(event.player, playerData)
         transaction.commit()
     }
 
 
-    private fun sendAchievementMessage(player: Player, playerMinedCount: Int, amount: List<Int>, name: String, action: String, materials: String) {
+    private fun applyAchievement(player: Player, stats: OreStats, amount: List<Int>, name: String, action: String, materials: String) {
         val base = Component.text("${ChatColor.GOLD}${ChatColor.BOLD}SUCCES OBTENU ")
         val indexToChar = listOf("I", "II", "II", "IV", "V", "VI", "VII", "VIII", "IX", "X")
         amount.withIndex().forEach{
-            if (it.value == playerMinedCount){
+            if (it.value == stats.amountMined){
                 val achiev = Component.text("$name ${indexToChar[it.index]}")
                 val hover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("$action ${amount[it.index]} $materials"))
                 player.sendMessage(base.append(achiev).hoverEvent(hover))
+                val award = Component.text("${ChatColor.GREEN}Récompense : Xp obtenu en minant des ${ChatColor.RESET}$materials ${ChatColor.BOLD}augmenté !")
+                val awardHover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("XP max : ${stats.maxXp} => ${stats.maxXp * 2}"))
+                player.sendMessage(award.hoverEvent(awardHover))
+                player.world.playSound(player, Sound.ENTITY_TNT_PRIMED, 1f, .0f)
+                stats.maxXp *= 2
             }
         }
-
     }
-    private fun handleAchievement(player: Player, playerData: PlayerBean, brokeBlock: Material){
-        when (brokeBlock){
-            Material.STONE, Material.DEEPSLATE -> {
-                playerData.stoneMined += 1
-                sendAchievementMessage(player, playerData.stoneMined, listOf(10, 100, 500, 1000), "Mineur de Pierre", "Miner", "pierres ou pierres des abîmes")
+
+    private fun checkAchievements(player: Player, playerData: PlayerBean, brokeBlock: Material){
+        val oreStats = playerData.oresStats.getOreInfos(brokeBlock)
+        oreStats?.let {
+            it.amountMined += 1
+            when (brokeBlock) {
+                Material.STONE, Material.DEEPSLATE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur de Pierre",
+                        "Miner",
+                        "pierres ou pierres des abîmes"
+                    )
+                }
+                Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur de Charbon",
+                        "Miner",
+                        "minerais de charbon"
+                    )
+                }
+
+                Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur de Fer",
+                        "Miner",
+                        "minerais de fer"
+                    )
+                }
+
+                Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur d'Or",
+                        "Miner",
+                        "minerais d'or"
+                    )
+                }
+                Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur de diamant",
+                        "Miner",
+                        "minerais de diamant"
+                    )
+                }
+
+                Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE -> {
+                    applyAchievement(
+                        player,
+                        it,
+                        listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
+                        "Mineur de redstone",
+                        "Miner",
+                        "minerais de redstone"
+                    )
+                }
+
+                else -> Unit
             }
-            Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE -> {
-                playerData.coalMined += 1
-                sendAchievementMessage(player, playerData.coalMined, listOf(10, 100, 500, 1000), "Mineur de Charbon", "Miner", "minerais de charbon")
-            }
-            Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE -> {
-                playerData.ironMined += 1
-                sendAchievementMessage(player, playerData.ironMined, listOf(10, 100, 500, 1000), "Mineur de Fer", "Miner", "minerais de fer")
-            }
-            Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE -> {
-                playerData.goldMined += 1
-                sendAchievementMessage(player, playerData.goldMined, listOf(10, 100, 500, 1000), "Mineur d'Or", "Miner", "minerais d'or")
-            }
-            Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE -> {
-                playerData.diamondMined += 1
-                sendAchievementMessage(player, playerData.diamondMined, listOf(10, 100, 500, 1000), "Mineur de diamant", "Miner", "minerais de diamant")
-            }
-            Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE -> {
-                playerData.redstoneMined += 1
-                sendAchievementMessage(player, playerData.redstoneMined, listOf(10, 100, 500, 1000), "Mineur de redstone", "Miner", "minerais de redstone")
-            }
-            else -> Unit
         }
     }
 
@@ -213,9 +300,23 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             playerData.currentXp -= getXpOfLevel(playerData.level)
             playerData.level += 1
             playerData.skillPoint += 1
+            handlePlayerScoreboard()
             playerLevelUpNotification(player, playerData)
             player.giveExpLevels(1)
         }
+    }
+
+    private fun getPlayerName(playerData: PlayerBean): String{
+        playerData.uuid?.let {
+            val player = Bukkit.getPlayer(UUID.fromString(playerData.uuid))
+            player?.let { return player.name }
+        }
+        return "Unknown Player"
+    }
+    private fun handlePlayerScoreboard(){
+        val top3 = session.createQuery("From PlayerBean p ORDER BY p.level desc", PlayerBean::class.java).setMaxResults(3).list()
+        val scoreboard = Component.text(top3.withIndex().joinToString("\n") { "${it.index + 1} : " + getPlayerName(it.value) + " (${it.value.level})"})
+        Bukkit.broadcast(Component.text("${ChatColor.GREEN}TOP 3").appendNewline().append(scoreboard))
     }
 
     @EventHandler

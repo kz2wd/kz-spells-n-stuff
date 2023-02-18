@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison
 
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.cfg.Configuration
 

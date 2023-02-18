@@ -1,5 +1,7 @@
-package com.cludivers.kz2wdprison
+package com.cludivers.kz2wdprison.attributes
 
+import com.cludivers.kz2wdprison.PrisonListener
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -12,7 +14,7 @@ class PlayerAttribute(
     private val maxLevel: Int,
     val increaseCommandCallName: String,
     private val parentCommandName: String,
-    private val getAttributeLevel: (PlayerBean) -> (Int),
+    private val getAttributeLevel: (PlayerBean) -> Int,
     private val increaseFunction: (PlayerBean) -> Unit,
     private val costFunction: (PlayerBean) -> (Int),
     private val attributeValueAtLevel: (Int) -> (String),

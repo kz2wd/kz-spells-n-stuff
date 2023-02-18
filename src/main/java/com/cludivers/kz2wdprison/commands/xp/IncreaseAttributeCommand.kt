@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.commands.xp
 
-import com.cludivers.kz2wdprison.PlayerAttribute
-import com.cludivers.kz2wdprison.PlayerBean
+import com.cludivers.kz2wdprison.attributes.PlayerAttribute
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

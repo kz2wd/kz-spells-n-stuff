@@ -1,5 +1,6 @@
-package com.cludivers.kz2wdprison
+package com.cludivers.kz2wdprison.beans
 
+import com.cludivers.kz2wdprison.beans.ores.OresMinedStatistics
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -19,20 +20,16 @@ class PlayerBean {
     var connectionAmount: Int = 0
 
     var level: Int = 0
-    var currentXp = 0
+    var currentXp: Float = 0f
     var skillPoint = 0
 
     var healthLevel = 0
-    var foodLevel = 0
     var miningLevel = 0
     var pickaxeLevel = 0
+    var criticOddLevel: Int = 0
+    var criticFactorLevel: Int = 0
 
-    var stoneMined = 0
-    var coalMined = 0
-    var ironMined = 0
-    var goldMined = 0
-    var diamondMined = 0
-    var redstoneMined = 0
+    var oresStats: OresMinedStatistics = OresMinedStatistics()
 
     companion object {
         fun getPlayerInfo(player: Player, session: Session): PlayerBean {
