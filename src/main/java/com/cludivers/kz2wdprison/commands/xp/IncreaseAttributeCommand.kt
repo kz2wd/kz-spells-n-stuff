@@ -2,6 +2,8 @@ package com.cludivers.kz2wdprison.commands.xp
 
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -17,8 +19,11 @@ class IncreaseAttributeCommand(private val session: Session, private val attribu
 
         val playerData = PlayerBean.getPlayerInfo(sender, session)
         val transaction = session.beginTransaction()
-
-        attribute.increase(sender, playerData)
+        var amount = 1
+        if (args.isNotEmpty() && args[0].toIntOrNull() != null){
+            amount = args[0].toInt()
+        }
+        attribute.increase(sender, playerData, amount)
 
         transaction.commit()
 

@@ -21,23 +21,25 @@ class PlayerAttribute(
     private val successMessage: Component
 ) {
 
-    fun increase(player: Player, playerData: PlayerBean){
+    fun increase(player: Player, playerData: PlayerBean, amount: Int){
+        for (i in 0 until amount) {
 
-        if (maxLevel > 0 && getAttributeLevel(playerData) >= maxLevel){
-            player.sendMessage(Component.text("${ChatColor.GREEN}${ChatColor.BOLD}Cet attribut est à son niveau maximum"))
-            return
-        }
+            if (maxLevel > 0 && getAttributeLevel(playerData) >= maxLevel){
+                player.sendActionBar(Component.text("${ChatColor.GREEN}${ChatColor.BOLD}Cet attribut est à son niveau maximum"))
+                return
+            }
+            val cost = costFunction(playerData)
 
-        val cost = costFunction(playerData)
-
-        if (cost <= playerData.skillPoint){
-            increaseFunction(playerData)
-            playerData.skillPoint -= cost
-            PrisonListener.updatePlayerStats(player, playerData)
-            PrisonListener.updatePlayerPickaxe(player, playerData, true)
-            player.sendMessage(successMessage)
-        } else {
-            player.sendMessage(Component.text("${ChatColor.RED}Vous n'avez pas assez de point de compétence !"))
+            if (cost <= playerData.skillPoint){
+                increaseFunction(playerData)
+                playerData.skillPoint -= cost
+                PrisonListener.updatePlayerStats(player, playerData)
+                PrisonListener.updatePlayerPickaxe(player, playerData, true)
+                player.sendActionBar(successMessage)
+            } else {
+                player.sendActionBar(Component.text("${ChatColor.RED}Vous n'avez pas assez de point de compétence !"))
+                return
+            }
         }
     }
 

@@ -300,7 +300,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             playerData.currentXp -= getXpOfLevel(playerData.level)
             playerData.level += 1
             playerData.skillPoint += 1
-            handlePlayerScoreboard()
+
             playerLevelUpNotification(player, playerData)
             player.giveExpLevels(1)
         }
