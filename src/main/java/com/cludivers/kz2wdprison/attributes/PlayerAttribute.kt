@@ -43,9 +43,9 @@ class PlayerAttribute(
         }
     }
 
-    fun upgradeComponent(playerData: PlayerBean): Component{
+    fun upgradeComponent(playerData: PlayerBean): Pair<Component, Component>{
         if (maxLevel > 0 &&getAttributeLevel(playerData) >= maxLevel){
-            return Component.text("$attributeName est au niveau maximum (${maxLevel})")
+            return Pair(Component.text("$attributeName est au niveau maximum (${maxLevel})"), Component.text(""))
         }
         val cost = costFunction(playerData)
 
@@ -53,16 +53,15 @@ class PlayerAttribute(
         upgradeComponent = upgradeComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND,
             "/$parentCommandName $increaseCommandCallName"))
 
-        upgradeComponent = upgradeComponent.hoverEvent(
-            HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text(
-                    "${attributeValueAtLevel(getAttributeLevel(playerData))} " +
-                    "=> ${attributeValueAtLevel(getAttributeLevel(playerData) + 1)} ")))
 
-        val costIndication = Component.text("     ($cost PC)").hoverEvent(
-            HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT,
-                Component.text("Coût : $cost Point${if (cost > 1) "s" else ""} de Compétence")))
+        val costIndication = Component.text("     ($cost PC)")
+
+        val loreInformation = Component.text(
+            "${attributeValueAtLevel(getAttributeLevel(playerData))} " +
+                    "=> ${attributeValueAtLevel(getAttributeLevel(playerData) + 1)} ")
+
 
         upgradeComponent = upgradeComponent.append(costIndication)
-        return upgradeComponent
+        return Pair(upgradeComponent, loreInformation)
     }
 }

@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.hoverEvent
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -118,6 +119,12 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             player.health = playerHealth
         }
 
+        fun updatePlayerLevelDisplay(player: Player, playerData: PlayerBean){
+            val playerNameDisplay = Component.text("${ChatColor.GREEN}LVL ${playerData.level} ${ChatColor.RESET}${player.name}")
+            player.displayName(playerNameDisplay)
+            player.playerListName(playerNameDisplay)
+        }
+
         fun updatePlayerPickaxe(player: Player, playerData: PlayerBean, notify: Boolean){
             val pickaxe = getPlayerPickaxe(playerData)
             if (! player.inventory.contains(pickaxe)){
@@ -134,19 +141,18 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         }
     }
 
-    private fun playerLevelUpMessage(playerData: PlayerBean): Component {
-        val line = Component.text("==============================").color(TextColor.color(100100200))
+    private fun playerLevelUpMessage(playerData: PlayerBean): Pair<Component, Component> {
         val main = Component.text("Niveau ${playerData.level} atteint !").color(TextColor.color(165425554))
-        val exp = Component.text("${ChatColor.GREEN}Vous avez ${ChatColor.GOLD}${playerData.skillPoint}" +
-                "${ChatColor.GREEN} point${if (playerData.skillPoint > 1) "s" else ""} de compétence.")
-        var startContent = line.appendNewline().append(main).appendNewline().append(exp).appendNewline()
+        val exp = Component.text(
+            "${ChatColor.GREEN}Vous avez ${ChatColor.GOLD}${playerData.skillPoint}" +
+                    "${ChatColor.GREEN} point${if (playerData.skillPoint > 1) "s" else ""} de compétence."
+        )
 
-        attributes.forEach { startContent = startContent.appendNewline().append(it.upgradeComponent(playerData)) }
-
-        return startContent.appendNewline().append(line)
+        return Pair(main, exp)
     }
     private fun playerLevelUpNotification(player: Player, playerData: PlayerBean){
-        player.sendMessage(playerLevelUpMessage(playerData))
+        val txt = playerLevelUpMessage(playerData)
+        player.showTitle(Title.title(txt.first, txt.second))
         player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, .8f)
     }
 
@@ -220,7 +226,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                 val award = Component.text("${ChatColor.GREEN}Récompense : Xp obtenu en minant des ${ChatColor.RESET}$materials ${ChatColor.BOLD}augmenté !")
                 val awardHover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("XP max : ${stats.maxXp} => ${stats.maxXp * 2}"))
                 player.sendMessage(award.hoverEvent(awardHover))
-                player.world.playSound(player, Sound.ENTITY_TNT_PRIMED, 1f, .0f)
+                player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, .0f)
                 stats.maxXp *= 1.2f
             }
         }
@@ -306,6 +312,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             playerData.skillPoint += 1
 
             playerLevelUpNotification(player, playerData)
+            updatePlayerLevelDisplay(player, playerData)
             player.giveExpLevels(1)
         }
     }

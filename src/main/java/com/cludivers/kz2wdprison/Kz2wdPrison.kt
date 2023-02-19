@@ -7,8 +7,11 @@ import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.commands.xp.XpShowCommand
+import com.cludivers.kz2wdprison.menu.MenuListener
+import com.cludivers.kz2wdprison.menu.SkillMenu
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.service.ServiceRegistry
@@ -91,14 +94,17 @@ class Kz2wdPrison : JavaPlugin() {
 
         val allAttributes = listOf(pickaxeAttribute, miningSpeedAttribute, healthAttribute,
             criticOddAttribute, criticFactorAttribute )
-
-        val xpCmd = XpShowCommand(session)
+        val attributesMaterials = listOf(Material.ANVIL, Material.ENCHANTING_TABLE, Material.GOLDEN_APPLE,
+            Material.ENDER_EYE, Material.EXPERIENCE_BOTTLE)
+//        val xpCmd = XpShowCommand(session)
+        val xpCmd = SkillMenu(session, attributesMaterials.zip(allAttributes))
         val xpCommands = allAttributes.associate { it.increaseCommandCallName to IncreaseAttributeCommand(session, it) }
 
         this.getCommand(xpCommandName)?.setExecutor(MainCommandExecutor(xpCommands, xpCmd))
 
         val prisonListener = PrisonListener(this, session, allAttributes)
         server.pluginManager.registerEvents(prisonListener, this)
+        server.pluginManager.registerEvents(MenuListener, this)
     }
 
     override fun onDisable() {
