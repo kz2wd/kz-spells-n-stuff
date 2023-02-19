@@ -33,12 +33,12 @@ class Kz2wdPrison : JavaPlugin() {
 
         val healthAttribute = PlayerAttribute(
             "PV",
-            100,
+            51,
             "health",
             xpCommandName,
             {p: PlayerBean -> p.healthLevel},
             {p: PlayerBean -> p.healthLevel += 1},
-            {p: PlayerBean -> if (p.healthLevel < 10) { 1 } else { 2 }},
+            {p: PlayerBean -> p.healthLevel / 10 + 1},
             {n: Int -> "${PrisonListener.getHealth(n).toInt()} PV"},
             successText.append(Component.text(" vos PV !")))
 
@@ -67,24 +67,24 @@ class Kz2wdPrison : JavaPlugin() {
 
         val criticOddAttribute = PlayerAttribute(
             "Chance de minage critique",
-            100,
+            101,
             "criticOdd",
             xpCommandName,
             {p: PlayerBean -> p.criticOddLevel},
             {p: PlayerBean -> p.criticOddLevel += 1},
-            {p: PlayerBean -> p.criticOddLevel},
+            {p: PlayerBean -> p.criticOddLevel + 1},
             {n: Int -> "${(getCriticOdd(n) * 100).toInt()}% de Minage Critique"},
             successText.append(Component.text( " vos chances de minage critique"))
         )
 
         val criticFactorAttribute = PlayerAttribute(
             "Multiplication de minage critique",
-            100,
+            101,
             "criticFactor",
             xpCommandName,
             {p: PlayerBean -> p.criticFactorLevel},
             {p: PlayerBean -> p.criticFactorLevel += 1},
-            {p: PlayerBean -> p.criticFactorLevel},
+            {p: PlayerBean -> p.criticFactorLevel + 1},
             {n: Int -> "${getCriticFactor(n)} fois plus d'expérience"},
             successText.append(Component.text( " votre gain d'expérience en cas de minage critique"))
         )

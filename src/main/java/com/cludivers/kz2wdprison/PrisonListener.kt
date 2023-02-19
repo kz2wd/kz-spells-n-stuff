@@ -47,8 +47,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             } else {
                 xpByLevel[index]
             }
-
         }
+
         private fun getUnbreakableItemStack(material: Material): ItemStack{
             val item = ItemStack(material)
             val meta = item.itemMeta
@@ -77,30 +77,27 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             player.exp = playerData.currentXp / getXpOfLevel(playerData.level)
         }
 
-        private fun getInRange(min: Int, max: Int): Pair<Float, Float>{
+        private fun getInRange(min: Float, max: Float): Pair<Float, Float>{
             val scale = Random.nextFloat()
             return Pair(min + scale * (max - min), scale)
         }
 
         private fun getBlockValue(block: Material, playerData: PlayerBean): Pair<Float, Float>{
             return when(block) {
-                Material.STONE -> getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp)
+                Material.STONE, Material.ANDESITE, Material.GRANITE, Material.TUFF, Material.DIORITE ->
+                    getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp)
                 Material.COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp)
-                Material.IRON_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp)
+                Material.IRON_ORE, Material.COPPER_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp)
                 Material.GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp)
-                Material.REDSTONE_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp)
-                Material.LAPIS_ORE -> getInRange(0, 10)
-                Material.DIAMOND_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
-                Material.EMERALD_ORE -> getInRange(0, 30)
+                Material.REDSTONE_ORE, Material.LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp)
+                Material.DIAMOND_ORE, Material.EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
                 Material.DEEPSLATE -> getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp + 5)
                 Material.DEEPSLATE_COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp + 5)
-                Material.DEEPSLATE_IRON_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp + 5)
+                Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_COPPER_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp + 5)
                 Material.DEEPSLATE_GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp + 5)
-                Material.DEEPSLATE_LAPIS_ORE -> getInRange(0, 10)
-                Material.DEEPSLATE_REDSTONE_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp + 5)
-                Material.DEEPSLATE_DIAMOND_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
-                Material.DEEPSLATE_EMERALD_ORE -> getInRange(0, 150)
-                else -> getInRange(0, 1)
+                Material.DEEPSLATE_REDSTONE_ORE, Material.DEEPSLATE_LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp + 5)
+                Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
+                else -> getInRange(0f, 1f)
             }
         }
 
@@ -187,11 +184,19 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
 
         var (xpGained, scale) = getBlockValue(event.block.type, playerData)
         var colorEffect = getColorEffect(scale)
+
         // Try to do a critic Hit
         if (Random.nextFloat() < getCriticOdd(playerData.criticOddLevel)){
-            colorEffect = "${ChatColor.LIGHT_PURPLE}"
-            xpGained *= getCriticFactor(playerData.criticFactorLevel)
-            event.player.world.playSound(event.player, Sound.BLOCK_AMETHYST_BLOCK_BREAK, 1f, .0f)
+            // Try to do a 2nd crit
+            if (Random.nextFloat() < .1f){
+                colorEffect = "${ChatColor.DARK_PURPLE}"
+                xpGained *= getCriticFactor(playerData.criticFactorLevel) * 2
+                event.player.world.playSound(event.player, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, .0f)
+            } else {
+                colorEffect = "${ChatColor.LIGHT_PURPLE}"
+                xpGained *= getCriticFactor(playerData.criticFactorLevel)
+                event.player.world.playSound(event.player, Sound.BLOCK_AMETHYST_BLOCK_BREAK, 1f, .0f)
+            }
         }
 
         event.player.sendActionBar(Component.text("${colorEffect}+ ${"%.1f".format(xpGained)}"))
@@ -216,7 +221,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                 val awardHover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("XP max : ${stats.maxXp} => ${stats.maxXp * 2}"))
                 player.sendMessage(award.hoverEvent(awardHover))
                 player.world.playSound(player, Sound.ENTITY_TNT_PRIMED, 1f, .0f)
-                stats.maxXp *= 2
+                stats.maxXp *= 1.2f
             }
         }
     }
@@ -252,9 +257,9 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         player,
                         it,
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
-                        "Mineur de Fer",
+                        "Mineur de Métaux",
                         "Miner",
-                        "minerais de fer"
+                        "minerais de fer ou minerais de cuivre"
                     )
                 }
 
@@ -273,9 +278,9 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         player,
                         it,
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
-                        "Mineur de diamant",
+                        "Mineur de Pierres précieuses",
                         "Miner",
-                        "minerais de diamant"
+                        "minerais de diamant ou minerais d'émeraude"
                     )
                 }
 
@@ -284,12 +289,11 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         player,
                         it,
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
-                        "Mineur de redstone",
+                        "Mineur de Pierre rares",
                         "Miner",
-                        "minerais de redstone"
+                        "minerais de redstone ou minerais de lapis"
                     )
                 }
-
                 else -> Unit
             }
         }
