@@ -25,8 +25,13 @@ abstract class Menu {
     abstract fun generateInventory(player: Player): Inventory
     fun open(player: Player){
         val inventory = generateInventory(player)
-        MenuListener.allInventoryMenus[inventory] = this
+        MenuListener.addMenu(inventory, this)
         player.openInventory(inventory)
+    }
+
+    fun updateInventory(player: Player){
+        val newInventory = generateInventory(player)
+        player.openInventory.topInventory.contents = newInventory.contents
     }
 
     abstract fun handleClick(event: InventoryClickEvent)

@@ -51,5 +51,8 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
             8 -> player.chat("/xp criticFactor")
             else -> Unit
         }
+
+        // Since the menu stays open, update it
+        updateInventory(player)
     }
 }

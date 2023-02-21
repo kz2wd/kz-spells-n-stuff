@@ -10,7 +10,12 @@ import org.bukkit.inventory.Inventory
 
 object MenuListener : Listener {
 
-    val allInventoryMenus = HashMap<Inventory, Menu>()
+    private val allInventoryMenus = HashMap<Inventory, Menu>()
+
+    fun addMenu(inventory: Inventory, menu: Menu){
+        allInventoryMenus[inventory] = menu
+    }
+
 
     @EventHandler
     fun onMenuClick(event: InventoryClickEvent){
