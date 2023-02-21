@@ -32,6 +32,7 @@ abstract class Menu {
     fun updateInventory(player: Player){
         val newInventory = generateInventory(player)
         player.openInventory.topInventory.contents = newInventory.contents
+        player.updateInventory()
     }
 
     abstract fun handleClick(event: InventoryClickEvent)
