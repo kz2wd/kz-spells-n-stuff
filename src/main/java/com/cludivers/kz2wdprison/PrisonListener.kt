@@ -8,7 +8,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.hoverEvent
 import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -30,7 +29,7 @@ import org.hibernate.Session
 import java.util.*
 import kotlin.random.Random
 
-class PrisonListener(private val plugin: JavaPlugin, private val session: Session, private val attributes: List<PlayerAttribute>): Listener {
+class PrisonListener(private val plugin: JavaPlugin, private val session: Session): Listener {
 
     companion object {
         private val pickaxesTypes = listOf(Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE,
@@ -153,8 +152,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
     }
     private fun playerLevelUpNotification(player: Player, playerData: PlayerBean){
         val txt = playerLevelUpMessage(playerData)
-        player.showTitle(Title.title(txt.first, txt.second))
-        player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, .8f)
+        player.sendMessage((txt.first).appendNewline().append(txt.second))
+        player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, .7f, .8f)
     }
 
     @EventHandler
@@ -169,6 +168,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         playerData.connectionAmount += 1
         updatePlayerStats(event.player, playerData)
         updatePlayerPickaxe(event.player, playerData, false)
+        event.player.sendMessage(BonusXpEvent.getEventMessage())
         transaction.commit()
     }
 
@@ -191,22 +191,24 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
 
         var (xpGained, scale) = getBlockValue(event.block.type, playerData)
         var colorEffect = getColorEffect(scale)
-
+        var criticMsg = ""
         // Try to do a critic Hit
         if (Random.nextFloat() < getCriticOdd(playerData.criticOddLevel)){
             // Try to do a 2nd crit
             if (Random.nextFloat() < .1f){
-                colorEffect = "${ChatColor.DARK_PURPLE}"
+                criticMsg = "SUPER CRITIQUE "
+                colorEffect = "${ChatColor.BOLD}${ChatColor.DARK_PURPLE}"
                 xpGained *= getCriticFactor(playerData.criticFactorLevel) * 2
                 event.player.world.playSound(event.player, Sound.ENTITY_ARROW_HIT_PLAYER, 1f, .0f)
             } else {
+                criticMsg = "Critique "
                 colorEffect = "${ChatColor.LIGHT_PURPLE}"
                 xpGained *= getCriticFactor(playerData.criticFactorLevel)
                 event.player.world.playSound(event.player, Sound.BLOCK_AMETHYST_BLOCK_BREAK, 1f, .0f)
             }
         }
 
-        event.player.sendActionBar(Component.text("${colorEffect}+ ${"%.1f".format(xpGained)}"))
+        event.player.sendActionBar(Component.text("$colorEffect ${criticMsg}+ ${"%.1f".format(xpGained)}"))
         playerData.currentXp += xpGained
 
         increasePlayerLevel(event.player, playerData)

@@ -22,7 +22,7 @@ class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin): BukkitRun
 
     private fun allMines(): List<PrisonMine>{
         return listOf(
-            PrisonMine(
+            PrisonMine("StarterMine",
                 Cuboid(
                     Location(Bukkit.getWorld("world"), -10.0, 100.0, -10.0),
                     Location(Bukkit.getWorld("world"), 10.0, 120.0, 10.0)),
@@ -35,7 +35,9 @@ class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin): BukkitRun
         )
     }
 
-    private val minesWithTimer = allMines().associateWith { 0 } as MutableMap<PrisonMine, Int>
+    val allMines = allMines()
+    val nameToMine = allMines.associateBy { it.name }
+    private val minesWithTimer = allMines.associateWith { 0 } as MutableMap<PrisonMine, Int>
 
     override fun run() {
         minesWithTimer.forEach {

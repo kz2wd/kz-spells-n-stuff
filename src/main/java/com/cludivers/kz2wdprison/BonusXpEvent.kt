@@ -13,9 +13,9 @@ object BonusXpEvent: BukkitRunnable() {
     fun start(plugin: JavaPlugin) {
 
         val blocs = mapOf(
-            Material.STONE to "pierre",
-            Material.IRON_ORE to "minerais de fer",
-            Material.COAL_ORE to "minerais de charbon"
+            Material.STONE to "de la pierre",
+            Material.IRON_ORE to "des minerais de fer",
+            Material.COAL_ORE to "des minerais de charbon"
         )
 
         blocsMaterial = blocs.keys.toList()
@@ -29,9 +29,10 @@ object BonusXpEvent: BukkitRunnable() {
     var currentBlockWithBonus: Material? = null
     var currentBonusFactor: Float = 1f
 
-    private fun getEventMessage(): Component {
-        return Component.text("${ChatColor.BLUE}[EVENEMENT] Bonus de ${ChatColor.BOLD}$currentBonusFactor en minant : " +
-                "${blocsNames?.get(currentBlockWithBonus)}")
+    fun getEventMessage(): Component {
+        return Component.text("${ChatColor.BLUE}[EVENEMENT EN COURS] Bonus XP max de " +
+                "${ChatColor.RED}${(currentBonusFactor * 100).toInt()}% ${ChatColor.RESET}${ChatColor.BLUE}en minant " +
+                "${ChatColor.BOLD}${blocsNames?.get(currentBlockWithBonus)}")
     }
 
     override fun run() {

@@ -5,6 +5,9 @@ import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticOdd
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
+import com.cludivers.kz2wdprison.commands.event.CurrentEventCommand
+import com.cludivers.kz2wdprison.commands.mine.MineListCommand
+import com.cludivers.kz2wdprison.commands.mine.MineResetCommand
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.menu.MenuListener
 import com.cludivers.kz2wdprison.menu.SkillMenu
@@ -98,17 +101,28 @@ class Kz2wdPrison : JavaPlugin() {
             Material.ENDER_EYE, Material.EXPERIENCE_BOTTLE)
 //        val xpCmd = XpShowCommand(session)
         val xpCmd = SkillMenu(session, attributesMaterials.zip(allAttributes))
-        val xpCommands = allAttributes.associate { it.increaseCommandCallName to IncreaseAttributeCommand(session, it) }
+        val xpCommands = allAttributes.associate {
+            it.increaseCommandCallName to IncreaseAttributeCommand(session, it, xpCommandName) }
+        val xpCommandsExecutor = MainCommandExecutor(xpCommands, xpCmd)
+        this.getCommand(xpCommandName)?.setExecutor(xpCommandsExecutor)
+        this.getCommand(xpCommandName)?.tabCompleter = xpCommandsExecutor
 
-        this.getCommand(xpCommandName)?.setExecutor(MainCommandExecutor(xpCommands, xpCmd))
-
-        val prisonListener = PrisonListener(this, session, allAttributes)
+        val prisonListener = PrisonListener(this, session)
         server.pluginManager.registerEvents(prisonListener, this)
         server.pluginManager.registerEvents(MenuListener, this)
 
-        MineHandler(MineHandler.minuteToTick(1), this)
+        val mineHandler = MineHandler(MineHandler.minuteToTick(1), this)
+        val mineCommandName = "mine"
+        val listMineCmd = MineListCommand(mineHandler, mineCommandName)
+        val mineCommandsExecutor = MainCommandExecutor(
+            mapOf("list" to listMineCmd, "reset" to MineResetCommand(mineHandler, mineCommandName)), listMineCmd)
+
+        this.getCommand(mineCommandName)?.setExecutor(mineCommandsExecutor)
+        this.getCommand(mineCommandName)?.tabCompleter = mineCommandsExecutor
 
         BonusXpEvent.start(this)
+
+        // val currentEventCmd = CurrentEventCommand()
 
     }
 

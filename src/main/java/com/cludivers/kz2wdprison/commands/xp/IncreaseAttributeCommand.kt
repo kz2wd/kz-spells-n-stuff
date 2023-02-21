@@ -2,15 +2,15 @@ package com.cludivers.kz2wdprison.commands.xp
 
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
+import com.cludivers.kz2wdprison.commands.SubCommand
 import org.bukkit.command.Command
-import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.hibernate.Session
 
-class IncreaseAttributeCommand(private val session: Session, private val attribute: PlayerAttribute): CommandExecutor {
+class IncreaseAttributeCommand(private val session: Session, private val attribute: PlayerAttribute, parentName: String): SubCommand(
+    parentName
+) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
         if (sender !is Player){
@@ -28,5 +28,14 @@ class IncreaseAttributeCommand(private val session: Session, private val attribu
         transaction.commit()
 
         return true
+    }
+
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<String>
+    ): MutableList<String>? {
+        return mutableListOf("1", "2", "3", "...")
     }
 }
