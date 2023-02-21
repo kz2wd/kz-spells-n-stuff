@@ -6,9 +6,9 @@ import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
-import com.cludivers.kz2wdprison.commands.xp.XpShowCommand
 import com.cludivers.kz2wdprison.menu.MenuListener
 import com.cludivers.kz2wdprison.menu.SkillMenu
+import com.cludivers.kz2wdprison.mines.MineHandler
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -105,6 +105,8 @@ class Kz2wdPrison : JavaPlugin() {
         val prisonListener = PrisonListener(this, session, allAttributes)
         server.pluginManager.registerEvents(prisonListener, this)
         server.pluginManager.registerEvents(MenuListener, this)
+
+        MineHandler(MineHandler.minuteToTick(1), this)
     }
 
     override fun onDisable() {

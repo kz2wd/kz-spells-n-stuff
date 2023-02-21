@@ -1,10 +1,7 @@
 package com.cludivers.kz2wdprison.beans
 
 import com.cludivers.kz2wdprison.beans.ores.OresMinedStatistics
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import org.bukkit.entity.Player
 import org.hibernate.Session
 
@@ -29,6 +26,7 @@ class PlayerBean {
     var criticOddLevel: Int = 0
     var criticFactorLevel: Int = 0
 
+    @Embedded
     var oresStats: OresMinedStatistics = OresMinedStatistics()
 
     companion object {
