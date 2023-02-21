@@ -107,6 +107,9 @@ class Kz2wdPrison : JavaPlugin() {
         server.pluginManager.registerEvents(MenuListener, this)
 
         MineHandler(MineHandler.minuteToTick(1), this)
+
+        BonusXpEvent.start(this)
+
     }
 
     override fun onDisable() {

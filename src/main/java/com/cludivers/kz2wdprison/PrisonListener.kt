@@ -84,20 +84,21 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         }
 
         private fun getBlockValue(block: Material, playerData: PlayerBean): Pair<Float, Float>{
+            val bonus = BonusXpEvent.getBonusFactor(block)
             return when(block) {
                 Material.STONE, Material.ANDESITE, Material.GRANITE, Material.TUFF, Material.DIORITE ->
-                    getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp)
-                Material.COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp)
-                Material.IRON_ORE, Material.COPPER_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp)
-                Material.GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp)
-                Material.REDSTONE_ORE, Material.LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp)
-                Material.DIAMOND_ORE, Material.EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
-                Material.DEEPSLATE -> getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp + 5)
-                Material.DEEPSLATE_COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp + 5)
-                Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_COPPER_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp + 5)
-                Material.DEEPSLATE_GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp + 5)
-                Material.DEEPSLATE_REDSTONE_ORE, Material.DEEPSLATE_LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp + 5)
-                Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp)
+                    getInRange(Ores.STONE.minXp, playerData.oresStats.stone.maxXp * bonus)
+                Material.COAL_ORE -> getInRange(Ores.COAL.minXp, playerData.oresStats.coal.maxXp * bonus)
+                Material.IRON_ORE, Material.COPPER_ORE -> getInRange(Ores.IRON.minXp, playerData.oresStats.iron.maxXp * bonus)
+                Material.GOLD_ORE -> getInRange(Ores.GOLD.minXp, playerData.oresStats.gold.maxXp * bonus)
+                Material.REDSTONE_ORE, Material.LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, playerData.oresStats.redstone.maxXp * bonus)
+                Material.DIAMOND_ORE, Material.EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, playerData.oresStats.diamond.maxXp * bonus)
+                Material.DEEPSLATE -> getInRange(Ores.STONE.minXp, (playerData.oresStats.stone.maxXp + 5)  * bonus)
+                Material.DEEPSLATE_COAL_ORE -> getInRange(Ores.COAL.minXp, (playerData.oresStats.coal.maxXp + 5)  * bonus)
+                Material.DEEPSLATE_IRON_ORE, Material.DEEPSLATE_COPPER_ORE -> getInRange(Ores.IRON.minXp, (playerData.oresStats.iron.maxXp + 5)  * bonus)
+                Material.DEEPSLATE_GOLD_ORE -> getInRange(Ores.GOLD.minXp, (playerData.oresStats.gold.maxXp + 5) * bonus)
+                Material.DEEPSLATE_REDSTONE_ORE, Material.DEEPSLATE_LAPIS_ORE -> getInRange(Ores.REDSTONE.minXp, (playerData.oresStats.redstone.maxXp + 5) * bonus)
+                Material.DEEPSLATE_DIAMOND_ORE, Material.DEEPSLATE_EMERALD_ORE -> getInRange(Ores.DIAMOND.minXp, (playerData.oresStats.diamond.maxXp)  * bonus)
                 else -> getInRange(0f, 1f)
             }
         }
