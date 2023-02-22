@@ -1,7 +1,7 @@
-package com.cludivers.kz2wdprison.mines
+package com.cludivers.kz2wdprison.world.mines
 
-import com.cludivers.kz2wdprison.cuboid.BlockPattern
-import com.cludivers.kz2wdprison.cuboid.Cuboid
+import com.cludivers.kz2wdprison.world.cuboid.BlockPattern
+import com.cludivers.kz2wdprison.world.cuboid.Cuboid
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material

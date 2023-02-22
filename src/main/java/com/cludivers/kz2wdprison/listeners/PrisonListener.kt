@@ -1,9 +1,10 @@
-package com.cludivers.kz2wdprison
+package com.cludivers.kz2wdprison.listeners
 
-import com.cludivers.kz2wdprison.attributes.PlayerAttribute
+import com.cludivers.kz2wdprison.BonusXpEvent
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.beans.ores.OreStats
 import com.cludivers.kz2wdprison.beans.ores.Ores
+import com.cludivers.kz2wdprison.bossBarDisplay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.hoverEvent
@@ -218,20 +219,33 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
     }
 
 
-    private fun applyAchievement(player: Player, stats: OreStats, amount: List<Int>, name: String, action: String, materials: String) {
+    private fun applyAchievement(player: Player, stats: OreStats, amount: List<Int>, name: String, action: String, materials: String, color: ChatColor) {
         val base = Component.text("${ChatColor.GOLD}${ChatColor.BOLD}SUCCES OBTENU ")
         val indexToChar = listOf("I", "II", "II", "IV", "V", "VI", "VII", "VIII", "IX", "X")
-        amount.withIndex().forEach{
-            if (it.value == stats.amountMined){
-                val achiev = Component.text("$name ${indexToChar[it.index]}")
-                val hover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("$action ${amount[it.index]} $materials"))
-                player.sendMessage(base.append(achiev).hoverEvent(hover))
-                val award = Component.text("${ChatColor.GREEN}Récompense : Xp obtenu en minant des ${ChatColor.RESET}$materials ${ChatColor.BOLD}augmenté !")
-                val awardHover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("XP max : ${stats.maxXp} => ${stats.maxXp * 2}"))
-                player.sendMessage(award.hoverEvent(awardHover))
-                player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, .0f)
-                stats.maxXp *= 1.2f
-            }
+
+        val currAchievementLevel = amount.binarySearch { it - stats.amountMined }
+        if (currAchievementLevel >= amount.size){
+            return
+        }
+
+        if (currAchievementLevel >= 0){
+            // Player just got achievement, award him
+
+            val achiev = Component.text("$name ${indexToChar[currAchievementLevel]}")
+            val hover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("$action ${amount[currAchievementLevel]} $materials"))
+            player.sendMessage(base.append(achiev).hoverEvent(hover))
+            val award = Component.text("${ChatColor.GREEN}Récompense : Xp obtenu en minant des ${ChatColor.RESET}$materials ${ChatColor.BOLD}augmenté !")
+            val awardHover = hoverEvent(HoverEvent.Action.SHOW_TEXT,  Component.text("XP max : ${stats.maxXp} => ${stats.maxXp * 2}"))
+
+            player.sendMessage(award.hoverEvent(awardHover))
+            player.world.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1f, .0f)
+            stats.maxXp *= 1.2f
+
+        } else {
+            // Player has made progress toward getting achievement, tells him
+            val progress: Float = stats.amountMined.toFloat() / amount[-currAchievementLevel - 1]
+            player.bossBarDisplay(Component.text("${color}Prochain succès : " +
+                    "$action ${amount[-currAchievementLevel - 1]} $materials"), progress)
         }
     }
 
@@ -247,7 +261,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur de Pierre",
                         "Miner",
-                        "pierres ou pierres des abîmes"
+                        "pierres ou pierres des abîmes",
+                        ChatColor.GRAY
                     )
                 }
                 Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE -> {
@@ -257,7 +272,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur de Charbon",
                         "Miner",
-                        "minerais de charbon"
+                        "minerais de charbon",
+                        ChatColor.BLACK
                     )
                 }
 
@@ -268,7 +284,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur de Métaux",
                         "Miner",
-                        "minerais de fer ou minerais de cuivre"
+                        "minerais de fer ou minerais de cuivre",
+                        ChatColor.GOLD
                     )
                 }
 
@@ -279,7 +296,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur d'Or",
                         "Miner",
-                        "minerais d'or"
+                        "minerais d'or",
+                        ChatColor.YELLOW
                     )
                 }
                 Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE -> {
@@ -289,7 +307,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur de Pierres précieuses",
                         "Miner",
-                        "minerais de diamant ou minerais d'émeraude"
+                        "minerais de diamant ou minerais d'émeraude",
+                        ChatColor.AQUA
                     )
                 }
 
@@ -300,7 +319,8 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         listOf(10, 100, 500, 1000, 2000, 5000, 10000, 25000, 50000, 100000, 200000),
                         "Mineur de Pierre rares",
                         "Miner",
-                        "minerais de redstone ou minerais de lapis"
+                        "minerais de redstone ou minerais de lapis",
+                        ChatColor.RED
                     )
                 }
                 else -> Unit

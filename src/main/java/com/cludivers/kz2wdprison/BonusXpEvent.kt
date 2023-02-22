@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.mines.MineHandler
+import com.cludivers.kz2wdprison.world.mines.MineHandler
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

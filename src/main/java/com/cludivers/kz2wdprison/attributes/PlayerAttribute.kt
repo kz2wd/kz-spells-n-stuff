@@ -1,10 +1,9 @@
 package com.cludivers.kz2wdprison.attributes
 
-import com.cludivers.kz2wdprison.PrisonListener
+import com.cludivers.kz2wdprison.listeners.PrisonListener
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player

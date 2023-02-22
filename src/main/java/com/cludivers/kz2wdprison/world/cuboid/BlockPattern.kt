@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.cuboid
+package com.cludivers.kz2wdprison.world.cuboid
 
 import org.bukkit.Material
 import java.util.TreeMap

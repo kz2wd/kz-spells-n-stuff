@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.commands.mine
 
 import com.cludivers.kz2wdprison.commands.SubCommand
-import com.cludivers.kz2wdprison.mines.MineHandler
+import com.cludivers.kz2wdprison.world.mines.MineHandler
 import net.kyori.adventure.text.Component
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

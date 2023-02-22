@@ -1,16 +1,17 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticFactor
-import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticOdd
+import com.cludivers.kz2wdprison.listeners.PrisonListener.Companion.getCriticFactor
+import com.cludivers.kz2wdprison.listeners.PrisonListener.Companion.getCriticOdd
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.commands.mine.MineListCommand
 import com.cludivers.kz2wdprison.commands.mine.MineResetCommand
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
+import com.cludivers.kz2wdprison.listeners.PrisonListener
 import com.cludivers.kz2wdprison.menu.MenuListener
 import com.cludivers.kz2wdprison.menu.SkillMenu
-import com.cludivers.kz2wdprison.mines.MineHandler
+import com.cludivers.kz2wdprison.world.mines.MineHandler
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.Material

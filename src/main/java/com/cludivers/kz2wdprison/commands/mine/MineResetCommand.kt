@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison.commands.mine
 
 import com.cludivers.kz2wdprison.commands.SubCommand
-import com.cludivers.kz2wdprison.mines.MineHandler
-import com.cludivers.kz2wdprison.mines.PrisonMine
+import com.cludivers.kz2wdprison.world.mines.MineHandler
+import com.cludivers.kz2wdprison.world.mines.PrisonMine
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.command.Command

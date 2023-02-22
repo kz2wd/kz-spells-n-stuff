@@ -1,15 +1,8 @@
-package com.cludivers.kz2wdprison.cuboid
+package com.cludivers.kz2wdprison.world.cuboid
 
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import kotlin.math.max
 import kotlin.math.min
-
-fun Player.isInArea(cuboid: Cuboid): Boolean{
-    return cuboid.start.x <= this.location.x && this.location.x <= cuboid.end.x &&
-            cuboid.start.y <= this.location.y && this.location.y <= cuboid.end.y &&
-            cuboid.start.z <= this.location.z && this.location.z <= cuboid.end.z
-}
 
 class Cuboid(loc1: Location, loc2: Location) {
 
