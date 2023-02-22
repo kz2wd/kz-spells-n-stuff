@@ -5,6 +5,7 @@ import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.beans.ores.OreStats
 import com.cludivers.kz2wdprison.beans.ores.Ores
 import com.cludivers.kz2wdprison.bossBarDisplay
+import com.cludivers.kz2wdprison.getData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEvent.hoverEvent
@@ -160,7 +161,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent){
         val transaction = session.beginTransaction()
-        val playerData = PlayerBean.getPlayerInfo(event.player, session)
+        val playerData = event.player.getData(session)
         if (playerData.connectionAmount < 1) {
             Bukkit.broadcast(Component.text("Bienvenue à ${ChatColor.LIGHT_PURPLE}${event.player.name} ${ChatColor.WHITE} !"))
         } else {
@@ -188,7 +189,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
     fun onPlayerBreak(event: BlockBreakEvent){
         val transaction = session.beginTransaction()
 
-        val playerData = PlayerBean.getPlayerInfo(event.player, session)
+        val playerData = event.player.getData(session)
 
         var (xpGained, scale) = getBlockValue(event.block.type, playerData)
         var colorEffect = getColorEffect(scale)
@@ -273,7 +274,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
                         "Mineur de Charbon",
                         "Miner",
                         "minerais de charbon",
-                        ChatColor.BLACK
+                        ChatColor.DARK_GRAY
                     )
                 }
 
@@ -366,7 +367,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
 
     @EventHandler
     fun onPlayerRespawn(event: PlayerRespawnEvent){
-        val playerData = PlayerBean.getPlayerInfo(event.player, session)
+        val playerData = event.player.getData(session)
         updatePlayerStats(event.player, playerData)
         updatePlayerPickaxe(event.player, playerData, false)
         event.player.sendMessage(Component.text("${ChatColor.RED}Vous êtes ${ChatColor.BOLD}mort"))
