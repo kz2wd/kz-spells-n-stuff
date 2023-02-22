@@ -2,11 +2,14 @@ package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import org.bukkit.configuration.file.FileConfiguration
+import org.hibernate.SessionFactory
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.hibernate.cfg.Configuration
+import org.hibernate.service.ServiceRegistry
 
-class ConfigurationHandler {
+class HibernateConfigurationHandler {
     companion object {
-        fun getConfiguration(config: FileConfiguration): Configuration {
+        fun loadHibernateConfiguration(config: FileConfiguration): SessionFactory {
             val configuration = Configuration()
 
             val login = config["login"]
@@ -21,7 +24,11 @@ class ConfigurationHandler {
             configuration.setProperty("hibernate.hbm2ddl.auto", hbmMode.toString())
             configuration.setProperty("show_sql", "true") // Not working :(
             configuration.addAnnotatedClass(PlayerBean::class.java)
-            return configuration
+
+            val serviceRegistry: ServiceRegistry =
+                StandardServiceRegistryBuilder().applySettings(configuration.properties).build()
+
+            return configuration.buildSessionFactory(serviceRegistry)
         }
     }
 }

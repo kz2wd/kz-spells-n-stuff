@@ -8,7 +8,7 @@ import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 
-class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin): BukkitRunnable() {
+class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin, val allMines: List<PrisonMine>): BukkitRunnable() {
 
     init {
         runTaskTimer(plugin, 0, tickPerUpdate.toLong())
@@ -20,22 +20,6 @@ class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin): BukkitRun
         }
     }
 
-    private fun allMines(): List<PrisonMine>{
-        return listOf(
-            PrisonMine("StarterMine",
-                Cuboid(
-                    Location(Bukkit.getWorld("world"), -10.0, 100.0, -10.0),
-                    Location(Bukkit.getWorld("world"), 10.0, 120.0, 10.0)),
-                BlockPattern(listOf(Pair(Material.STONE, 1f),
-                                    Pair(Material.COAL_ORE, .15f),
-                                    Pair(Material.IRON_ORE, .1f))),
-                Bukkit.getWorld("world")!!.spawnLocation,
-                minuteToTick(10)
-            )
-        )
-    }
-
-    val allMines = allMines()
     val nameToMine = allMines.associateBy { it.name }
     private val minesWithTimer = allMines.associateWith { 0 } as MutableMap<PrisonMine, Int>
 
