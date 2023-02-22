@@ -245,7 +245,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         } else {
             // Player has made progress toward getting achievement, tells him
             val progress: Float = stats.amountMined.toFloat() / amount[-currAchievementLevel - 1]
-            player.bossBarDisplay(Component.text("${color}Prochain succès : " +
+            player.bossBarDisplay(Component.text("${color}" +
                     "$action ${amount[-currAchievementLevel - 1]} $materials"), progress)
         }
     }
@@ -333,6 +333,10 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         while (playerData.currentXp >= getXpOfLevel(playerData.level)) {
             playerData.currentXp -= getXpOfLevel(playerData.level)
             playerData.level += 1
+
+            if (playerData.level % 5 == 0){
+                playerData.skillPoint += 2
+            }
             playerData.skillPoint += 1
 
             playerLevelUpNotification(player, playerData)
