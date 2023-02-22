@@ -2,6 +2,7 @@ package com.cludivers.kz2wdprison.menu
 
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
+import com.cludivers.kz2wdprison.getData
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -29,7 +30,7 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
 
     override fun generateInventory(player: Player): Inventory {
         val transaction = session.beginTransaction()
-        val playerData = PlayerBean.getPlayerInfo(player, session)
+        val playerData = player.getData(session)
         val inventory = Bukkit.createInventory(player, 9 * 1, Component.text("Vous avez " +
                 "${playerData.skillPoint} PC disponible"))
         attributes.withIndex().forEach {

@@ -1,11 +1,28 @@
 package com.cludivers.kz2wdprison
 
+import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.world.cuboid.Cuboid
 import com.cludivers.kz2wdprison.player.PlayerTransientData
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
+import org.hibernate.Session
 
+
+fun Player.getData(session: Session): PlayerBean {
+    var playerData = session
+        .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
+        .setParameter("uuid", this.uniqueId.toString())
+        .uniqueResult()
+
+    if (playerData == null){
+        playerData = PlayerBean()
+        playerData.uuid = this.uniqueId.toString()
+        session.persist(playerData)
+    }
+
+    return playerData
+}
 fun Player.isInArea(cuboid: Cuboid): Boolean{
     return cuboid.start.x <= this.location.x && this.location.x <= cuboid.end.x &&
             cuboid.start.y <= this.location.y && this.location.y <= cuboid.end.y &&

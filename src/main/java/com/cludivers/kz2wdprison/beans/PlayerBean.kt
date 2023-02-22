@@ -29,20 +29,4 @@ class PlayerBean {
     @Embedded
     var oresStats: OresMinedStatistics = OresMinedStatistics()
 
-    companion object {
-        fun getPlayerInfo(player: Player, session: Session): PlayerBean {
-            var playerData = session
-                    .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
-                    .setParameter("uuid", player.uniqueId.toString())
-                    .uniqueResult()
-
-            if (playerData == null){
-                playerData = PlayerBean()
-                playerData.uuid = player.uniqueId.toString()
-                session.persist(playerData)
-            }
-
-            return playerData
-        }
-    }
 }
