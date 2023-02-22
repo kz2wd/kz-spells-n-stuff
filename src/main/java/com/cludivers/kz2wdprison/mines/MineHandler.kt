@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable
 class MineHandler(private val tickPerUpdate: Int, plugin: JavaPlugin): BukkitRunnable() {
 
     init {
-        runTaskTimerAsynchronously(plugin, 0, tickPerUpdate.toLong())
+        runTaskTimer(plugin, 0, tickPerUpdate.toLong())
     }
 
     companion object {

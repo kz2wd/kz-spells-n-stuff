@@ -5,7 +5,6 @@ import com.cludivers.kz2wdprison.PrisonListener.Companion.getCriticOdd
 import com.cludivers.kz2wdprison.attributes.PlayerAttribute
 import com.cludivers.kz2wdprison.beans.PlayerBean
 import com.cludivers.kz2wdprison.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.commands.event.CurrentEventCommand
 import com.cludivers.kz2wdprison.commands.mine.MineListCommand
 import com.cludivers.kz2wdprison.commands.mine.MineResetCommand
 import com.cludivers.kz2wdprison.commands.xp.IncreaseAttributeCommand
@@ -106,8 +105,8 @@ class Kz2wdPrison : JavaPlugin() {
         val xpCommandsExecutor = MainCommandExecutor(xpCommands, xpCmd)
         this.getCommand(xpCommandName)?.setExecutor(xpCommandsExecutor)
         this.getCommand(xpCommandName)?.tabCompleter = xpCommandsExecutor
+        val prisonListener = PrisonListener(this, session);
 
-        val prisonListener = PrisonListener(this, session)
         server.pluginManager.registerEvents(prisonListener, this)
         server.pluginManager.registerEvents(MenuListener, this)
 
