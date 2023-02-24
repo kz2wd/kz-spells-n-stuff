@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.framework.beans
 
+import com.cludivers.kz2wdprison.framework.beans.city.PermissionGroup
 import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
 import jakarta.persistence.*
 
@@ -28,4 +29,6 @@ class PlayerBean {
     var oresStats: OresMinedStatistics =
         OresMinedStatistics()
 
+    @ManyToMany
+    var groups: List<PermissionGroup>? = null
 }

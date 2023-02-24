@@ -1,5 +1,6 @@
-package com.cludivers.kz2wdprison.framework.beans
+package com.cludivers.kz2wdprison.framework.beans.city
 
+import com.cludivers.kz2wdprison.framework.beans.city.CityBean
 import jakarta.persistence.*
 
 @Entity
@@ -13,6 +14,6 @@ class ChunkBean {
 
     var xCoord: Int? = null
 
-    // Owner ?
-    // Permissions ?
+    @ManyToOne
+    var city: CityBean? = null
 }
