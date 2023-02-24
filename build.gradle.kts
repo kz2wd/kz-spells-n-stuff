@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
@@ -24,6 +23,12 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.hibernate:hibernate-core:6.1.1.Final")
     implementation("mysql:mysql-connector-java:8.0.29")
+
+    testImplementation("com.h2database:h2:2.1.214")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+    testImplementation(kotlin("test"))
+    testImplementation("org.apache.logging.log4j:log4j-core:2.20.0")
+
 }
 
 java {
@@ -51,3 +56,8 @@ tasks.withType<ShadowJar> {
         include(dependency("org.antlr:antlr4-runtime:4.10"))
     }
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
+

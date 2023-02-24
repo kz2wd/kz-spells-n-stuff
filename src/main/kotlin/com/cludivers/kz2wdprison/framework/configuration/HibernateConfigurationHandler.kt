@@ -1,5 +1,7 @@
 package com.cludivers.kz2wdprison.framework.configuration
 
+import com.cludivers.kz2wdprison.framework.beans.PlayerBean
+import com.cludivers.kz2wdprison.framework.beans.city.*
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
@@ -22,7 +24,13 @@ class HibernateConfigurationHandler {
             configuration.setProperty("hibernate.connection.password", password.toString())
             configuration.setProperty("hibernate.hbm2ddl.auto", hbmMode.toString())
             configuration.setProperty("show_sql", "true") // Not working :(
-            configuration.addAnnotatedClass(com.cludivers.kz2wdprison.framework.beans.PlayerBean::class.java)
+
+            val classes = listOf(
+                PlayerBean::class.java, AreaPermission::class.java, ChunkBean::class.java,
+                CityBean::class.java, CityPermission::class.java, CityPlot::class.java, PermissionGroup::class.java)
+            classes.forEach {
+                configuration.addAnnotatedClass(it)
+            }
 
             val serviceRegistry: ServiceRegistry =
                 StandardServiceRegistryBuilder().applySettings(configuration.properties).build()

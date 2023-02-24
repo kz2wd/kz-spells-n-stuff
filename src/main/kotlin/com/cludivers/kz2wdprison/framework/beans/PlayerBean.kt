@@ -30,5 +30,8 @@ class PlayerBean {
         OresMinedStatistics()
 
     @ManyToMany
+    @JoinTable(name = "player_groups",
+        joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name="player_id", referencedColumnName = "id")])
     var groups: List<PermissionGroup>? = null
 }

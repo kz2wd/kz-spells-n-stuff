@@ -11,7 +11,7 @@ import jakarta.persistence.OneToOne
 class PermissionGroup {
     @Id
     @GeneratedValue
-    var group_id: Long? = null
+    var id: Long? = null
 
     var name: String? = null
 

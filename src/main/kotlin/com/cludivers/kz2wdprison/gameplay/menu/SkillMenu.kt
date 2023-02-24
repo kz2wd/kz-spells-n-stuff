@@ -28,8 +28,7 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
     override fun generateInventory(player: Player): Inventory {
         val transaction = session.beginTransaction()
         val playerData = player.getData(session)
-        val inventory = Bukkit.createInventory(player, 9 * 1, Component.text("Vous avez " +
-                "${playerData.skillPoint} PC disponible"))
+        val inventory = Bukkit.createInventory(player, 9 * 1, Component.text("Amélioration de vos compétences"))
         attributes.withIndex().forEach {
             val infos = it.value.second.upgradeComponent(playerData)
             inventory.setItem(it.index * 2, getItem(it.value.first, infos.first,
