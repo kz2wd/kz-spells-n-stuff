@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.framework.beans
 
+import com.cludivers.kz2wdprison.framework.beans.city.NationBean
 import com.cludivers.kz2wdprison.framework.beans.city.PermissionGroup
 import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
 import jakarta.persistence.*
@@ -28,6 +29,9 @@ class PlayerBean {
     @Embedded
     var oresStats: OresMinedStatistics =
         OresMinedStatistics()
+
+    @OneToOne
+    var nation: NationBean? = null
 
     @ManyToMany
     @JoinTable(name = "player_groups",

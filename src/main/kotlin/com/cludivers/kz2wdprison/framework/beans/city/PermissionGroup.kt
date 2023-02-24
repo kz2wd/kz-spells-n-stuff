@@ -19,7 +19,7 @@ class PermissionGroup {
     var areaPermission: AreaPermission? = null
 
     @OneToOne
-    var cityPermission: CityPermission? = null
+    var nationPermission: NationPermission? = null
 
     @ManyToMany(mappedBy = "groups")
     var players: List<PlayerBean>? = null

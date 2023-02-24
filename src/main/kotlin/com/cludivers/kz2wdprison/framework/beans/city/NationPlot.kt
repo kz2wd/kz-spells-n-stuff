@@ -6,7 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 
 @Entity
-class CityPlot {
+class NationPlot {
     @Id
     @GeneratedValue
     var id: Long? = null

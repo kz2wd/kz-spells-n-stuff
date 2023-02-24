@@ -27,7 +27,7 @@ class HibernateConfigurationHandler {
 
             val classes = listOf(
                 PlayerBean::class.java, AreaPermission::class.java, ChunkBean::class.java,
-                CityBean::class.java, CityPermission::class.java, CityPlot::class.java, PermissionGroup::class.java)
+                NationBean::class.java, NationPermission::class.java, NationPlot::class.java, PermissionGroup::class.java)
             classes.forEach {
                 configuration.addAnnotatedClass(it)
             }

@@ -11,7 +11,7 @@ import jakarta.persistence.OneToOne
 import java.sql.Date
 
 @Entity
-class CityBean {
+class NationBean {
     @Id
     @GeneratedValue
     @Column(name = "id", nullable = false)
@@ -35,7 +35,7 @@ class CityBean {
     var chunks: List<ChunkBean>? = null
 
     @OneToMany
-    var plots: List<CityPlot>? = null
+    var plots: List<NationPlot>? = null
 
     @OneToOne
     var defaultAreaRules: AreaPermission? = null

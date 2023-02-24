@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 
 @Entity
-class CityPermission {
+class NationPermission {
     @Id
     @GeneratedValue
     var id: Long? = null
