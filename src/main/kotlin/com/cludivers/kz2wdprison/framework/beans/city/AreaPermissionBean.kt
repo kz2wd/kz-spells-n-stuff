@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 
 @Entity
-class AreaPermission {
+class AreaPermissionBean {
     @Id
     @GeneratedValue
     var id: Long? = null
@@ -13,4 +13,5 @@ class AreaPermission {
     var canBreak: Boolean = false
     var canPlace: Boolean = false
     var canAttackPlayer: Boolean = false
+
 }

@@ -16,7 +16,7 @@ class PermissionGroup {
     var name: String? = null
 
     @OneToOne
-    var areaPermission: AreaPermission? = null
+    var areaPermissionBean: AreaPermissionBean? = null
 
     @OneToOne
     var nationPermission: NationPermission? = null

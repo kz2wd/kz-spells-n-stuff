@@ -34,7 +34,6 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
             inventory.setItem(it.index * 2, getItem(it.value.first, infos.first,
                 listOf(infos.second)))
         }
-
         transaction.commit()
         return inventory
     }

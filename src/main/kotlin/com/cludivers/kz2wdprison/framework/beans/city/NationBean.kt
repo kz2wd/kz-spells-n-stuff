@@ -38,7 +38,7 @@ class NationBean {
     var plots: List<NationPlot>? = null
 
     @OneToOne
-    var defaultAreaRules: AreaPermission? = null
+    var defaultAreaRules: AreaPermissionBean? = null
 
     var level: Int? = 0
 

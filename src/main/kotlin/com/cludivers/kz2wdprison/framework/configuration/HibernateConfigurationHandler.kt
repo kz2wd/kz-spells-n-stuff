@@ -26,7 +26,7 @@ class HibernateConfigurationHandler {
             configuration.setProperty("show_sql", "true") // Not working :(
 
             val classes = listOf(
-                PlayerBean::class.java, AreaPermission::class.java, ChunkBean::class.java,
+                PlayerBean::class.java, AreaPermissionBean::class.java, ChunkBean::class.java,
                 NationBean::class.java, NationPermission::class.java, NationPlot::class.java, PermissionGroup::class.java)
             classes.forEach {
                 configuration.addAnnotatedClass(it)

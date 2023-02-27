@@ -1,27 +1,29 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
 import com.cludivers.kz2wdprison.framework.beans.PlayerBean
+import com.cludivers.kz2wdprison.framework.beans.city.AreaPermissionBean
+import com.cludivers.kz2wdprison.framework.beans.city.ChunkBean
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.Cuboid
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.hibernate.Session
 
 
 fun Player.getData(session: Session): PlayerBean {
-    var playerData = session
-        .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
-        .setParameter("uuid", this.uniqueId.toString())
-        .uniqueResult()
+    return PlayerBean.getPlayerPlayerBean(session, this)
+}
 
-    if (playerData == null){
-        playerData = PlayerBean()
-        playerData.uuid = this.uniqueId.toString()
-        session.persist(playerData)
+
+/*fun Player.getAreaPermission(session: Session, interactionLocation: Location): AreaPermissionBean {
+    val chunk = interactionLocation.chunk
+    val chunkBean = ChunkBean.getChunkBean(session, chunk.x, chunk.z)
+    if (chunkBean !is ChunkBean){
+
     }
 
-    return playerData
-}
+}*/
 fun Player.isInArea(cuboid: Cuboid): Boolean{
     return cuboid.start.x <= this.location.x && this.location.x <= cuboid.end.x &&
             cuboid.start.y <= this.location.y && this.location.y <= cuboid.end.y &&
