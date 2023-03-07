@@ -3,7 +3,10 @@ package com.cludivers.kz2wdprison.framework.beans
 import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
 import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
+import com.cludivers.kz2wdprison.gameplay.player.getData
 import jakarta.persistence.*
+import org.bukkit.entity.Player
+import org.hibernate.Session
 
 @Entity
 class PlayerBean {
@@ -38,4 +41,21 @@ class PlayerBean {
         joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name="player_id", referencedColumnName = "id")])
     var groups: List<PermissionGroup>? = null
+
+    companion object {
+        fun getPlayerPlayerBean(session: Session, player: Player): PlayerBean{
+            var playerData = session
+                .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
+                .setParameter("uuid", player.uniqueId.toString())
+                .uniqueResult()
+
+            if (playerData == null){
+                playerData = PlayerBean()
+                playerData.uuid = player.uniqueId.toString()
+                session.persist(playerData)
+            }
+
+            return playerData
+        }
+    }
 }
