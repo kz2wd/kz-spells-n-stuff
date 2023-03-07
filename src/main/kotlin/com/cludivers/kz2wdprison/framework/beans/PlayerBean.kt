@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.framework.beans
 
-import com.cludivers.kz2wdprison.framework.beans.city.NationBean
-import com.cludivers.kz2wdprison.framework.beans.city.PermissionGroup
+import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
 import jakarta.persistence.*
 

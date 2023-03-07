@@ -4,6 +4,7 @@ import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationH
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
+import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -17,6 +18,7 @@ class Kz2wdPrison : JavaPlugin() {
         PlayerAttributesDeclaration.declare(this, session)
         ListenersDeclaration.declare(this,  server.pluginManager, session)
         MinesDeclaration.declare(this)
+        NationDeclaration.declare(this, session)
 
         BonusXpEvent.start(this)
 

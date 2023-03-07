@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.city
+package com.cludivers.kz2wdprison.framework.beans.nation
 
 import jakarta.persistence.*
 

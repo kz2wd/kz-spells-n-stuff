@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.beans.PlayerBean
-import com.cludivers.kz2wdprison.framework.beans.city.*
+import com.cludivers.kz2wdprison.framework.beans.nation.*
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder

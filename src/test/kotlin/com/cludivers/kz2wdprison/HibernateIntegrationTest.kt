@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.beans.PlayerBean
-import com.cludivers.kz2wdprison.framework.beans.city.*
+import com.cludivers.kz2wdprison.framework.beans.nation.*
 import org.junit.jupiter.api.Test
 
 class HibernateIntegrationTest {
