@@ -17,6 +17,7 @@ class NationPermission {
     var canBan: Boolean = false
     var canManagePermission = false
     var canSetCriminal: Boolean = false
+    var canClaim: Boolean = false
 
     companion object {
         fun getPersistentCitizenPermissions(session: Session): NationPermission{

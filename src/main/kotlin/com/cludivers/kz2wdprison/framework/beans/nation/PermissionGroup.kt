@@ -1,12 +1,10 @@
 package com.cludivers.kz2wdprison.framework.beans.nation
 
 import com.cludivers.kz2wdprison.framework.beans.PlayerBean
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.OneToOne
+import jakarta.persistence.*
+import org.bukkit.Bukkit
 import org.hibernate.Session
+import java.util.*
 
 @Entity
 class PermissionGroup {
@@ -22,8 +20,12 @@ class PermissionGroup {
     @OneToOne
     var nationPermission: NationPermission? = null
 
-    @ManyToMany(mappedBy = "groups")
+    @OneToMany
     var players: MutableList<PlayerBean>? = null
+
+    fun description(): String{
+        return "- $name : ${players!!.map { Bukkit.getOfflinePlayer(UUID.fromString(it.uuid!!)).name }.joinToString(", ")}"
+    }
 
     companion object {
 

@@ -3,7 +3,6 @@ package com.cludivers.kz2wdprison.framework.beans
 import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
 import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
-import com.cludivers.kz2wdprison.gameplay.player.getData
 import jakarta.persistence.*
 import org.bukkit.entity.Player
 import org.hibernate.Session
@@ -36,11 +35,8 @@ class PlayerBean {
     @OneToOne
     var nation: NationBean? = null
 
-    @ManyToMany
-    @JoinTable(name = "player_groups",
-        joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name="player_id", referencedColumnName = "id")])
-    var groups: List<PermissionGroup>? = null
+    @ManyToOne
+    var permissionGroup: PermissionGroup? = null
 
     companion object {
         fun getPlayerPlayerBean(session: Session, player: Player): PlayerBean{

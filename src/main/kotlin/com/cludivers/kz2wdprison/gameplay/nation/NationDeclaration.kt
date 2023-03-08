@@ -19,7 +19,9 @@ object NationDeclaration {
                 "create" to CreateNation(nationCommandName, session),
                 "invite" to InviteToNation(nationCommandName, session),
                 "join" to JoinNation(nationCommandName, session),
-                "quit" to QuitNation(nationCommandName, session)),
+                "refuse" to RefuseInvitation(nationCommandName),
+                "quit" to QuitNation(nationCommandName, session),
+                "claim" to NationClaim(nationCommandName, session)),
             infoCmd
         )
 

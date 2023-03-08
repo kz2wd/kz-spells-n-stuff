@@ -29,10 +29,10 @@ class MainCommandExecutor(private val commands: Map<String, SubCommand>, private
         label: String,
         args: Array<String>
     ): MutableList<String>? {
-        if (args.isEmpty() || args[0].isBlank()){
-            return commands.keys.toMutableList()
-        } else if (commands.containsKey(args[0])){
+        if (commands.containsKey(args[0])){
             return commands[args[0]]!!.onTabComplete(sender, command, args[0], args.drop(1).toTypedArray())
+        } else if (args.size < 2){
+            return commands.keys.toMutableList()
         }
         return null
 

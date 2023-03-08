@@ -16,8 +16,14 @@ class AreaPermission {
     var canAttackPlayer: Boolean = false
     var canAttackFriendlyMob = false
     var canAttackAggressiveMob = true
-
+    
     companion object {
+
+        fun getPersistentDefaultPermissions(session: Session): AreaPermission{
+            val perm = AreaPermission()
+            session.persist(perm)
+            return perm
+        }
         fun getPersistentCitizenPermissions(session: Session): AreaPermission{
             val perm = AreaPermission()
             session.persist(perm)

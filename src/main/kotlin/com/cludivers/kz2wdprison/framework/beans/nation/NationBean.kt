@@ -29,16 +29,16 @@ class NationBean {
     var creationDate: Date? = null
 
     @OneToMany
-    var residents: List<PermissionGroup>? = null
+    var residents: MutableList<PermissionGroup>? = null
 
     @ManyToMany
-    var criminals: List<PlayerBean>? = null
+    var criminals: MutableList<PlayerBean>? = null
 
     @OneToMany
-    var chunks: List<ChunkBean>? = null
+    var chunks: MutableList<ChunkBean>? = null
 
     @OneToMany
-    var plots: List<NationPlot>? = null
+    var plots: MutableList<NationPlot>? = null
 
     @OneToOne
     var defaultAreaRules: AreaPermission? = null
@@ -48,9 +48,10 @@ class NationBean {
     var chunkClaimTokens: Int? = 1
 
     fun description(): String{
-        val residentAmount = if (residents.isNullOrEmpty()) 1 else residents?.map { if (!it.players.isNullOrEmpty()) it.players!!.size else 0}
-            ?.reduce { acc, i -> acc + i }
-        return "$name, $residentAmount citoyens, ${chunks?.size} chunks"
+        val residentAmount: Int = if (residents.isNullOrEmpty()) 0 else residents!!.map {
+            if (!it.players.isNullOrEmpty()) it.players!!.size else 0
+        }.reduce { acc, i -> acc + i }
+        return "$name, ${residentAmount + 1} citoyens, ${chunks?.size} chunks\n${residents!!.map { it.description() }.joinToString("\n")}"
     }
 
     fun changeOwner(newOwner: PlayerBean){
@@ -60,18 +61,42 @@ class NationBean {
     }
 
     fun addMember(member: PlayerBean){
+        member.nation = this
+        member.permissionGroup = this.residents!![0]
         this.residents!![0].players?.add(member)
     }
 
     fun removeMember(member: PlayerBean){
         this.residents?.forEach { it.players?.remove(member) }
+        member.nation = null
     }
 
     fun findNewOwner(): PlayerBean? {
         this.residents?.sortedBy { it.nationPermission?.rankAuthority }?.forEach {
-            return it.players?.random()
+            if (!it.players.isNullOrEmpty()){
+                return it.players?.random()
+            }
         }
         return null
+    }
+
+    fun delete(session: Session){
+        this.owner!!.nation = null
+        this.residents!!.forEach { group ->
+            group.players!!.forEach {
+                it.nation = null
+                it.permissionGroup = null
+            }
+            val areaPerm = group.areaPermission
+            group.areaPermission = null
+            session.remove(areaPerm)
+            val nationPerm = group.nationPermission
+            group.nationPermission = null
+            session.remove(nationPerm)
+        }
+        this.chunks!!.forEach {
+            it.nation = null
+        }
     }
 
     companion object {
@@ -79,6 +104,8 @@ class NationBean {
             val nation = NationBean()
             nation.owner = owner
             nation.name = name
+
+            nation.defaultAreaRules = AreaPermission.getPersistentDefaultPermissions(session)
 
             nation.residents = mutableListOf(
                 PermissionGroup.getPersistentDefaultCitizenPermissionGroup(session),
