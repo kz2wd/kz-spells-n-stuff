@@ -21,7 +21,7 @@ class PermissionGroup {
     var nationPermission: NationPermission? = null
 
     @OneToMany
-    var players: MutableList<PlayerBean>? = null
+    var players: MutableList<PlayerBean>? = mutableListOf()
 
     fun description(): String{
         return "- $name : ${players!!.map { Bukkit.getOfflinePlayer(UUID.fromString(it.uuid!!)).name }.joinToString(", ")}"
