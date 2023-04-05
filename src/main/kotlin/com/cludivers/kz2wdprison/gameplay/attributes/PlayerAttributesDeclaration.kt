@@ -85,7 +85,7 @@ object PlayerAttributesDeclaration {
             Material.ANVIL, Material.ENCHANTING_TABLE, Material.GOLDEN_APPLE,
             Material.ENDER_EYE, Material.EXPERIENCE_BOTTLE)
 //        val xpCmd = SkillMenu(session, attributesMaterials.zip(allAttributes))
-        val xpCmd = IntrinsicManagerMenu()
+        val xpCmd = IntrinsicManagerMenu(session)
         val xpCommands = allAttributes.associate {
             it.increaseCommandCallName to IncreaseAttributeCommand(session, it, xpCommandName) }
         val xpCommandsExecutor = MainCommandExecutor(xpCommands, xpCmd)
