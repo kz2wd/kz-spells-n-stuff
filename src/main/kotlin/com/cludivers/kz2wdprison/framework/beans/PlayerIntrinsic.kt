@@ -2,8 +2,11 @@ package com.cludivers.kz2wdprison.framework.beans
 
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Embeddable
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
+import org.hibernate.Session
 
 @Embeddable
 class PlayerIntrinsic {
@@ -13,18 +16,25 @@ class PlayerIntrinsic {
     @ElementCollection
     var attributes: MutableMap<IntrinsicAttributes, Int> = IntrinsicAttributes.values().associateWith { 1 }.toMutableMap()
 
-    fun increaseAttribute(attribute: IntrinsicAttributes){
+    fun increaseAttribute(session: Session, attribute: IntrinsicAttributes){
+        Bukkit.broadcast(Component.text("${attribute.name}: ${attributes[attribute]}"))
         if (attributes[attribute]!! >= attributesMaxValues){
             return
         }
+
+        session.beginTransaction()
         attributes[attribute] = attributes[attribute]!! + 1
+        session.transaction.commit()
     }
 
-    fun decreaseAttribute(attribute: IntrinsicAttributes){
+    fun decreaseAttribute(session: Session, attribute: IntrinsicAttributes){
+        Bukkit.broadcast(Component.text("${attribute.name}: ${attributes[attribute]}"))
         if (attributes[attribute] !! <= 1){
             return
         }
+        session.beginTransaction()
         attributes[attribute] = attributes[attribute]!! - 1
+        session.transaction.commit()
     }
 
     private fun updatePlayer(player: Player, attribute: IntrinsicAttributes){

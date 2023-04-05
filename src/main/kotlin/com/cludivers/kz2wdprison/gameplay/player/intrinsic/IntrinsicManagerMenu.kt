@@ -17,8 +17,9 @@ class IntrinsicManagerMenu(private val session: Session): ChoiceMenu({ Component
     private fun changeName(itemStack: ItemStack, newName: String): ItemStack{
         val itm = itemStack.itemMeta
         itm.displayName(Component.text(newName))
-        itemStack.itemMeta = itm
-        return itemStack
+        val itCopy = itemStack.clone()
+        itCopy.itemMeta = itm
+        return itCopy
     }
 
     override fun generateChoices(player: Player): Map<Int, Pair<ItemStack, () -> Unit>> {
@@ -32,10 +33,10 @@ class IntrinsicManagerMenu(private val session: Session): ChoiceMenu({ Component
         
         val inc = attributesItemStacks.entries.mapIndexed {
                 index, entry -> index * 9 to Pair(changeName(entry.value, "Increase ${entry.key.name}"),
-                    { playerData.intrinsic.increaseAttribute(entry.key) }) }.toMap()
+                    { playerData.intrinsic.increaseAttribute(session, entry.key) }) }.toMap()
         val dec = attributesItemStacks.entries.mapIndexed {
                 index, entry -> (index + 1) * 9 - 1 to Pair(changeName(entry.value, "Decrease ${entry.key.name}"),
-            { playerData.intrinsic.decreaseAttribute(entry.key) }) }.toMap()
+            { playerData.intrinsic.decreaseAttribute(session, entry.key) }) }.toMap()
 
         return inc + dec
     }
