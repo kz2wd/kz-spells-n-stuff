@@ -6,6 +6,11 @@ import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -24,9 +29,26 @@ class Kz2wdPrison : JavaPlugin() {
 
         // val currentEventCmd = CurrentEventCommand()
 
+        Bukkit.addRecipe(getRecipe())
     }
 
     override fun onDisable() {
         // Plugin shutdown logic
+    }
+
+    private fun getRecipe(): ShapedRecipe {
+        val item = ItemStack(Material.GOLDEN_SWORD)
+        val meta = item.itemMeta
+        meta.setCustomModelData(1234567)
+        item.setItemMeta(meta)
+
+        val key = NamespacedKey(this, "custom_sword")
+        val recipe = ShapedRecipe(key, item)
+
+        recipe.shape(" B ", " B ", " R ")
+        recipe.setIngredient('B', Material.GOLD_BLOCK)
+        recipe.setIngredient('R', Material.BLAZE_ROD)
+
+        return recipe
     }
 }
