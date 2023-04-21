@@ -1,6 +1,5 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
-import com.cludivers.kz2wdprison.framework.beans.PlayerBean
 import com.cludivers.kz2wdprison.framework.beans.nation.AreaPermission
 import com.cludivers.kz2wdprison.framework.beans.nation.ChunkBean
 import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
@@ -8,18 +7,14 @@ import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.entity.Player
-import org.bukkit.event.Cancellable
-import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.hibernate.Session
 
