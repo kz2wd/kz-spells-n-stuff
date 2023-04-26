@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.menu
 
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -36,9 +37,7 @@ object MenuListener : Listener {
 
     @EventHandler
     fun onMenuDragItem(event: InventoryDragEvent){
-        if (allInventoryMenus.contains(event.inventory)){
-            event.isCancelled = true
-        }
+        allInventoryMenus[event.inventory]?.onItemDrag(event)
     }
 
     @EventHandler
