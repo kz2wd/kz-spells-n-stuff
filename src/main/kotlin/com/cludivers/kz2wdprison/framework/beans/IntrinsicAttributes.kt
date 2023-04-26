@@ -5,6 +5,6 @@ enum class IntrinsicAttributes {
     AGILITY,
     STRENGTH,
     TOUGHNESS,
-
+    ARTIFACT_ARCHITECT,
 
 }

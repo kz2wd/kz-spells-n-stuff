@@ -8,14 +8,33 @@ enum class CustomShardItems {
         override val flag: Int = 10000
 
         override val itemStack: ItemStack = run {
-            val item = ItemStack(Material.IRON_NUGGET)
-            val meta = item.itemMeta
-            meta.setCustomModelData(flag)
-            item.setItemMeta(meta)
-            item
+            buildItemStack(Material.IRON_NUGGET, flag)
         }
 
-    };
+    },
+    PROJECTILE_SPEC {
+        override val flag: Int = 20001
+
+        override val itemStack: ItemStack = run {
+            buildItemStack(Material.IRON_NUGGET, flag)
+        }
+    },
+    BLOCK_SPEC {
+        override val flag: Int = 20002
+
+        override val itemStack: ItemStack = run {
+            buildItemStack(Material.IRON_NUGGET, flag)
+        }
+    }
+    ;
+
+    protected fun buildItemStack(material: Material, flag: Int): ItemStack{
+        val item = ItemStack(material)
+        val meta = item.itemMeta
+        meta.setCustomModelData(flag)
+        item.setItemMeta(meta)
+        return item
+    }
 
     // Flag must be unique for each custom item
     protected abstract val flag: Int

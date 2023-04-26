@@ -1,6 +1,6 @@
-package com.cludivers.kz2wdprison.gameplay.menu
+package com.cludivers.kz2wdprison.gameplay.attributes
 
-import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttribute
+import com.cludivers.kz2wdprison.gameplay.menu.Menu
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -32,7 +32,8 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
         attributes.withIndex().forEach {
             val infos = it.value.second.upgradeComponent(playerData)
             inventory.setItem(it.index * 2, getItem(it.value.first, infos.first,
-                listOf(infos.second)))
+                listOf(infos.second))
+            )
         }
         transaction.commit()
         return inventory

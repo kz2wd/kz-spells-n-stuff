@@ -4,7 +4,6 @@ import com.cludivers.kz2wdprison.framework.beans.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.gameplay.listeners.PrisonListener
-import com.cludivers.kz2wdprison.gameplay.menu.SkillMenu
 import com.cludivers.kz2wdprison.gameplay.player.intrinsic.IntrinsicManagerMenu
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor

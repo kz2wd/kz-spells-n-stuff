@@ -26,6 +26,8 @@ enum class Specifications: Consumer, Producer {
             }
             return 0f
         }
+
+        override val customItemStack: CustomShardItems = CustomShardItems.BLOCK_SPEC
     },
     PROJECTILE{
         override fun consume(session: Session, item: ItemStack, entity: Entity, location: Location, flow: Float) {
@@ -37,7 +39,14 @@ enum class Specifications: Consumer, Producer {
                 location.world.spawnArrow(location.add(location.direction), location.direction, flow + 1, 1 / (flow + 1))
             }
         }
+        override val customItemStack: CustomShardItems = CustomShardItems.PROJECTILE_SPEC
     };
+
+    companion object {
+        private val map = Specifications.values().associateBy(Specifications::customItemStack)
+        fun itemStackToSpecification(itemStack: CustomShardItems) = map[itemStack]
+    }
+
     override fun consume(session: Session, item: ItemStack, entity: Entity, location: Location, flow: Float) {
         // Default behavior : do nothing
     }
@@ -46,5 +55,7 @@ enum class Specifications: Consumer, Producer {
         // Default behavior : do nothing
         return 0f
     }
+
+    abstract val customItemStack: CustomShardItems
 
 }
