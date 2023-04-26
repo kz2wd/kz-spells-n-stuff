@@ -1,5 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.menu
 
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -19,9 +22,10 @@ object MenuListener : Listener {
 
     @EventHandler
     fun onMenuClick(event: InventoryClickEvent){
-        if (allInventoryMenus.contains(event.clickedInventory)){
-            allInventoryMenus[event.clickedInventory]?.handleClick(event)
+        if (allInventoryMenus.contains(event.inventory)){
             event.isCancelled = true
+            allInventoryMenus[event.inventory]?.handleClick(event)
+
         }
     }
 
@@ -35,13 +39,12 @@ object MenuListener : Listener {
 
     @EventHandler
     fun onMenuDragItem(event: InventoryDragEvent){
-        if (allInventoryMenus.contains(event.inventory)){
-            event.isCancelled = true
-        }
+        allInventoryMenus[event.inventory]?.onItemDrag(event)
     }
 
     @EventHandler
     fun onMenuClose(event: InventoryCloseEvent){
+        allInventoryMenus[event.inventory]?.close(event.player as Player)
         allInventoryMenus.remove(event.inventory)
     }
 }

@@ -28,7 +28,12 @@ class ArtifactListener(private val session: Session): Listener {
         if (artifact === null || !artifact.activateOnInteract){
             return
         }
-        artifact.activate(session, event.player, event.player.eyeLocation)
+        if (event.player.isSneaking){
+            artifact.generateEditorMenu().open(event.player)
+        } else {
+            artifact.activate(session, event.player, event.player.eyeLocation)
+        }
+
     }
 
 }

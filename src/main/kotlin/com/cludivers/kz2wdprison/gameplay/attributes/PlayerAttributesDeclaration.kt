@@ -5,10 +5,13 @@ import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.gameplay.listeners.PrisonListener
 import com.cludivers.kz2wdprison.gameplay.menu.SkillMenu
+import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.player.intrinsic.IntrinsicManagerMenu
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.plugin.java.JavaPlugin
 import org.hibernate.Session
 
@@ -85,7 +88,8 @@ object PlayerAttributesDeclaration {
             Material.ANVIL, Material.ENCHANTING_TABLE, Material.GOLDEN_APPLE,
             Material.ENDER_EYE, Material.EXPERIENCE_BOTTLE)
 //        val xpCmd = SkillMenu(session, attributesMaterials.zip(allAttributes))
-        val xpCmd = IntrinsicManagerMenu(session)
+         val xpCmd = IntrinsicManagerMenu(session)
+
         val xpCommands = allAttributes.associate {
             it.increaseCommandCallName to IncreaseAttributeCommand(session, it, xpCommandName) }
         val xpCommandsExecutor = MainCommandExecutor(xpCommands, xpCmd)
