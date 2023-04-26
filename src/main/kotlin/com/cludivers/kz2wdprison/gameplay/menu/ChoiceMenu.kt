@@ -24,6 +24,9 @@ abstract class ChoiceMenu(val inventoryName: (Player) -> Component,
     }
 
     override fun handleClick(event: InventoryClickEvent) {
+        if (event.clickedInventory != event.inventory){
+            return
+        }
         choices?.get(event.slot)?.second?.let { it() }
         if (update){
             choices = null
