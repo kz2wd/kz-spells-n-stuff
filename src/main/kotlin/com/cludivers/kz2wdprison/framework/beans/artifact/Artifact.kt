@@ -44,29 +44,34 @@ class Artifact {
     }
 
     fun generateEditorMenu(): StoringMenu{
-        val slots: Set<Int> =
-            ((0 until producers.size) + (9 until producers.size + 9) + (27 until consumers.size + 27) + (36 until consumers.size + 36)).toSet()
-        Bukkit.broadcast(Component.text(slots.joinToString { it.toString() }))
+        val producersSlotsOffset = 0
+        val producersSpecsOffset = 9
+        val consumersSlotsOffset = 27
+        val consumersSpecsOffset = 36
+        val producersSlots = (producersSlotsOffset until producers.size + producersSlotsOffset)
+        val producersSpecs = (producersSpecsOffset until producers.size + producersSpecsOffset)
+        val consumersSlots = (consumersSlotsOffset until consumers.size + consumersSlotsOffset)
+        val consumersSpecs = (consumersSpecsOffset until consumers.size + consumersSpecsOffset)
+        val slots: Set<Int> = (producersSlots + producersSpecs + consumersSlots + consumersSpecs).toSet()
         val editor = object: StoringMenu(slots){
             override fun generateInventory(player: Player): Inventory {
                 val inventory = Bukkit.createInventory(player, 5 * 9, Component.text("Artifact Edition"))
                 producers.entries.withIndex().forEach {
-                    inventory.setItem(it.index, it.value.value)
-                    inventory.setItem(it.index + 9, it.value.value) // Yeah I know, I suck because I didn't push work made at home. I'll modify it later :)
+                    inventory.setItem(it.index + producersSlotsOffset, it.value.value)
+                    inventory.setItem(it.index + producersSpecsOffset, it.value.value) // Yeah I know, I suck because I didn't push work made at home. I'll modify it later :)
                 }
                 for (i in 18 until 27){
                     inventory.setItem(i, ItemStack(Material.LIGHT_GRAY_STAINED_GLASS))
                 }
                 consumers.entries.withIndex().forEach {
-                    inventory.setItem(it.index + 27, it.value.value)
-                    inventory.setItem(it.index + 36, it.value.value) // Yeah I know, I suck because I didn't push work made at home. I'll modify it later :)
+                    inventory.setItem(it.index + consumersSlotsOffset, it.value.value)
+                    inventory.setItem(it.index + consumersSpecsOffset, it.value.value) // Yeah I know, I suck because I didn't push work made at home. I'll modify it later :)
                 }
                 return inventory
             }
 
             override fun close(player: Player) {
-                // Register artifact change here
-                Bukkit.broadcast(Component.text("Updating artifact"))
+                // TODO : Register artifact change here
             }
         }
 
