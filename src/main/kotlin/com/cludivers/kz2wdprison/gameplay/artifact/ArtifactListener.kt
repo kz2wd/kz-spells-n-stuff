@@ -1,6 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
+import com.cludivers.kz2wdprison.framework.beans.IntrinsicAttributes
 import com.cludivers.kz2wdprison.framework.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.gameplay.player.getData
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -28,7 +30,14 @@ class ArtifactListener(private val session: Session): Listener {
         if (artifact === null || !artifact.activateOnInteract){
             return
         }
-        artifact.activate(session, event.player, event.player.eyeLocation)
+        // Artifact Editor, add level condition later ?
+        if (event.player.isSneaking
+            && artifact.minLevelToEdit <= event.player.getData(session).intrinsic
+                .attributes[IntrinsicAttributes.ARTIFACT_ARCHITECT]!!){
+            artifact.generateEditorMenu().open(event.player)
+        } else {
+            artifact.activate(session, event.player, event.player.eyeLocation)
+        }
     }
 
 }

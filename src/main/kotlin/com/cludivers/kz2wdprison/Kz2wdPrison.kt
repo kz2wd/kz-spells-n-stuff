@@ -38,7 +38,6 @@ class Kz2wdPrison : JavaPlugin() {
         val artifact = defaultArtifact()
         ArtifactListener.registerArtifact(artifact)
 
-
     }
 
     override fun onDisable() {
@@ -64,8 +63,8 @@ class Kz2wdPrison : JavaPlugin() {
     private fun defaultArtifact(): Artifact {
         val artifact = Artifact()
 
-        artifact.producers = mapOf(Specifications.BLOCKS to CustomShardItems.SHARDS.itemStack)
-        artifact.consumers = mapOf(Specifications.PROJECTILE to ItemStack(Material.ARROW))
+        artifact.producers = listOf(Pair(Specifications.BLOCKS, CustomShardItems.SHARDS.itemStack))
+        artifact.consumers = listOf(Pair(Specifications.PROJECTILE, ItemStack(Material.ARROW)))
         artifact.activateOnInteract = true
         artifact.itemStack = ItemStack(Material.STICK)
 

@@ -28,7 +28,7 @@ class PlayerBean {
     var criticOddLevel: Int = 0
     var criticFactorLevel: Int = 0
 
-    var shards: Int = 0
+    var shards: Int = 1
     var shardsEfficiencyFactor: Float = 1f
 
     @Embedded

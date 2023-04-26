@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
+import com.cludivers.kz2wdprison.framework.beans.artifact.Specifications
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -27,6 +28,11 @@ enum class CustomShardItems {
         }
     }
     ;
+
+    companion object {
+        private val map = CustomShardItems.values().associateBy(CustomShardItems::itemStack)
+        fun getCustomItemStack(itemStack: ItemStack) = map[itemStack]
+    }
 
     protected fun buildItemStack(material: Material, flag: Int): ItemStack{
         val item = ItemStack(material)

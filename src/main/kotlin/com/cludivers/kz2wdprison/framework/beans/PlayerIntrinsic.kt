@@ -11,16 +11,11 @@ import org.hibernate.Session
 @Embeddable
 class PlayerIntrinsic {
 
-    var attributesMaxValues: Int =  5
-
     @ElementCollection
     var attributes: MutableMap<IntrinsicAttributes, Int> = IntrinsicAttributes.values().associateWith { 1 }.toMutableMap()
 
     fun increaseAttribute(session: Session, attribute: IntrinsicAttributes){
         Bukkit.broadcast(Component.text("${attribute.name}: ${attributes[attribute]}"))
-        if (attributes[attribute]!! >= attributesMaxValues){
-            return
-        }
 
         session.beginTransaction()
         attributes[attribute] = attributes[attribute]!! + 1

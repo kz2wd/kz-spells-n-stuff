@@ -36,7 +36,7 @@ enum class Specifications: Consumer, Producer {
                 return
             }
             if (item.type === Material.ARROW){
-                location.world.spawnArrow(location.add(location.direction), location.direction, flow + 1, 1 / (flow + 1))
+                location.world.spawnArrow(location.add(location.direction), location.direction, flow / 100 + 1, 1 / (flow / 200 + 1))
             }
         }
         override val customItemStack: CustomShardItems = CustomShardItems.PROJECTILE_SPEC

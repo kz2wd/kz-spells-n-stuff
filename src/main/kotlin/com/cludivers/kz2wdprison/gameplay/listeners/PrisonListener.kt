@@ -176,7 +176,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
         transaction.commit()
 
         // Set resource pack
-        event.player.setResourcePack("https://drive.google.com/uc?export=download&id=1VFzPQhxXNI_nk4dYYLVqazzHl_eEifND")
+        // event.player.setResourcePack("https://drive.google.com/uc?export=download&id=1VFzPQhxXNI_nk4dYYLVqazzHl_eEifND")
 
     }
 
