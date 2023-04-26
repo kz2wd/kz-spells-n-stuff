@@ -19,9 +19,10 @@ object MenuListener : Listener {
 
     @EventHandler
     fun onMenuClick(event: InventoryClickEvent){
-        if (allInventoryMenus.contains(event.clickedInventory)){
-            allInventoryMenus[event.clickedInventory]?.handleClick(event)
+        if (allInventoryMenus.contains(event.inventory)){
             event.isCancelled = true
+            allInventoryMenus[event.inventory]?.handleClick(event)
+
         }
     }
 
@@ -42,6 +43,7 @@ object MenuListener : Listener {
 
     @EventHandler
     fun onMenuClose(event: InventoryCloseEvent){
+        allInventoryMenus[event.inventory]?.close(event.player as Player)
         allInventoryMenus.remove(event.inventory)
     }
 }
