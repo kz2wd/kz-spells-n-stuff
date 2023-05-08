@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
-import com.cludivers.kz2wdprison.framework.beans.IntrinsicAttributes
-import com.cludivers.kz2wdprison.framework.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.IntrinsicAttributes
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

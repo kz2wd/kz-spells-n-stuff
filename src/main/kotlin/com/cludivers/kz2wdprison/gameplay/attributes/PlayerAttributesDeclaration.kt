@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.attributes
 
-import com.cludivers.kz2wdprison.framework.beans.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.xp.IncreaseAttributeCommand
 import com.cludivers.kz2wdprison.gameplay.listeners.PrisonListener

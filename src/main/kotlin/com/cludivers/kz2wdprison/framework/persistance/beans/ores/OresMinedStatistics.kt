@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.ores
+package com.cludivers.kz2wdprison.framework.persistance.beans.ores
 
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides

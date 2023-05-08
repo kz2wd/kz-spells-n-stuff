@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
-import com.cludivers.kz2wdprison.framework.beans.PlayerBean
-import com.cludivers.kz2wdprison.framework.beans.nation.ChunkBean
-import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.ChunkBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.addInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.removeInvitation

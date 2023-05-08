@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.nation
+package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
 import jakarta.persistence.*
 import org.bukkit.Chunk
@@ -20,7 +20,7 @@ class ChunkBean {
 
     companion object {
 
-        fun getChunkBean(session: Session, chunk: Chunk): ChunkBean{
+        fun getChunkBean(session: Session, chunk: Chunk): ChunkBean {
             return getChunkBean(session, chunk.x, chunk.z)
         }
         fun getChunkBean(session: Session, x: Int, z: Int): ChunkBean {

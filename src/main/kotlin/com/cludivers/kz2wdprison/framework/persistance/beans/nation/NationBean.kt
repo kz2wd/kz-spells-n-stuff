@@ -1,6 +1,6 @@
-package com.cludivers.kz2wdprison.framework.beans.nation
+package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.beans.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

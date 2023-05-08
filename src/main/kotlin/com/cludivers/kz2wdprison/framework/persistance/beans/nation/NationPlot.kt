@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.nation
+package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans
+package com.cludivers.kz2wdprison.framework.persistance.beans
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.nation
+package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -19,18 +19,18 @@ class AreaPermission {
     
     companion object {
 
-        fun getPersistentDefaultPermissions(session: Session): AreaPermission{
+        fun getPersistentDefaultPermissions(session: Session): AreaPermission {
             val perm = AreaPermission()
             session.persist(perm)
             return perm
         }
-        fun getPersistentCitizenPermissions(session: Session): AreaPermission{
+        fun getPersistentCitizenPermissions(session: Session): AreaPermission {
             val perm = AreaPermission()
             session.persist(perm)
             return perm
         }
 
-        fun getPersistentOfficerPermissions(session: Session): AreaPermission{
+        fun getPersistentOfficerPermissions(session: Session): AreaPermission {
             val areaPermission = AreaPermission()
             areaPermission.canBreak = true
             areaPermission.canPlace = true

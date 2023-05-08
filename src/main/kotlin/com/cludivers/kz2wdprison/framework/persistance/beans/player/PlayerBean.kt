@@ -1,8 +1,8 @@
-package com.cludivers.kz2wdprison.framework.beans
+package com.cludivers.kz2wdprison.framework.persistance.beans.player
 
-import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
-import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
-import com.cludivers.kz2wdprison.framework.beans.ores.OresMinedStatistics
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.PermissionGroup
+import com.cludivers.kz2wdprison.framework.persistance.beans.ores.OresMinedStatistics
 import jakarta.persistence.*
 import org.bukkit.entity.Player
 import org.hibernate.Session
@@ -13,7 +13,7 @@ class PlayerBean {
     @GeneratedValue
     var id: Long? = null
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     var uuid: String? = null
 
     var connectionAmount: Int = 0
@@ -45,7 +45,7 @@ class PlayerBean {
     var permissionGroup: PermissionGroup? = null
 
     companion object {
-        fun getPlayerPlayerBean(session: Session, player: Player): PlayerBean{
+        fun getPlayerPlayerBean(session: Session, player: Player): PlayerBean {
             var playerData = session
                 .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
                 .setParameter("uuid", player.uniqueId.toString())

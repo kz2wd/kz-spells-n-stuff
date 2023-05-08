@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.commands.nation
 
-import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.player.*
 import org.bukkit.Bukkit

@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
-import com.cludivers.kz2wdprison.framework.beans.nation.AreaPermission
-import com.cludivers.kz2wdprison.framework.beans.nation.ChunkBean
-import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
-import com.cludivers.kz2wdprison.framework.beans.nation.PermissionGroup
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.AreaPermission
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.ChunkBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title

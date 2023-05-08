@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.player.intrinsic
 
-import com.cludivers.kz2wdprison.framework.beans.IntrinsicAttributes
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.IntrinsicAttributes
 import com.cludivers.kz2wdprison.gameplay.menu.ChoiceMenu
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component

@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.nation
 
-import com.cludivers.kz2wdprison.framework.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.gameplay.player.acceptNationInvitation
 import com.cludivers.kz2wdprison.gameplay.player.refuseNationInvitation
 import com.cludivers.kz2wdprison.gameplay.player.sendConfirmationMessage

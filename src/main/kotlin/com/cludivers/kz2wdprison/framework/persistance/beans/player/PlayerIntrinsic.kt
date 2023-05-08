@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans
+package com.cludivers.kz2wdprison.framework.persistance.beans.player
 
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Embeddable

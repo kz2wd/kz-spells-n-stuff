@@ -1,8 +1,9 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.framework.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.beans.artifact.Specifications
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ConsumptionTypes
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ProductionTypes
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
@@ -16,13 +17,19 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
+import org.hibernate.Session
+import org.hibernate.SessionFactory
 
 
 @Suppress("unused")
 class Kz2wdPrison : JavaPlugin() {
+
+    lateinit var sessionFactory: SessionFactory
+    lateinit var session: Session
+
     override fun onEnable() {
-        val sessionFactory = HibernateConfigurationHandler.loadHibernateConfiguration(config)
-        val session = sessionFactory.openSession()
+        sessionFactory = HibernateConfigurationHandler.loadHibernateConfiguration(config)
+        session = sessionFactory.openSession()
 
         PlayerAttributesDeclaration.declare(this, session)
         ListenersDeclaration.declare(this,  server.pluginManager, session)
@@ -41,7 +48,8 @@ class Kz2wdPrison : JavaPlugin() {
     }
 
     override fun onDisable() {
-        // Plugin shutdown logic
+        session.close()
+        sessionFactory.close()
     }
 
     private fun getRecipe(): ShapedRecipe {
@@ -63,8 +71,8 @@ class Kz2wdPrison : JavaPlugin() {
     private fun defaultArtifact(): Artifact {
         val artifact = Artifact()
 
-        artifact.producers = listOf(Pair(Specifications.BLOCKS, CustomShardItems.SHARDS.itemStack))
-        artifact.consumers = listOf(Pair(Specifications.PROJECTILE, ItemStack(Material.ARROW)))
+        artifact.producers = listOf(Pair(CustomShardItems.SHARDS.itemStack, ProductionTypes.PLAYER_ATTRIBUTE.customItemStack.itemStack))
+        artifact.consumers = listOf(Pair(ItemStack(Material.ARROW), CustomShardItems.PROJECTILE_SPEC.itemStack))
         artifact.activateOnInteract = true
         artifact.itemStack = ItemStack(Material.STICK)
 

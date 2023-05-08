@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.beans.nation
+package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -20,13 +20,13 @@ class NationPermission {
     var canClaim: Boolean = false
 
     companion object {
-        fun getPersistentCitizenPermissions(session: Session): NationPermission{
+        fun getPersistentCitizenPermissions(session: Session): NationPermission {
             val perm = NationPermission()
             session.persist(perm)
             return perm
         }
 
-        fun getPersistentOfficerPermissions(session: Session): NationPermission{
+        fun getPersistentOfficerPermissions(session: Session): NationPermission {
             val nationPermission = NationPermission()
             nationPermission.canInvite = true
             session.persist(nationPermission)

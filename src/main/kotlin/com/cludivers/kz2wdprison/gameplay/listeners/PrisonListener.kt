@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
-import com.cludivers.kz2wdprison.framework.beans.PlayerBean
-import com.cludivers.kz2wdprison.framework.beans.ores.OreStats
-import com.cludivers.kz2wdprison.framework.beans.ores.Ores
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.ores.OreStats
+import com.cludivers.kz2wdprison.framework.persistance.beans.ores.Ores
 import com.cludivers.kz2wdprison.gameplay.player.bossBarDisplay
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
@@ -13,7 +13,6 @@ import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
@@ -26,7 +25,6 @@ import org.bukkit.event.player.PlayerExpChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.hibernate.Session
