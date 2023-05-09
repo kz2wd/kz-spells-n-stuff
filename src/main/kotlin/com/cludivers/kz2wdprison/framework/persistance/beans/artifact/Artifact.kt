@@ -52,10 +52,10 @@ class Artifact {
             return
         }
         lastUsage = Instant.now()
-        flow = producers.map { ProductionTypes.itemStackToProducerType(it.second).produce(session, it.first, entity, location) }.sumOf { it.toDouble() }.toFloat()
+        flow = producers.map { ProductionTypes.itemStackToProducerType(it.second).produce(session, it.first, entity, location, it.second.amount) }.sumOf { it.toDouble() }.toFloat()
         if (consumers.isNotEmpty()){
             val flowValue = flow / consumers.size
-            consumers.forEach { ConsumptionTypes.itemStackToConsumerType(it.second).consume(session, it.first, entity, location, flowValue) }
+            consumers.forEach { ConsumptionTypes.itemStackToConsumerType(it.second).consume(session, it.first, entity, location, flowValue, it.second.amount) }
         }
     }
 

@@ -27,10 +27,16 @@ enum class CustomShardItems {
     },
     BLOCK_SPEC {
         override val flag: Int = 20002
-
         override val itemStack : ItemStack = run {
             buildItemStack(Component.text("Block"), Material.IRON_NUGGET, flag)
         }
+    },
+    PLAYER_EFFECT_SPEC {
+        override val flag: Int = 20003
+        override val itemStack : ItemStack = run {
+            buildItemStack(Component.text("Self effect"), Material.IRON_NUGGET, flag)
+        }
+
     }
     ;
 
