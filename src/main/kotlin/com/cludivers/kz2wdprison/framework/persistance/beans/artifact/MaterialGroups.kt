@@ -5,9 +5,11 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 enum class MaterialGroups {
-    Blocks,
-    Projectiles,
-    PotionMaterial,
+    BLOCKS,
+    PROJECTILES,
+    CONSUMABLE,
+    TOOLS,
+    ENTITY,
     Custom,
     None
     ;
@@ -19,9 +21,8 @@ enum class MaterialGroups {
             }
 
             return when(itemStack.type){
-                Material.STONE, Material.COBBLESTONE, Material.DEEPSLATE, Material.DEEPSLATE_BRICKS, Material.STONE_BRICKS -> Blocks
-                Material.SUGAR -> PotionMaterial
-                Material.ARROW, Material.EGG, Material.SNOWBALL -> Projectiles
+                Material.STONE, Material.COBBLESTONE, Material.DEEPSLATE, Material.DEEPSLATE_BRICKS, Material.STONE_BRICKS -> BLOCKS
+                Material.ARROW, Material.EGG, Material.SNOWBALL -> PROJECTILES
                 else -> None
             }
         }
