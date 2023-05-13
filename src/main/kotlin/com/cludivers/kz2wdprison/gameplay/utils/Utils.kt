@@ -6,10 +6,10 @@ import org.bukkit.inventory.ItemStack
 
 object Utils {
 
-    fun buildItemStack(name: Component, material: Material, flag: Int): ItemStack {
+    fun buildItemStack(name: Component, material: Material, customData: Int): ItemStack {
         val item = ItemStack(material)
         val meta = item.itemMeta
-        meta.setCustomModelData(flag)
+        meta.setCustomModelData(customData)
         meta.displayName(name)
         item.setItemMeta(meta)
         return item

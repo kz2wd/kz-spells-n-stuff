@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import org.bukkit.inventory.ItemStack
 
 enum class Converters {
@@ -32,4 +33,8 @@ enum class Converters {
         }
     }
     abstract val customData: Int
+
+    open fun convertInput(input: ArtifactInput) {
+        // Default : Do nothing
+    }
 }

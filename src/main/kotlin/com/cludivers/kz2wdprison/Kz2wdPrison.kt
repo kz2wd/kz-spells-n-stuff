@@ -1,16 +1,16 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ConsumptionTypes
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ProductionTypes
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact2
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
-import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
+import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -32,7 +32,7 @@ class Kz2wdPrison : JavaPlugin() {
         session = sessionFactory.openSession()
 
         PlayerAttributesDeclaration.declare(this, session)
-        ListenersDeclaration.declare(this,  server.pluginManager, session)
+        ListenersDeclaration.declare(this, server.pluginManager, session)
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this, session)
 
@@ -42,8 +42,8 @@ class Kz2wdPrison : JavaPlugin() {
 
         Bukkit.addRecipe(getRecipe())
 
-        val artifact = defaultArtifact()
-        ArtifactListener.registerArtifact(artifact)
+        val artifact = defaultArtifact2()
+        ArtifactListener.registerArtifact(artifact, ItemStack(Material.STICK))
 
     }
 
@@ -68,13 +68,16 @@ class Kz2wdPrison : JavaPlugin() {
         return recipe
     }
 
-    private fun defaultArtifact(): Artifact {
-        val artifact = Artifact()
+    private fun defaultArtifact2(): Artifact2 {
+        val artifact = Artifact2()
 
-        artifact.producers = listOf(Pair(CustomShardItems.SHARDS.itemStack, ProductionTypes.PLAYER_ATTRIBUTE.customItemStack.itemStack))
-        artifact.consumers = listOf(Pair(ItemStack(Material.ARROW), CustomShardItems.PROJECTILE_SPEC.itemStack))
-        artifact.activateOnInteract = true
-        artifact.itemStack = ItemStack(Material.STICK)
+        artifact.itemStack = ItemStack(Material.DIAMOND_PICKAXE)
+        artifact.input = Utils.buildItemStack(
+            Component.text(""),
+            Material.GOLD_BLOCK,
+            customData = InputTypes.LOCATION_SIGHT.customData
+        )
+        artifact.converters = listOf()
 
         return artifact
     }

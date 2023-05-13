@@ -1,6 +1,5 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
+package com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs
 
-import org.bukkit.entity.Entity
 import org.bukkit.inventory.ItemStack
 
 enum class InputTypes {
