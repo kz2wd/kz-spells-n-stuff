@@ -10,6 +10,7 @@ enum class InputTypes {
     ENTITY_SIGHT {
         override val customData: Int
             get() = 5001
+
     },
     ENTITY_BOUND {
         override val customData: Int
@@ -18,6 +19,10 @@ enum class InputTypes {
     LOCATION_SIGHT {
         override val customData: Int
             get() = 5003
+    },
+    EMPTY_LOCATION_SIGHT {
+        override val customData: Int
+            get() = 5004
     },
     NONE {
         override val customData: Int

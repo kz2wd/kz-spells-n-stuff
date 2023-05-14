@@ -7,6 +7,10 @@ enum class Converters {
     ENTITIES_POSITION {
         override val customData: Int
             get() = 6000
+
+        override fun convertInput(input: ArtifactInput) {
+            input.locations = input.entities.map { it.location }
+        }
     },
     SHIFT_POSITIONS {
         override val customData: Int
@@ -15,6 +19,10 @@ enum class Converters {
     POSITIONS_AROUND {
         override val customData: Int
             get() = 6002
+
+        override fun convertInput(input: ArtifactInput) {
+            input.locations
+        }
     },
     ENTITIES_AROUND {
         override val customData: Int

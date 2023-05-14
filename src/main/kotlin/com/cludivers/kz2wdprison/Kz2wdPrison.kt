@@ -1,13 +1,12 @@
 package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact2
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactHelperCommand
-import com.cludivers.kz2wdprison.gameplay.commands.mine.MineResetCommand
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
@@ -78,8 +77,8 @@ class Kz2wdPrison : JavaPlugin() {
         return recipe
     }
 
-    private fun defaultArtifact2(): Artifact2 {
-        val artifact = Artifact2()
+    private fun defaultArtifact2(): Artifact {
+        val artifact = Artifact()
 
         artifact.itemStack = ItemStack(Material.DIAMOND_PICKAXE)
         artifact.input = Utils.buildItemStack(

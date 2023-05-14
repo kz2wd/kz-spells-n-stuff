@@ -8,6 +8,11 @@ import org.bukkit.entity.Player
 interface Caster {
     fun getLocation(): Location
     fun getSelf(): Entity
+
+    /**
+     * Returns a block of AIR in the sight of the caster
+     */
+    fun getSightAirBlock(maxDistance: Int): Block?
     fun getSightBlock(maxDistance: Int): Block?
     fun getSightEntity(maxDistance: Int): Entity?
 
@@ -20,6 +25,10 @@ interface Caster {
 
                 override fun getSelf(): Entity {
                     return player.player as Entity
+                }
+
+                override fun getSightAirBlock(maxDistance: Int): Block? {
+                    return player.getLastTwoTargetBlocks(null, maxDistance)[0]
                 }
 
                 override fun getSightBlock(maxDistance: Int): Block? {

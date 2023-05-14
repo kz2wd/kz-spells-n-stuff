@@ -1,6 +1,5 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ConsumptionTypes
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Converters
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand

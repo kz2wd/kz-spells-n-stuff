@@ -10,6 +10,7 @@ class ArtifactInput(
     var locations: List<Location> = listOf(),
     var entities: List<Entity> = listOf(),
     var vector: Vector? = null,
+    var maxDistance: Int = 5
 )
 
 
