@@ -31,9 +31,10 @@ class ArtifactListener(private val session: Session): Listener {
             return
         }
         // Artifact Editor, add level condition later ?
-
-        artifact.activate(Caster.playerToCaster(event.player), 100)
-
+        if (event.player.isSneaking){
+            artifact.generateEditorMenu().open(event.player)
+        } else {
+            artifact.activate(Caster.playerToCaster(event.player), 100)
+        }
     }
-
 }

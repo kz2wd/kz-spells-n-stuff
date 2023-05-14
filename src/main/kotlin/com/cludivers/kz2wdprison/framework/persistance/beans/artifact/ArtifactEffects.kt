@@ -2,19 +2,21 @@ package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 
 enum class ArtifactEffects {
     BLOCKS {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             input.locations.forEach { it.world.getBlockAt(it).type = itemStack.type }
         }
     },
     PROJECTILES {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             if (input.vector == null) {
                 return
             }
@@ -24,17 +26,29 @@ enum class ArtifactEffects {
         }
     },
     CONSUMABLE {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             input.entities.forEach { foodEffect(it, itemStack.type) }
         }
     },
     TOOLS {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
-            input.locations.forEach {it.world.getBlockAt(it).breakNaturally(itemStack) }
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+            if (player == null){
+                return
+            }
+            input.locations.forEach {
+                if (it.block.type == Material.BEDROCK){ // Blacklist blocks here
+                    return
+                }
+                val event = BlockBreakEvent(it.block, player)
+                Bukkit.getPluginManager().callEvent(event)
+                if (! event.isCancelled){
+                    it.block.breakNaturally(itemStack)
+                }
+            }
         }
     },
     ENTITY {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
 
         }
     },
@@ -117,7 +131,7 @@ enum class ArtifactEffects {
         player.foodLevel += foodDelta
     }
 
-    open fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput) {
+    open fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
 
     }
 

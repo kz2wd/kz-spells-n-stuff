@@ -18,6 +18,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
@@ -27,6 +28,7 @@ import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import org.eclipse.sisu.Priority
 import org.hibernate.Session
 import java.util.*
 import kotlin.random.Random
@@ -189,8 +191,12 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             "${ChatColor.BOLD}${ChatColor.GOLD}"
         }
     }
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerBreak(event: BlockBreakEvent){
+        if (event.isCancelled){
+            return
+        }
+
         val transaction = session.beginTransaction()
 
         val playerData = event.player.getData(session)

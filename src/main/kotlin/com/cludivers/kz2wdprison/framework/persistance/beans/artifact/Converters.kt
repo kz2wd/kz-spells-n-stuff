@@ -29,7 +29,11 @@ enum class Converters {
 
         private val map = Converters.values().associateBy(Converters::customData)
         fun getConverter(itemStack: ItemStack): Converters {
-            return map[itemStack.itemMeta.customModelData] ?: Converters.NONE
+            return if (itemStack.itemMeta.hasCustomModelData()){
+                map[itemStack.itemMeta.customModelData] ?: NONE
+            } else {
+                NONE
+            }
         }
     }
     abstract val customData: Int

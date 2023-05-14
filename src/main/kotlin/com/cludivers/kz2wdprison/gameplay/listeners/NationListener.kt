@@ -7,6 +7,7 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.nation.PermissionGr
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.entity.Player
@@ -69,6 +70,5 @@ class NationListener(private val session: Session): Listener {
     @EventHandler
     fun onPlayerBreakInArea(event: BlockBreakEvent){
         event.isCancelled = isBlockEventUnauthorized(event.player, event) { perm -> perm.canBreak }
-
     }
 }

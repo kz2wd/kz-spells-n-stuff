@@ -9,3 +9,5 @@ commands:
     description: mine utility
   nation:
     description: nation utility
+  artifact:
+    description: artifact utility

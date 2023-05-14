@@ -27,6 +27,6 @@ class CurrentEventCommand(parentName: String): SubCommand(parentName) {
         label: String,
         args: Array<String>
     ): MutableList<String>? {
-        TODO("Not yet implemented")
+        return null
     }
 }
