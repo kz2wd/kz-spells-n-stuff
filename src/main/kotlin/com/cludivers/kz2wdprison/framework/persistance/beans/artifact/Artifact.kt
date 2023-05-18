@@ -2,26 +2,39 @@ package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
+import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
+import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.hibernate.Session
 import java.time.Duration
 import java.time.Instant
 
+@Entity
 class Artifact {
 
     companion object {
         private val defaultItemStack = ItemStack(Material.AIR)
     }
 
+    @Id
+    @GeneratedValue
+    var id: Long? = null
+
+    @Convert(converter = ItemStackConverter::class)
     var itemStack: ItemStack = defaultItemStack
+    @Convert(converter = ItemStackConverter::class)
     var input: ItemStack = defaultItemStack
+    @ElementCollection
+    @Convert(converter = ItemStackConverter::class)
     var converters: List<ItemStack> = listOf()
+
 
     private var cooldown: Duration = Duration.ZERO
     private var lastUsage: Instant? = null
@@ -58,14 +71,13 @@ class Artifact {
                 ArtifactInput(inFlow, listOf(forwardEyeLocation))
             }
         }
-
-        converters.map { Converters.getConverter(itemStack) }.forEach { it.convertInput(input) }
+        converters.map { Converters.getConverter(it) }.forEach { it.convertInput(input) }
 
         ArtifactEffects.getMaterialGroup(itemStack).triggerArtifactEffect(itemStack, input, caster.getSelf() as Player)
 
         return 0
     }
-    fun generateEditorMenu(): StoringMenu {
+    fun generateEditorMenu(session: Session): StoringMenu {
         val inventorySize = 5 * 9
         val itemStackSlot = 4 * 9 - 1
         val inputSlot = 9
@@ -91,9 +103,11 @@ class Artifact {
             }
 
             override fun close(player: Player) {
+                session.beginTransaction()
                 input = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
                 itemStack = player.openInventory.topInventory.getItem(itemStackSlot) ?: defaultItemStack
                 converters = convertersSlots.map { player.openInventory.topInventory.getItem(it) ?: defaultItemStack }.filter { it != defaultItemStack }
+                session.transaction.commit()
             }
         }
 

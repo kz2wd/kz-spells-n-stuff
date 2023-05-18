@@ -4,10 +4,11 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.Art
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.entity.Entity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.PotionMeta
+
 
 enum class ArtifactEffects {
     BLOCKS {
@@ -17,17 +18,38 @@ enum class ArtifactEffects {
     },
     PROJECTILES {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            if (input.locations.isEmpty()) {
-                return
-            }
-            if (itemStack.type == Material.ARROW) {
-                input.locations.forEach { it.world.spawnArrow(it, it.direction, 1f, 1f) }
+            when (itemStack.type) {
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.forEach {
+                    it.world.spawnArrow(
+                        it,
+                        it.direction,
+                        1f,
+                        1f
+                    )
+                }
+
+                Material.SPLASH_POTION -> input.locations.forEach {
+                    val potion = (it.world.spawnEntity(it, EntityType.SPLASH_POTION) as ThrownPotion)
+                    potion.item = itemStack
+                    potion.velocity = it.direction
+                }
+
+                else -> {}
             }
         }
     },
     CONSUMABLE {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             input.entities.forEach { foodEffect(it, itemStack.type) }
+            input.entities.forEach { potionEffect(it, itemStack) }
+        }
+
+        private fun potionEffect(entity: Entity, itemStack: ItemStack) {
+            if (itemStack.type != Material.POTION) {
+                return
+            }
+            val meta = itemStack.itemMeta as PotionMeta
+            (entity as LivingEntity).addPotionEffects(meta.customEffects)
         }
     },
     TOOLS {
@@ -56,7 +78,8 @@ enum class ArtifactEffects {
 
     companion object {
 
-        private val blocks = setOf(Material.STONE, Material.GRANITE, Material.POLISHED_GRANITE, Material.DIORITE,
+        private val blocks = setOf(
+            Material.STONE, Material.GRANITE, Material.POLISHED_GRANITE, Material.DIORITE,
             Material.POLISHED_DIORITE, Material.ANDESITE, Material.POLISHED_ANDESITE, Material.DEEPSLATE,
             Material.COBBLED_DEEPSLATE, Material.POLISHED_DEEPSLATE, Material.CALCITE, Material.TUFF,
             Material.DRIPSTONE_BLOCK, Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT, Material.PODZOL,
@@ -146,7 +169,7 @@ enum class ArtifactEffects {
             Material.CRACKED_NETHER_BRICKS, Material.CHISELED_NETHER_BRICKS, Material.NETHER_BRICK_FENCE,
             Material.NETHER_BRICK_STAIRS, Material.SCULK, Material.SCULK_VEIN, Material.SCULK_CATALYST,
             Material.SCULK_SHRIEKER, Material.ENCHANTING_TABLE,
-            Material.SNOW_BLOCK , Material.END_STONE, Material.END_STONE_BRICKS, Material.DRAGON_EGG,
+            Material.SNOW_BLOCK, Material.END_STONE, Material.END_STONE_BRICKS, Material.DRAGON_EGG,
             Material.SANDSTONE_STAIRS, Material.ENDER_CHEST, Material.EMERALD_BLOCK, Material.OAK_STAIRS,
             Material.SPRUCE_STAIRS, Material.BIRCH_STAIRS, Material.JUNGLE_STAIRS, Material.ACACIA_STAIRS,
             Material.DARK_OAK_STAIRS, Material.MANGROVE_STAIRS, Material.BAMBOO_STAIRS,
@@ -255,19 +278,21 @@ enum class ArtifactEffects {
             Material.BIRCH_FENCE_GATE, Material.JUNGLE_FENCE_GATE, Material.ACACIA_FENCE_GATE,
             Material.DARK_OAK_FENCE_GATE, Material.MANGROVE_FENCE_GATE, Material.BAMBOO_FENCE_GATE,
             Material.CRIMSON_FENCE_GATE, Material.WARPED_FENCE_GATE, Material.POWERED_RAIL,
-            Material.DETECTOR_RAIL, Material.RAIL, Material.ACTIVATOR_RAIL)
+            Material.DETECTOR_RAIL, Material.RAIL, Material.ACTIVATOR_RAIL
+        )
+
         fun getMaterialGroup(itemStack: ItemStack): ArtifactEffects {
             if (CustomShardItems.getCustomItemStack(itemStack) != null) {
                 return Custom
             }
 
             // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation
-            if (itemStack.type in blocks){
+            if (itemStack.type in blocks) {
                 return BLOCKS
             }
 
             return when (itemStack.type) {
-                Material.ARROW -> PROJECTILES
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.SPLASH_POTION -> PROJECTILES
 
                 Material.APPLE, Material.BAKED_POTATO, Material.BEETROOT, Material.BEETROOT_SOUP, Material.BREAD,
                 Material.CAKE, Material.CARROT, Material.CHORUS_FRUIT, Material.COOKED_CHICKEN, Material.COOKED_COD,
@@ -279,7 +304,7 @@ enum class ArtifactEffects {
                 Material.MUTTON, Material.PORKCHOP, Material.RABBIT, Material.SALMON, Material.ROTTEN_FLESH,
                 Material.SPIDER_EYE, Material.COOKED_BEEF, Material.SUSPICIOUS_STEW, Material.SWEET_BERRIES,
                 Material.TROPICAL_FISH,
-                Material.POTION, Material.LINGERING_POTION, Material.SPLASH_POTION -> CONSUMABLE
+                Material.POTION -> CONSUMABLE
 
                 Material.DIAMOND_PICKAXE -> TOOLS
                 else -> None
@@ -288,48 +313,51 @@ enum class ArtifactEffects {
     }
 
     fun foodEffect(entity: Entity, material: Material) {
+        if (entity !is Player) {
+            return
+        }
         when (material) {
-            Material.APPLE -> feedPlayer((entity as Player), 2.4f, 4)
-            Material.BAKED_POTATO -> feedPlayer((entity as Player), 6f, 5)
-            Material.BEETROOT -> feedPlayer((entity as Player), 1.2f, 1)
-            Material.BEETROOT_SOUP -> feedPlayer((entity as Player), 7.2f, 6)
-            Material.BREAD -> feedPlayer((entity as Player), 5f, 6)
-            Material.CAKE -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.CARROT -> feedPlayer((entity as Player), 3.6f, 3)
-            Material.CHORUS_FRUIT -> feedPlayer((entity as Player), 2.4f, 4)
-            Material.COOKED_CHICKEN -> feedPlayer((entity as Player), 7.2f, 6)
-            Material.COOKED_COD -> feedPlayer((entity as Player), 6f, 5)
-            Material.COOKED_MUTTON -> feedPlayer((entity as Player), 9.6f, 6)
-            Material.COOKED_PORKCHOP -> feedPlayer((entity as Player), 12.8f, 8)
-            Material.COOKED_RABBIT -> feedPlayer((entity as Player), 6f, 5)
-            Material.COOKED_SALMON -> feedPlayer((entity as Player), 9.6f, 6)
-            Material.COOKIE -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.DRIED_KELP -> feedPlayer((entity as Player), 0.6f, 1)
-            Material.ENCHANTED_GOLDEN_APPLE -> feedPlayer((entity as Player), 9.6f, 4)
-            Material.GOLDEN_APPLE -> feedPlayer((entity as Player), 9.6f, 4)
-            Material.GLOW_BERRIES -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.GOLDEN_CARROT -> feedPlayer((entity as Player), 14.4f, 6)
-            Material.HONEY_BOTTLE -> feedPlayer((entity as Player), 1.2f, 6)
-            Material.MELON_SLICE -> feedPlayer((entity as Player), 1.2f, 2)
-            Material.MUSHROOM_STEW -> feedPlayer((entity as Player), 7.2f, 6)
-            Material.POISONOUS_POTATO -> feedPlayer((entity as Player), 1.2f, 2)
-            Material.POTATO -> feedPlayer((entity as Player), 0.6f, 1)
-            Material.PUFFERFISH -> feedPlayer((entity as Player), 0.2f, 1)
-            Material.PUMPKIN_PIE -> feedPlayer((entity as Player), 4.8f, 8)
-            Material.RABBIT_STEW -> feedPlayer((entity as Player), 12f, 10)
-            Material.BEEF -> feedPlayer((entity as Player), 1.8f, 3)
-            Material.CHICKEN -> feedPlayer((entity as Player), 1.2f, 2)
-            Material.COD -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.MUTTON -> feedPlayer((entity as Player), 1.2f, 2)
-            Material.PORKCHOP -> feedPlayer((entity as Player), 1.8f, 3)
-            Material.RABBIT -> feedPlayer((entity as Player), 1.8f, 3)
-            Material.SALMON -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.ROTTEN_FLESH -> feedPlayer((entity as Player), 0.8f, 4)
-            Material.SPIDER_EYE -> feedPlayer((entity as Player), 3.2f, 2)
-            Material.COOKED_BEEF -> feedPlayer((entity as Player), 12.8f, 8)
-            Material.SUSPICIOUS_STEW -> feedPlayer((entity as Player), 7.2f, 6)
-            Material.SWEET_BERRIES -> feedPlayer((entity as Player), 0.4f, 2)
-            Material.TROPICAL_FISH -> feedPlayer((entity as Player), 0.2f, 1)
+            Material.APPLE -> feedPlayer(entity, 2.4f, 4)
+            Material.BAKED_POTATO -> feedPlayer(entity, 6f, 5)
+            Material.BEETROOT -> feedPlayer(entity, 1.2f, 1)
+            Material.BEETROOT_SOUP -> feedPlayer(entity, 7.2f, 6)
+            Material.BREAD -> feedPlayer(entity, 5f, 6)
+            Material.CAKE -> feedPlayer(entity, 0.4f, 2)
+            Material.CARROT -> feedPlayer(entity, 3.6f, 3)
+            Material.CHORUS_FRUIT -> feedPlayer(entity, 2.4f, 4)
+            Material.COOKED_CHICKEN -> feedPlayer(entity, 7.2f, 6)
+            Material.COOKED_COD -> feedPlayer(entity, 6f, 5)
+            Material.COOKED_MUTTON -> feedPlayer(entity, 9.6f, 6)
+            Material.COOKED_PORKCHOP -> feedPlayer(entity, 12.8f, 8)
+            Material.COOKED_RABBIT -> feedPlayer(entity, 6f, 5)
+            Material.COOKED_SALMON -> feedPlayer(entity, 9.6f, 6)
+            Material.COOKIE -> feedPlayer(entity, 0.4f, 2)
+            Material.DRIED_KELP -> feedPlayer(entity, 0.6f, 1)
+            Material.ENCHANTED_GOLDEN_APPLE -> feedPlayer(entity, 9.6f, 4)
+            Material.GOLDEN_APPLE -> feedPlayer(entity, 9.6f, 4)
+            Material.GLOW_BERRIES -> feedPlayer(entity, 0.4f, 2)
+            Material.GOLDEN_CARROT -> feedPlayer(entity, 14.4f, 6)
+            Material.HONEY_BOTTLE -> feedPlayer(entity, 1.2f, 6)
+            Material.MELON_SLICE -> feedPlayer(entity, 1.2f, 2)
+            Material.MUSHROOM_STEW -> feedPlayer(entity, 7.2f, 6)
+            Material.POISONOUS_POTATO -> feedPlayer(entity, 1.2f, 2)
+            Material.POTATO -> feedPlayer(entity, 0.6f, 1)
+            Material.PUFFERFISH -> feedPlayer(entity, 0.2f, 1)
+            Material.PUMPKIN_PIE -> feedPlayer(entity, 4.8f, 8)
+            Material.RABBIT_STEW -> feedPlayer(entity, 12f, 10)
+            Material.BEEF -> feedPlayer(entity, 1.8f, 3)
+            Material.CHICKEN -> feedPlayer(entity, 1.2f, 2)
+            Material.COD -> feedPlayer(entity, 0.4f, 2)
+            Material.MUTTON -> feedPlayer(entity, 1.2f, 2)
+            Material.PORKCHOP -> feedPlayer(entity, 1.8f, 3)
+            Material.RABBIT -> feedPlayer(entity, 1.8f, 3)
+            Material.SALMON -> feedPlayer(entity, 0.4f, 2)
+            Material.ROTTEN_FLESH -> feedPlayer(entity, 0.8f, 4)
+            Material.SPIDER_EYE -> feedPlayer(entity, 3.2f, 2)
+            Material.COOKED_BEEF -> feedPlayer(entity, 12.8f, 8)
+            Material.SUSPICIOUS_STEW -> feedPlayer(entity, 7.2f, 6)
+            Material.SWEET_BERRIES -> feedPlayer(entity, 0.4f, 2)
+            Material.TROPICAL_FISH -> feedPlayer(entity, 0.2f, 1)
             else -> {}
         }
     }

@@ -191,7 +191,7 @@ class PrisonListener(private val plugin: JavaPlugin, private val session: Sessio
             "${ChatColor.BOLD}${ChatColor.GOLD}"
         }
     }
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     fun onPlayerBreak(event: BlockBreakEvent){
         if (event.isCancelled){
             return

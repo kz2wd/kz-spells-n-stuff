@@ -12,6 +12,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockEvent
@@ -62,12 +63,12 @@ class NationListener(private val session: Session): Listener {
         return isChunkEventUnauthorized(player, {event.block.chunk}, getPerm)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerPlaceInArea(event: BlockPlaceEvent){
         event.isCancelled = isBlockEventUnauthorized(event.player, event) { perm -> perm.canPlace }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerBreakInArea(event: BlockBreakEvent){
         event.isCancelled = isBlockEventUnauthorized(event.player, event) { perm -> perm.canBreak }
     }

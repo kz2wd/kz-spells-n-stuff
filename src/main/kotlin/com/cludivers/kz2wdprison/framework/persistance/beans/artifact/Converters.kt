@@ -1,6 +1,8 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
 
 enum class Converters {
@@ -37,7 +39,7 @@ enum class Converters {
 
         private val map = Converters.values().associateBy(Converters::customData)
         fun getConverter(itemStack: ItemStack): Converters {
-            return if (itemStack.itemMeta.hasCustomModelData()){
+            return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()){
                 map[itemStack.itemMeta.customModelData] ?: NONE
             } else {
                 NONE

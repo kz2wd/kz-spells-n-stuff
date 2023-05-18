@@ -38,7 +38,7 @@ enum class InputTypes {
 
         private val map = InputTypes.values().associateBy(InputTypes::customData)
         fun getInputType(itemStack: ItemStack): InputTypes {
-            return if (itemStack.itemMeta.hasCustomModelData()){
+            return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()){
                 map[itemStack.itemMeta.customModelData] ?: NONE
             } else {
                 NONE
