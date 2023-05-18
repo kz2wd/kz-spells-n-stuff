@@ -52,6 +52,11 @@ class Artifact {
                 ArtifactInput(inFlow, listOf(locationSight))
             }
             InputTypes.NONE -> return inFlow
+            InputTypes.LOCATION_FORWARD_EYE_CASTER -> {
+                var forwardEyeLocation = (caster.getSelf() as Player).eyeLocation
+                forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
+                ArtifactInput(inFlow, listOf(forwardEyeLocation))
+            }
         }
 
         converters.map { Converters.getConverter(itemStack) }.forEach { it.convertInput(input) }

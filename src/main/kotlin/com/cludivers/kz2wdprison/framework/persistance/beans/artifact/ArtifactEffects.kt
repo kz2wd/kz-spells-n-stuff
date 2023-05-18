@@ -17,11 +17,11 @@ enum class ArtifactEffects {
     },
     PROJECTILES {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            if (input.vector == null) {
+            if (input.locations.isEmpty()) {
                 return
             }
             if (itemStack.type == Material.ARROW) {
-                input.locations.forEach { it.world.spawnArrow(it, input.vector!!, 1f, 1f) }
+                input.locations.forEach { it.world.spawnArrow(it, it.direction, 1f, 1f) }
             }
         }
     },

@@ -24,6 +24,11 @@ enum class InputTypes {
         override val customData: Int
             get() = 5004
     },
+    LOCATION_FORWARD_EYE_CASTER {
+        override val customData: Int
+            get() = 5005
+
+    },
     NONE {
         override val customData: Int
             get() = 4999
