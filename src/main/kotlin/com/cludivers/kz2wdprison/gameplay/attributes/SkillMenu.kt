@@ -5,25 +5,13 @@ import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.command.Command
-import org.bukkit.command.CommandExecutor
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.Inventory
 import org.hibernate.Session
 
-class SkillMenu(private val session: Session, private val attributes: List<Pair<Material, PlayerAttribute>>): CommandExecutor, Menu() {
+class SkillMenu(private val session: Session, private val attributes: List<Pair<Material, PlayerAttribute>>) : Menu() {
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (sender !is Player){
-            return false
-        }
-
-        this.open(sender)
-
-        return true
-    }
 
     override fun generateInventory(player: Player): Inventory {
         val transaction = session.beginTransaction()
@@ -31,8 +19,11 @@ class SkillMenu(private val session: Session, private val attributes: List<Pair<
         val inventory = Bukkit.createInventory(player, 9 * 1, Component.text("Amélioration de vos compétences"))
         attributes.withIndex().forEach {
             val infos = it.value.second.upgradeComponent(playerData)
-            inventory.setItem(it.index * 2, getItem(it.value.first, infos.first,
-                listOf(infos.second))
+            inventory.setItem(
+                it.index * 2, getItem(
+                    it.value.first, infos.first,
+                    listOf(infos.second)
+                )
             )
         }
         transaction.commit()

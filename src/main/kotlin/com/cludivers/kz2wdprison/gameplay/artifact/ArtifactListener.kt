@@ -12,8 +12,17 @@ class ArtifactListener(private val session: Session): Listener {
 
     companion object {
         private val artifacts: MutableMap<ItemStack, Artifact> = mutableMapOf()
-        fun registerArtifact(artifact: Artifact, itemStack: ItemStack){
+        fun registerArtifact(artifact: Artifact, itemStack: ItemStack) {
             artifacts[itemStack] = artifact
+        }
+
+        fun isItemStackLinked(item: ItemStack): Boolean {
+            return artifacts.containsKey(item)
+        }
+
+        fun initPersistentArtifacts(session: Session) {
+            val artifacts = session.createQuery("from Artifact A", Artifact::class.java).list()
+            artifacts.filter { it.linkedItemStack != null }.forEach { registerArtifact(it, it.linkedItemStack!!) }
         }
     }
 

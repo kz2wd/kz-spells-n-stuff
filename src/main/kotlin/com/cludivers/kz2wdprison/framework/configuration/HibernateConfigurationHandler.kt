@@ -1,7 +1,8 @@
 package com.cludivers.kz2wdprison.framework.configuration
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.*
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
@@ -26,8 +27,16 @@ class HibernateConfigurationHandler {
             configuration.setProperty("show_sql", "true") // Not working :(
 
             val classes = listOf(
-                PlayerBean::class.java, AreaPermission::class.java, ChunkBean::class.java,
-                NationBean::class.java, NationPermission::class.java, NationPlot::class.java, PermissionGroup::class.java)
+                PlayerBean::class.java,
+                AreaPermission::class.java,
+                ChunkBean::class.java,
+                NationBean::class.java,
+                NationPermission::class.java,
+                NationPlot::class.java,
+                PermissionGroup::class.java,
+                Artifact::class.java
+            )
+
             classes.forEach {
                 configuration.addAnnotatedClass(it)
             }

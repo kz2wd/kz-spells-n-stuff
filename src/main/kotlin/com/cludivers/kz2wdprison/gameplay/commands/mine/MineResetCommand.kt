@@ -16,7 +16,7 @@ class MineResetCommand(private val mineHandler: MineHandler, parentName: String)
         }
 
         if (args.isEmpty()){
-            sender.sendMessage(usage(label, "<mine>"))
+                sender.sendMessage(usage(label, "<mine>"))
             return false
         }
 

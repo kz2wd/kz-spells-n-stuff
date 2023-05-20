@@ -6,7 +6,8 @@ import org.bukkit.inventory.ItemStack
 
 class ItemStackConverter: AttributeConverter<ItemStack, ByteArray> {
     override fun convertToDatabaseColumn(attribute: ItemStack?): ByteArray {
-        return if (attribute != null) {
+        // Air cannot be serialized so filter it !
+        return if (attribute != null && attribute.type != Material.AIR) {
             attribute.serializeAsBytes()
         } else {
             ByteArray(0)
@@ -14,8 +15,12 @@ class ItemStackConverter: AttributeConverter<ItemStack, ByteArray> {
     }
 
     override fun convertToEntityAttribute(dbData: ByteArray?): ItemStack {
-        return if (dbData != null){
-            ItemStack.deserializeBytes(dbData)
+        return if (dbData != null) {
+            return if (dbData.isEmpty()) {
+                ItemStack(Material.AIR)
+            } else {
+                ItemStack.deserializeBytes(dbData)
+            }
         } else {
             ItemStack(Material.AIR)
         }

@@ -28,10 +28,15 @@ class Artifact {
     var id: Long? = null
 
     @Convert(converter = ItemStackConverter::class)
-    var itemStack: ItemStack = defaultItemStack
+    var linkedItemStack: ItemStack? = null
+
+    @Convert(converter = ItemStackConverter::class)
+    var effect: ItemStack = defaultItemStack
+
     @Convert(converter = ItemStackConverter::class)
     var input: ItemStack = defaultItemStack
-    @ElementCollection
+
+    @ElementCollection(targetClass = ItemStack::class)
     @Convert(converter = ItemStackConverter::class)
     var converters: List<ItemStack> = listOf()
 
@@ -41,7 +46,7 @@ class Artifact {
 
     fun activate(caster: Caster, inFlow: Int): Int {
 
-        if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown){
+        if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown) {
             return inFlow
         }
         lastUsage = Instant.now()
@@ -73,7 +78,7 @@ class Artifact {
         }
         converters.map { Converters.getConverter(it) }.forEach { it.convertInput(input) }
 
-        ArtifactEffects.getMaterialGroup(itemStack).triggerArtifactEffect(itemStack, input, caster.getSelf() as Player)
+        ArtifactEffects.getMaterialGroup(effect).triggerArtifactEffect(effect, input, caster.getSelf() as Player)
 
         return 0
     }
@@ -88,7 +93,7 @@ class Artifact {
         val editor = object: StoringMenu(slots, true){
             override fun generateInventory(player: Player): Inventory {
                 val inventory = Bukkit.createInventory(player, inventorySize, Component.text("Artifact Edition"))
-                inventory.setItem(itemStackSlot, itemStack)
+                inventory.setItem(itemStackSlot, effect)
                 inventory.setItem(inputSlot, input)
 
                 converters.zip(convertersSlots).forEach {
@@ -105,8 +110,9 @@ class Artifact {
             override fun close(player: Player) {
                 session.beginTransaction()
                 input = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
-                itemStack = player.openInventory.topInventory.getItem(itemStackSlot) ?: defaultItemStack
-                converters = convertersSlots.map { player.openInventory.topInventory.getItem(it) ?: defaultItemStack }.filter { it != defaultItemStack }
+                effect = player.openInventory.topInventory.getItem(itemStackSlot) ?: defaultItemStack
+                converters = convertersSlots.map { player.openInventory.topInventory.getItem(it) ?: defaultItemStack }
+                    .filter { it != defaultItemStack }
                 session.transaction.commit()
             }
         }

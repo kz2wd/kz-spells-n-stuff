@@ -6,6 +6,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
 
@@ -13,7 +15,25 @@ import org.bukkit.inventory.meta.PotionMeta
 enum class ArtifactEffects {
     BLOCKS {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            input.locations.forEach { it.block.type = itemStack.type }
+            if (player == null) {
+                return
+            }
+            input.locations.forEach {
+                // Don't really know how to implement it right, I don't think I have enough data in this scope
+                val event = BlockPlaceEvent(
+                    it.block,
+                    it.block.state,
+                    it.block,
+                    player.inventory.itemInMainHand,
+                    player,
+                    true,
+                    EquipmentSlot.HAND
+                )
+                Bukkit.getPluginManager().callEvent(event)
+                if (!event.isCancelled) {
+                    it.block.type = itemStack.type
+                }
+            }
         }
     },
     PROJECTILES {

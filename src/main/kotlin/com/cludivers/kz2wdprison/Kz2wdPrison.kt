@@ -6,6 +6,7 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.Inp
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
+import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactAddCommand
 import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactHelperCommand
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
@@ -44,12 +45,15 @@ class Kz2wdPrison : JavaPlugin() {
 
         Bukkit.addRecipe(getRecipe())
 
-        val artifact = defaultArtifact2()
-        ArtifactListener.registerArtifact(artifact, ItemStack(Material.STICK))
+        ArtifactListener.initPersistentArtifacts(session)
 
         val artifactCommandName = "artifact"
         val artifactCommandExecutor = MainCommandExecutor(
-            mapOf(), ArtifactHelperCommand(artifactCommandName))
+            mapOf(
+                "runes" to ArtifactHelperCommand(artifactCommandName),
+                "create" to ArtifactAddCommand(artifactCommandName, session)
+            )
+        )
 
         this.getCommand(artifactCommandName)?.setExecutor(artifactCommandExecutor)
         this.getCommand(artifactCommandName)?.tabCompleter = artifactCommandExecutor
@@ -80,7 +84,7 @@ class Kz2wdPrison : JavaPlugin() {
     private fun defaultArtifact2(): Artifact {
         val artifact = Artifact()
 
-        artifact.itemStack = ItemStack(Material.DIAMOND_PICKAXE)
+        artifact.effect = ItemStack(Material.DIAMOND_PICKAXE)
         artifact.input = Utils.buildItemStack(
             Component.text(""),
             Material.GOLD_BLOCK,

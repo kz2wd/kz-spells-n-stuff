@@ -29,9 +29,12 @@ object MinesDeclaration {
 
         val mineHandler = MineHandler(MineHandler.minuteToTick(1), plugin, mines)
         val mineCommandName = "mine"
-        val listMineCmd = MineListCommand(mineHandler, mineCommandName)
         val mineCommandsExecutor = MainCommandExecutor(
-            mapOf("list" to listMineCmd, "reset" to MineResetCommand(mineHandler, mineCommandName)), listMineCmd)
+            mapOf(
+                "list" to MineListCommand(mineHandler, mineCommandName),
+                "reset" to MineResetCommand(mineHandler, mineCommandName)
+            ),
+        )
 
         plugin.getCommand(mineCommandName)?.setExecutor(mineCommandsExecutor)
         plugin.getCommand(mineCommandName)?.tabCompleter = mineCommandsExecutor

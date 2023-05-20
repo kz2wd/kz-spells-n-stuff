@@ -1,7 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.nation
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.mine.MineResetCommand
 import com.cludivers.kz2wdprison.gameplay.commands.nation.*
 import org.bukkit.plugin.java.JavaPlugin
 import org.hibernate.Session
@@ -12,7 +11,6 @@ object NationDeclaration {
 
         val nationCommandName = "nation"
 
-        val infoCmd = NationInfo(nationCommandName, session)
 
         val nationCommandsExecutor = MainCommandExecutor(
             mapOf(
@@ -21,8 +19,9 @@ object NationDeclaration {
                 "join" to JoinNation(nationCommandName, session),
                 "refuse" to RefuseInvitation(nationCommandName),
                 "quit" to QuitNation(nationCommandName, session),
-                "claim" to NationClaim(nationCommandName, session)),
-            infoCmd
+                "claim" to NationClaim(nationCommandName, session),
+                "info" to NationInfo(nationCommandName, session)
+            )
         )
 
         plugin.getCommand(nationCommandName)?.setExecutor(nationCommandsExecutor)
