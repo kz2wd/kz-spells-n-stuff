@@ -20,7 +20,8 @@ object NationDeclaration {
                 "refuse" to RefuseInvitation(nationCommandName),
                 "quit" to QuitNation(nationCommandName, session),
                 "claim" to NationClaim(nationCommandName, session),
-                "info" to NationInfo(nationCommandName, session)
+                "info" to NationInfo(nationCommandName, session),
+                "add" to AddClaimPoint(nationCommandName, session)
             )
         )
 
