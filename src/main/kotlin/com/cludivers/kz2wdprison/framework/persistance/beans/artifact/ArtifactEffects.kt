@@ -54,6 +54,13 @@ enum class ArtifactEffects {
                     potion.velocity = it.direction
                 }
 
+                Material.FIRE_CHARGE -> {
+                    input.locations.forEach {
+                        val fireball = it.world.spawnEntity(it, EntityType.SMALL_FIREBALL)
+                        fireball.velocity = it.direction
+                    }
+                }
+
                 else -> {}
             }
         }
@@ -91,10 +98,36 @@ enum class ArtifactEffects {
     },
     ENTITY {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-
+            val entity = entityTypeFromItemStack(itemStack)
+            if (entity === null) {
+                return
+            }
+            input.locations.forEach { it.world.spawnEntity(it, entity) }
         }
     },
-    Custom, None;
+    CUSTOM {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+            when (itemStack) {
+                CustomShardItems.FIRE_SPARK.itemStack -> {
+                    input.locations.forEach {
+                        if (it.block.type == Material.AIR) {
+                            it.block.type = Material.FIRE
+                        }
+                    }
+                    input.entities.forEach { it.fireTicks = 4 }
+                }
+
+                CustomShardItems.LIGHTNING_SPARK.itemStack -> {
+                    (input.entities.map { it.location } + input.locations).forEach { it.world.strikeLightning(it) }
+                }
+
+                else -> {}
+
+            }
+        }
+    },
+
+    None;
 
     companion object {
 
@@ -303,7 +336,7 @@ enum class ArtifactEffects {
 
         fun getMaterialGroup(itemStack: ItemStack): ArtifactEffects {
             if (CustomShardItems.getCustomItemStack(itemStack) != null) {
-                return Custom
+                return CUSTOM
             }
 
             // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation
@@ -327,6 +360,9 @@ enum class ArtifactEffects {
                 Material.POTION -> CONSUMABLE
 
                 Material.DIAMOND_PICKAXE -> TOOLS
+
+                // Add all spawn eggs, boring . . .
+                Material.COW_SPAWN_EGG, Material.CHICKEN_SPAWN_EGG, Material.GOAT_SPAWN_EGG -> ENTITY
                 else -> None
             }
         }
@@ -379,6 +415,13 @@ enum class ArtifactEffects {
             Material.SWEET_BERRIES -> feedPlayer(entity, 0.4f, 2)
             Material.TROPICAL_FISH -> feedPlayer(entity, 0.2f, 1)
             else -> {}
+        }
+    }
+
+    fun entityTypeFromItemStack(itemStack: ItemStack): EntityType? {
+        return when (itemStack.type) {
+            Material.COW_SPAWN_EGG -> EntityType.COW
+            else -> null
         }
     }
 
