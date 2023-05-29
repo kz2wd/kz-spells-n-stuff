@@ -2,18 +2,16 @@ package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactAddCommand
 import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactHelperCommand
+import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactInputRuneAddCommand
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
-import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -41,17 +39,17 @@ class Kz2wdPrison : JavaPlugin() {
 
         BonusXpEvent.start(this)
 
-        // val currentEventCmd = CurrentEventCommand()
-
         Bukkit.addRecipe(getRecipe())
 
-        ArtifactListener.initPersistentArtifacts(session)
+        ArtifactInputRune.initPersistentArtifactInputRune(session)
+        Artifact.initPersistentArtifacts(session)
 
         val artifactCommandName = "artifact"
         val artifactCommandExecutor = MainCommandExecutor(
             mapOf(
                 "runes" to ArtifactHelperCommand(artifactCommandName),
-                "create" to ArtifactAddCommand(artifactCommandName, session)
+                "create" to ArtifactAddCommand(artifactCommandName, session),
+                "create_input" to ArtifactInputRuneAddCommand(artifactCommandName, session),
             )
         )
 
@@ -81,17 +79,4 @@ class Kz2wdPrison : JavaPlugin() {
         return recipe
     }
 
-    private fun defaultArtifact2(): Artifact {
-        val artifact = Artifact()
-
-        artifact.effect = ItemStack(Material.DIAMOND_PICKAXE)
-        artifact.input = Utils.buildItemStack(
-            Component.text(""),
-            Material.GOLD_BLOCK,
-            customData = InputTypes.LOCATION_SIGHT.customData
-        )
-        artifact.converters = listOf()
-
-        return artifact
-    }
 }

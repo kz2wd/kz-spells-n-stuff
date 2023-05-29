@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.hibernate.Session
 
-class ArtifactAddCommand(parentName: String, private val session: Session) : SubCommand(parentName) {
+class ArtifactInputRuneAddCommand(parentName: String, private val session: Session) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false
@@ -20,18 +20,18 @@ class ArtifactAddCommand(parentName: String, private val session: Session) : Sub
             return false
         }
 
-        if (Artifact.isItemStackLinked(sender.inventory.itemInMainHand)) {
+        if (ArtifactInputRune.isItemStackLinked(sender.inventory.itemInMainHand)) {
             sender.sendMessage(Component.text("${ChatColor.GRAY}Cet objet est déjà lié. Essayez avec un autre."))
             return false
         }
 
         session.beginTransaction()
 
-        val artifact = Artifact()
-        artifact.linkedItemStack = sender.inventory.itemInMainHand.clone()
-        Artifact.registerArtifact(artifact, artifact.linkedItemStack!!)
-        sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouvel artefact à été lié avec l'objet dans votre main !"))
-        session.persist(artifact)
+        val artifactInputRune = ArtifactInputRune()
+        artifactInputRune.linkedItemStack = sender.inventory.itemInMainHand.clone()
+        ArtifactInputRune.registerArtifact(artifactInputRune, artifactInputRune.linkedItemStack!!)
+        sender.sendMessage(Component.text("${ChatColor.GREEN}Une nouvelle source d'artefact à été lié avec l'objet dans votre main !"))
+        session.persist(artifactInputRune)
         session.transaction.commit()
 
         return true

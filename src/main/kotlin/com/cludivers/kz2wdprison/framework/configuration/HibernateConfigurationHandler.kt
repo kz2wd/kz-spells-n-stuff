@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.*
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import org.bukkit.configuration.file.FileConfiguration
@@ -34,7 +35,8 @@ class HibernateConfigurationHandler {
                 NationPermission::class.java,
                 NationPlot::class.java,
                 PermissionGroup::class.java,
-                Artifact::class.java
+                Artifact::class.java,
+                ArtifactInputRune::class.java,
             )
 
             classes.forEach {
