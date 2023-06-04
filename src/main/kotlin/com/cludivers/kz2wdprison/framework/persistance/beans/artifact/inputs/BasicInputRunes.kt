@@ -42,16 +42,25 @@ enum class BasicInputRunes : ArtifactInputInterface {
             return ArtifactInput(inFlow, listOf(locationSight))
         }
     },
-    LOCATION_FORWARD_EYE_CASTER {
+    PROJECTILE_CASTING {
         override val customData: Int
             get() = 5005
 
         override fun getArtifactInput(inputRune: ItemStack, caster: Caster, inFlow: Int): ArtifactInput {
             var forwardEyeLocation = (caster.getSelf() as Player).eyeLocation
             forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
-            return ArtifactInput(inFlow, listOf(forwardEyeLocation))
+
+            return ArtifactInput(inFlow, listOf(forwardEyeLocation), vectors = listOf(caster.getLocation().direction))
         }
 
+    },
+    CASTER_DIRECTION {
+        override val customData: Int
+            get() = 5006
+
+        override fun getArtifactInput(inputRune: ItemStack, caster: Caster, inFlow: Int): ArtifactInput {
+            return ArtifactInput(inFlow, vectors = listOf(caster.getLocation().direction))
+        }
     },
     NONE {
         override val customData: Int

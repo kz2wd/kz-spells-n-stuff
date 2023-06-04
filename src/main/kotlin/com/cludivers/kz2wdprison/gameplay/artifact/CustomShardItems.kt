@@ -61,7 +61,7 @@ enum class CustomShardItems {
             buildItemStack(Component.text("Back Rune"), Material.IRON_NUGGET, flag)
         }
     },
-    DASH_RUNE {
+    MOVE_RUNE {
         override val flag: Int = 10007
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Dash Rune"), Material.IRON_NUGGET, flag)

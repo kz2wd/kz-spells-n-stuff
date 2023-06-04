@@ -133,8 +133,11 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
                     input.locations.forEach { it.world.strikeLightning(it) }
                 }
 
-                CustomShardItems.DASH_RUNE.itemStack -> {
-                    input.entities.forEach { }
+                CustomShardItems.MOVE_RUNE.itemStack -> {
+                    input.entities.zip(input.vectors).forEach {
+
+                        it.first.velocity = it.first.velocity.add(it.second.multiply(3))
+                    }
                 }
 
                 else -> {}

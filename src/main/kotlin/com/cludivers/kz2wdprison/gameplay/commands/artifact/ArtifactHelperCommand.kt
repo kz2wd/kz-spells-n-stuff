@@ -20,15 +20,15 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
         BasicInputRunes.values()
             .map { Utils.buildItemStack(Component.text("Input : ${it.name}"), Material.DISPENSER, it.customData) }
             .forEach {
-                sender.player?.inventory?.addItem(it)
+                sender.player?.inventory?.addItem(it.asQuantity(32))
             }
         Converters.values()
             .map { Utils.buildItemStack(Component.text("Converter : ${it.name}"), Material.HOPPER, it.customData) }
             .forEach {
-                sender.player?.inventory?.addItem(it)
+                sender.player?.inventory?.addItem(it.asQuantity(32))
             }
         CustomShardItems.values().map { it.itemStack }.forEach {
-            sender.player?.inventory?.addItem(it)
+            sender.player?.inventory?.addItem(it.asQuantity(32))
         }
 
         return true
