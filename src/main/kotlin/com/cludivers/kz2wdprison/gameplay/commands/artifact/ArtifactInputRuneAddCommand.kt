@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -20,18 +21,19 @@ class ArtifactInputRuneAddCommand(parentName: String, private val session: Sessi
             return false
         }
 
-        if (ArtifactInputRune.isItemStackLinked(sender.inventory.itemInMainHand)) {
+        if (ArtifactComplexRune.isItemStackLinked(sender.inventory.itemInMainHand)) {
             sender.sendMessage(Component.text("${ChatColor.GRAY}Cet objet est déjà lié. Essayez avec un autre."))
             return false
         }
 
         session.beginTransaction()
 
-        val artifactInputRune = ArtifactInputRune()
-        artifactInputRune.linkedItemStack = sender.inventory.itemInMainHand.clone()
-        ArtifactInputRune.registerArtifact(artifactInputRune, artifactInputRune.linkedItemStack!!)
+        val artifactComplexInput = ArtifactComplexRune()
+        artifactComplexInput.runeType = ArtifactRuneTypes.INPUT_RUNE
+        artifactComplexInput.linkedItemStack = sender.inventory.itemInMainHand.clone()
+        ArtifactComplexRune.registerArtifactComplexRune(artifactComplexInput, artifactComplexInput.linkedItemStack!!)
         sender.sendMessage(Component.text("${ChatColor.GREEN}Une nouvelle source d'artefact à été lié avec l'objet dans votre main !"))
-        session.persist(artifactInputRune)
+        session.persist(artifactComplexInput)
         session.transaction.commit()
 
         return true

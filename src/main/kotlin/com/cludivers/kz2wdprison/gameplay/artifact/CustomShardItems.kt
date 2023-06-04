@@ -24,6 +24,48 @@ enum class CustomShardItems {
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Lighting Spark"), Material.IRON_NUGGET, flag)
         }
+    },
+    UP_RUNE {
+        override val flag: Int = 10003
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Up Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    DOWN_RUNE {
+        override val flag: Int = 10003
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Down Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    LEFT_RUNE {
+        override val flag: Int = 10004
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Left Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    RIGHT_RUNE {
+        override val flag: Int = 10004
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Right Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    FRONT_RUNE {
+        override val flag: Int = 10005
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Front Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    BACK_RUNE {
+        override val flag: Int = 10006
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Back Rune"), Material.IRON_NUGGET, flag)
+        }
+    },
+    DASH_RUNE {
+        override val flag: Int = 10007
+        override val itemStack: ItemStack = run {
+            buildItemStack(Component.text("Dash Rune"), Material.IRON_NUGGET, flag)
+        }
     }
 
     ;

@@ -1,8 +1,6 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
+package com.cludivers.kz2wdprison.framework.persistance.beans.artifact.converters
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
 
 enum class Converters {

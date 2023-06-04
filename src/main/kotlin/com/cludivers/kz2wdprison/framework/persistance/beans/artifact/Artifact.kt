@@ -1,7 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
@@ -48,7 +47,7 @@ class Artifact {
     var linkedItemStack: ItemStack? = null
 
     @Convert(converter = ItemStackConverter::class)
-    var effect: ItemStack = defaultItemStack
+    var effectRune: ItemStack = defaultItemStack
 
     @Convert(converter = ItemStackConverter::class)
     var inputRune: ItemStack = defaultItemStack
@@ -63,15 +62,9 @@ class Artifact {
         }
         lastUsage = Instant.now()
 
-        val artifactInputRune = ArtifactInputRune.artifactInputRunes[inputRune];
-        val input = if (artifactInputRune === null) {
-            // Give default input for correct effect or do nothing ?
-            ArtifactInput(inFlow)
-        } else {
-            artifactInputRune.getArtifactInput(caster, inFlow)
-        }
+        val input: ArtifactInput = ArtifactRuneTypes.INPUT_RUNE.getArtifactInput(inputRune, caster, inFlow)
 
-        ArtifactEffects.getMaterialGroup(effect).triggerArtifactEffect(effect, input, caster.getSelf() as Player)
+        ArtifactRuneTypes.EFFECT_RUNE.triggerArtifactEffect(effectRune, input, caster.getSelf() as Player)
 
         return 0
     }
@@ -85,7 +78,7 @@ class Artifact {
         val editor = object : StoringMenu(slots, true) {
             override fun generateInventory(player: Player): Inventory {
                 val inventory = Bukkit.createInventory(player, inventorySize, Component.text("Artifact Edition"))
-                inventory.setItem(effectSlot, effect)
+                inventory.setItem(effectSlot, effectRune)
                 inventory.setItem(inputSlot, inputRune)
 
                 val fillingItem =
@@ -102,13 +95,12 @@ class Artifact {
             override fun close(player: Player) {
                 session.beginTransaction()
                 inputRune = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
-                effect = player.openInventory.topInventory.getItem(effectSlot) ?: defaultItemStack
+                effectRune = player.openInventory.topInventory.getItem(effectSlot) ?: defaultItemStack
                 session.transaction.commit()
             }
         }
 
         return editor
     }
-
 
 }

@@ -2,7 +2,7 @@ package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputRune
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
 import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactAddCommand
@@ -41,7 +41,7 @@ class Kz2wdPrison : JavaPlugin() {
 
         Bukkit.addRecipe(getRecipe())
 
-        ArtifactInputRune.initPersistentArtifactInputRune(session)
+        ArtifactComplexRune.initPersistentArtifactComplexRune(session)
         Artifact.initPersistentArtifacts(session)
 
         val artifactCommandName = "artifact"

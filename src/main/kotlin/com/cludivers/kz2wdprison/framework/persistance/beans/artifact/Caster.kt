@@ -16,8 +16,10 @@ interface Caster {
     fun getSightBlock(maxDistance: Int): Block?
     fun getSightEntity(maxDistance: Int): Entity?
 
+    fun maxSightDistance(): Int
+
     companion object {
-        fun playerToCaster(player: Player): Caster{
+        fun playerToCaster(player: Player): Caster {
             return object : Caster {
                 override fun getLocation(): Location {
                     return player.location
@@ -37,6 +39,10 @@ interface Caster {
 
                 override fun getSightEntity(maxDistance: Int): Entity? {
                     return player.getTargetEntity(maxDistance)
+                }
+
+                override fun maxSightDistance(): Int {
+                    return 8
                 }
             }
         }

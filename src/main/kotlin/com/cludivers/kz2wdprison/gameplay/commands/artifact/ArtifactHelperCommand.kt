@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Converters
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.InputTypes
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.converters.Converters
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
@@ -17,7 +17,7 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
             return false
         }
 
-        InputTypes.values()
+        BasicInputRunes.values()
             .map { Utils.buildItemStack(Component.text("Input : ${it.name}"), Material.DISPENSER, it.customData) }
             .forEach {
                 sender.player?.inventory?.addItem(it)

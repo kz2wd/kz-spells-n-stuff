@@ -1,5 +1,7 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
+package com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects
 
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import org.bukkit.Bukkit
@@ -12,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
 
 
-enum class ArtifactEffects {
+enum class BasicArtifactEffects : ArtifactEffectInterface {
     BLOCKS {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             if (player == null) {
@@ -84,16 +86,31 @@ enum class ArtifactEffects {
             if (player == null) {
                 return
             }
-            input.locations.forEach {
-                if (it.block.type == Material.BEDROCK) { // Blacklist blocks here
-                    return
+            when (itemStack.type) {
+                Material.DIAMOND_PICKAXE -> {
+                    input.locations.forEach {
+                        if (it.block.type == Material.BEDROCK) { // Blacklist blocks here
+                            return
+                        }
+                        val event = BlockBreakEvent(it.block, player)
+                        Bukkit.getPluginManager().callEvent(event)
+                        if (!event.isCancelled) {
+                            it.block.breakNaturally(itemStack)
+                        }
+                    }
                 }
-                val event = BlockBreakEvent(it.block, player)
-                Bukkit.getPluginManager().callEvent(event)
-                if (!event.isCancelled) {
-                    it.block.breakNaturally(itemStack)
+
+                Material.FLINT_AND_STEEL -> {
+                    input.locations.forEach {
+                        if (it.block.type == Material.AIR) {
+                            it.block.type = Material.FIRE
+                        }
+                    }
                 }
+
+                else -> {}
             }
+
         }
     },
     ENTITY {
@@ -109,16 +126,15 @@ enum class ArtifactEffects {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             when (itemStack) {
                 CustomShardItems.FIRE_SPARK.itemStack -> {
-                    input.locations.forEach {
-                        if (it.block.type == Material.AIR) {
-                            it.block.type = Material.FIRE
-                        }
-                    }
-                    input.entities.forEach { it.fireTicks = 4 }
+                    input.entities.forEach { it.fireTicks = 100 }
                 }
 
                 CustomShardItems.LIGHTNING_SPARK.itemStack -> {
-                    (input.entities.map { it.location } + input.locations).forEach { it.world.strikeLightning(it) }
+                    input.locations.forEach { it.world.strikeLightning(it) }
+                }
+
+                CustomShardItems.DASH_RUNE.itemStack -> {
+                    input.entities.forEach { }
                 }
 
                 else -> {}
@@ -126,8 +142,21 @@ enum class ArtifactEffects {
             }
         }
     },
+    COMPLEX {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+            val artifactComplexEffect = ArtifactComplexRune.artifactComplexRunes[itemStack] ?: return
+            if (artifactComplexEffect.runeType != ArtifactRuneTypes.EFFECT_RUNE) {
+                return
+            }
+            artifactComplexEffect.triggerArtifactEffect(itemStack, input, player)
+        }
+    },
 
-    None;
+    None {
+        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+            // Do nothing
+        }
+    };
 
     companion object {
 
@@ -334,9 +363,12 @@ enum class ArtifactEffects {
             Material.DETECTOR_RAIL, Material.RAIL, Material.ACTIVATOR_RAIL
         )
 
-        fun getMaterialGroup(itemStack: ItemStack): ArtifactEffects {
+        fun getEffectType(itemStack: ItemStack): BasicArtifactEffects {
             if (CustomShardItems.getCustomItemStack(itemStack) != null) {
                 return CUSTOM
+            }
+            if (ArtifactComplexRune.isItemStackLinked(itemStack)) {
+                return COMPLEX
             }
 
             // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation
@@ -428,10 +460,6 @@ enum class ArtifactEffects {
     private fun feedPlayer(player: Player, saturationDelta: Float, foodDelta: Int) {
         player.saturation += saturationDelta
         player.foodLevel += foodDelta
-    }
-
-    open fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-
     }
 
 }
