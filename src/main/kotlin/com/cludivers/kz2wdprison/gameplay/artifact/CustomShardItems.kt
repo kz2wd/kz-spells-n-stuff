@@ -32,39 +32,39 @@ enum class CustomShardItems {
         }
     },
     DOWN_RUNE {
-        override val flag: Int = 10003
+        override val flag: Int = 10004
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Down Rune"), Material.IRON_NUGGET, flag)
         }
     },
     LEFT_RUNE {
-        override val flag: Int = 10004
+        override val flag: Int = 10005
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Left Rune"), Material.IRON_NUGGET, flag)
         }
     },
     RIGHT_RUNE {
-        override val flag: Int = 10004
+        override val flag: Int = 10006
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Right Rune"), Material.IRON_NUGGET, flag)
         }
     },
     FRONT_RUNE {
-        override val flag: Int = 10005
+        override val flag: Int = 10007
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Front Rune"), Material.IRON_NUGGET, flag)
         }
     },
     BACK_RUNE {
-        override val flag: Int = 10006
+        override val flag: Int = 10008
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Back Rune"), Material.IRON_NUGGET, flag)
         }
     },
     MOVE_RUNE {
-        override val flag: Int = 10007
+        override val flag: Int = 10009
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Dash Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Move Rune"), Material.IRON_NUGGET, flag)
         }
     }
 
