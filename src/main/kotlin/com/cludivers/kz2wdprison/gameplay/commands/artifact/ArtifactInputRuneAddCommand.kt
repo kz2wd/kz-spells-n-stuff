@@ -29,7 +29,7 @@ class ArtifactInputRuneAddCommand(parentName: String, private val session: Sessi
         session.beginTransaction()
 
         val artifactComplexInput = ArtifactComplexRune()
-        artifactComplexInput.runeType = ArtifactRuneTypes.INPUT_RUNE
+        artifactComplexInput.runeType = ArtifactRuneTypes.GENERIC_INPUT_RUNE
         artifactComplexInput.linkedItemStack = sender.inventory.itemInMainHand.clone()
         ArtifactComplexRune.registerArtifactComplexRune(artifactComplexInput, artifactComplexInput.linkedItemStack!!)
         sender.sendMessage(Component.text("${ChatColor.GREEN}Une nouvelle source d'artefact à été lié avec l'objet dans votre main !"))

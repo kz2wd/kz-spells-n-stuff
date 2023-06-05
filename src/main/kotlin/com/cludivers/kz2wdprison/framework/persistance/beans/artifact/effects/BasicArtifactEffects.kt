@@ -149,7 +149,7 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
     COMPLEX {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             val artifactComplexEffect = ArtifactComplexRune.artifactComplexRunes[itemStack] ?: return
-            if (artifactComplexEffect.runeType != ArtifactRuneTypes.EFFECT_RUNE) {
+            if (artifactComplexEffect.runeType != ArtifactRuneTypes.GENERIC_EFFECT_RUNE) {
                 return
             }
             artifactComplexEffect.triggerArtifactEffect(itemStack, input, player)
@@ -368,11 +368,12 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         )
 
         fun getEffectType(itemStack: ItemStack): BasicArtifactEffects {
-            if (CustomShardItems.getCustomItemStack(itemStack) != null) {
-                return CUSTOM
-            }
+
             if (ArtifactComplexRune.isItemStackLinked(itemStack)) {
                 return COMPLEX
+            }
+            if (CustomShardItems.getCustomItemStack(itemStack) != null) {
+                return CUSTOM
             }
 
             // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation

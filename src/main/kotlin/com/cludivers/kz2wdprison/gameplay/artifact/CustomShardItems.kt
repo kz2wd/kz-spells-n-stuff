@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-enum class CustomShardItems {
+enum class CustomShardItems : CustomItem {
     SHARDS {
         override val flag: Int = 10000
         override val itemStack: ItemStack = run {
@@ -71,9 +71,11 @@ enum class CustomShardItems {
     ;
 
     companion object {
-        private val map = CustomShardItems.values().associateBy(CustomShardItems::itemStack)
-        fun getCustomItemStack(itemStack: ItemStack): CustomShardItems? {
-            return map[itemStack]
+        private val allCustomItems: MutableMap<ItemStack, CustomItem> =
+            CustomShardItems.values().associateBy(CustomShardItems::itemStack).toMutableMap()
+
+        fun getCustomItemStack(itemStack: ItemStack): CustomItem? {
+            return allCustomItems[itemStack]
         }
     }
 

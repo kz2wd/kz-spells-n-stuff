@@ -63,9 +63,9 @@ class Artifact {
         lastUsage = Instant.now()
 
         val input = ArtifactInput(0)
-        ArtifactRuneTypes.INPUT_RUNE.enrichArtifactInput(inputRune, caster, input, mutableListOf())
+        ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(inputRune, caster, input, mutableListOf())
 
-        ArtifactRuneTypes.EFFECT_RUNE.triggerArtifactEffect(effectRune, input, caster.getSelf() as Player)
+        ArtifactRuneTypes.GENERIC_EFFECT_RUNE.triggerArtifactEffect(effectRune, input, caster.getSelf() as Player)
 
         return 0
     }

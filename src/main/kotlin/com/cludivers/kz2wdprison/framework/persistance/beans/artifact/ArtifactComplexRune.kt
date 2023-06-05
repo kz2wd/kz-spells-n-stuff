@@ -5,8 +5,6 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.Art
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputInterface
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import jakarta.persistence.*
-import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.hibernate.Session
@@ -61,13 +59,12 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
         // Prevent infinite loop
 
         if (inputsTrace.contains(inputRune)) {
-            Bukkit.broadcast(Component.text("RETURNING"))
             return
         }
         inputsTrace.add(inputRune)
 
         stockedItemStack.forEach {
-            ArtifactRuneTypes.INPUT_RUNE.enrichArtifactInput(
+            ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(
                 it.value,
                 caster,
                 input,

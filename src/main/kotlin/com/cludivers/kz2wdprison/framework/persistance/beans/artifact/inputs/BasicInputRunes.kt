@@ -196,6 +196,71 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
 
     },
+    DOWN_DIRECTION {
+        override val customData: Int
+            get() = 6009
+
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            input.vectors = (0 until inputRune.amount).map { Vector(0, -1, 0) }
+        }
+    },
+    UP_DIRECTION {
+        override val customData: Int
+            get() = 6010
+
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            input.vectors = (0 until inputRune.amount).map { Vector(0, 1, 0) }
+        }
+    },
+    INVERT_DIRECTION {
+        override val customData: Int
+            get() = 6011
+
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            input.vectors = input.vectors.map { it.multiply(-1) }
+        }
+    },
+    MULTIPLY_DIRECTION {
+        override val customData: Int
+            get() = 6012
+
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            input.vectors = input.vectors.map { it.multiply(inputRune.amount) }
+        }
+    },
+    DIVIDE_DIRECTION {
+        override val customData: Int
+            get() = 6013
+
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            input.vectors = input.vectors.map { it.multiply(1 / inputRune.amount) }
+        }
+    },
     NONE {
         override val customData: Int
             get() = 4999

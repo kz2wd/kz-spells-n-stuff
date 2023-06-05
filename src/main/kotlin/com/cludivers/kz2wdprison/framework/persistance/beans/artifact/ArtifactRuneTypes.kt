@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.hibernate.Session
 
 enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
-    INPUT_RUNE {
+    GENERIC_INPUT_RUNE {
         override fun enrichArtifactInput(
             inputRune: ItemStack,
             caster: Caster,
@@ -31,16 +31,28 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
 
             // If it is not a basic input type :
             val complexRune = ArtifactComplexRune.artifactComplexRunes[inputRune]
-            if (complexRune == null || complexRune.runeType != INPUT_RUNE) {
+            if (complexRune == null || complexRune.runeType != GENERIC_INPUT_RUNE) {
                 return
             }
             // If a complexRune of type INPUT was found, then resolve its input
             return complexRune.enrichArtifactInput(inputRune, caster, input, inputsTrace)
         }
     },
-    EFFECT_RUNE {
+    GENERIC_EFFECT_RUNE {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             BasicArtifactEffects.getEffectType(itemStack).triggerArtifactEffect(itemStack, input, player)
+        }
+    },
+
+    BOUND_ENTITY_RUNE {
+        override fun enrichArtifactInput(
+            inputRune: ItemStack,
+            caster: Caster,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            // TODO
+            input.entities
         }
     },
     NONE;
