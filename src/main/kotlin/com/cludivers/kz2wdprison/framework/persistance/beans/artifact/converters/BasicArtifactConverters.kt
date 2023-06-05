@@ -4,36 +4,20 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.Art
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 
-enum class Converters {
+enum class BasicArtifactConverters : ArtifactConverterInterface {
     ENTITIES_POSITION {
         override val customData: Int
             get() = 6000
 
-        override fun convertInput(input: ArtifactInput) {
+        override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
             input.locations = input.entities.map { it.location }
         }
-    },
-    SHIFT_POSITIONS {
-        override val customData: Int
-            get() = 6001
-    },
-    POSITIONS_AROUND {
-        override val customData: Int
-            get() = 6002
-
-        override fun convertInput(input: ArtifactInput) {
-            input.locations
-        }
-    },
-    ENTITIES_AROUND {
-        override val customData: Int
-            get() = 6003
     },
     ENTITY_DIRECTION {
         override val customData: Int
             get() = 6004
 
-        override fun convertInput(input: ArtifactInput) {
+        override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
             input.vectors = input.entities.map { it.location.direction }
         }
     },
@@ -41,7 +25,7 @@ enum class Converters {
         override val customData: Int
             get() = 6005
 
-        override fun convertInput(input: ArtifactInput) {
+        override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
             input.locations = input.locations.map { it.subtract(Vector(0, 1, 0)) }
         }
     },
@@ -49,7 +33,7 @@ enum class Converters {
         override val customData: Int
             get() = 6006
 
-        override fun convertInput(input: ArtifactInput) {
+        override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
             input.locations = input.locations.map { it.add(Vector(0, 1, 0)) }
         }
     },
@@ -57,7 +41,7 @@ enum class Converters {
         override val customData: Int
             get() = 6007
 
-        override fun convertInput(input: ArtifactInput) {
+        override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
             input.locations =
                 input.locations.zip(input.vectors).map { it.first.add(it.second.multiply(Vector(1, 0, 1)).normalize()) }
         }
@@ -69,18 +53,19 @@ enum class Converters {
 
     companion object {
 
-        private val map = Converters.values().associateBy(Converters::customData)
-        fun getConverter(itemStack: ItemStack): Converters {
+        private val map = BasicArtifactConverters.values().associateBy(BasicArtifactConverters::customData)
+        fun getConverter(itemStack: ItemStack): BasicArtifactConverters? {
             return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()) {
-                map[itemStack.itemMeta.customModelData] ?: NONE
+                map[itemStack.itemMeta.customModelData]
             } else {
-                NONE
+                null
             }
         }
     }
+
     abstract val customData: Int
 
-    open fun convertInput(input: ArtifactInput) {
-        // Default : Do nothing
+    override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
+        // Default : do nothing
     }
 }

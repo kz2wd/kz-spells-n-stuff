@@ -52,8 +52,8 @@ class Artifact {
     @Convert(converter = ItemStackConverter::class)
     var inputRune: ItemStack = defaultItemStack
 
-    private var cooldown: Duration = Duration.ZERO
-    private var lastUsage: Instant? = null
+    var cooldown: Duration = Duration.ZERO
+    var lastUsage: Instant? = null
 
     fun activate(caster: Caster, inFlow: Int): Int {
 

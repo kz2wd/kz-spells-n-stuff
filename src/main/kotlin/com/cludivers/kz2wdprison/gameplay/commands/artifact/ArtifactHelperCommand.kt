@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.converters.Converters
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.converters.BasicArtifactConverters
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
@@ -22,7 +22,7 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
             .forEach {
                 sender.player?.inventory?.addItem(it.asQuantity(32))
             }
-        Converters.values()
+        BasicArtifactConverters.values()
             .map { Utils.buildItemStack(Component.text("Converter : ${it.name}"), Material.HOPPER, it.customData) }
             .forEach {
                 sender.player?.inventory?.addItem(it.asQuantity(32))

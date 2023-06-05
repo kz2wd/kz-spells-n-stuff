@@ -28,7 +28,7 @@ class ArtifactListener(private val session: Session): Listener {
         }
         val artifactComplexRune: ArtifactComplexRune? = ArtifactComplexRune.artifactComplexRunes[event.item]
         if (artifactComplexRune !== null) {
-            artifactComplexRune.generateEditorMenu(session).open(event.player)
+            artifactComplexRune.runeType.generateEditorMenu(session, artifactComplexRune).open(event.player)
         }
 
     }

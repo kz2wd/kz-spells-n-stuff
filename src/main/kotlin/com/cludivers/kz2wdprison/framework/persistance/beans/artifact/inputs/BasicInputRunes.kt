@@ -73,7 +73,10 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
     companion object {
         private val map = BasicInputRunes.values().associateBy(BasicInputRunes::customData)
-        fun getInputRune(itemStack: ItemStack): BasicInputRunes? {
+        fun getInputRune(itemStack: ItemStack?): BasicInputRunes? {
+            if (itemStack == null) {
+                return null
+            }
             return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()) {
                 map[itemStack.itemMeta.customModelData]
             } else {
