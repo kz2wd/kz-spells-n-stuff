@@ -381,7 +381,7 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
             }
 
             return when (itemStack.type) {
-                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.SPLASH_POTION -> PROJECTILES
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.SPLASH_POTION, Material.FIRE_CHARGE -> PROJECTILES
 
                 Material.APPLE, Material.BAKED_POTATO, Material.BEETROOT, Material.BEETROOT_SOUP, Material.BREAD,
                 Material.CAKE, Material.CARROT, Material.CHORUS_FRUIT, Material.COOKED_CHICKEN, Material.COOKED_COD,
