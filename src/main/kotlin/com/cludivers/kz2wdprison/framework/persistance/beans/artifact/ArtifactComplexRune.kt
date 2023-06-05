@@ -1,18 +1,18 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.converters.ArtifactConverterInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.ArtifactEffectInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputInterface
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import jakarta.persistence.*
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.hibernate.Session
 
 @Entity
-class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface, ArtifactConverterInterface {
+class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
 
     companion object {
         val artifactComplexRunes: MutableMap<ItemStack, ArtifactComplexRune> = mutableMapOf()
@@ -52,25 +52,28 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface, Art
         // Do nothing
     }
 
-    override fun getArtifactInput(inputRune: ItemStack, caster: Caster, inFlow: Int): ArtifactInput {
-        val mainItemStackSlot = 9
-        // Only search in basic runes to prevent infinite recursion leading to stack overflow
-        val input: ArtifactInput =
-            BasicInputRunes.getInputRune(stockedItemStack[mainItemStackSlot])
-                ?.getArtifactInput(inputRune, caster, inFlow)
-                ?: return ArtifactInput(0)
+    override fun enrichArtifactInput(
+        inputRune: ItemStack,
+        caster: Caster,
+        input: ArtifactInput,
+        inputsTrace: MutableList<ItemStack>
+    ) {
+        // Prevent infinite loop
 
-        (stockedItemStack - mainItemStackSlot).forEach {
-            ArtifactRuneTypes.CONVERTER_RUNE.convertInput(
+        if (inputsTrace.contains(inputRune)) {
+            Bukkit.broadcast(Component.text("RETURNING"))
+            return
+        }
+        inputsTrace.add(inputRune)
+
+        stockedItemStack.forEach {
+            ArtifactRuneTypes.INPUT_RUNE.enrichArtifactInput(
                 it.value,
-                input
+                caster,
+                input,
+                inputsTrace
             )
         }
-
-        return input
-    }
-
-    override fun convertInput(itemStack: ItemStack, input: ArtifactInput) {
     }
 }
 

@@ -5,5 +5,10 @@ import org.bukkit.inventory.ItemStack
 
 interface ArtifactInputInterface {
 
-    fun getArtifactInput(inputRune: ItemStack, caster: Caster, inFlow: Int): ArtifactInput
+    fun enrichArtifactInput(
+        inputRune: ItemStack,
+        caster: Caster,
+        input: ArtifactInput,
+        inputsTrace: MutableList<ItemStack>
+    )
 }

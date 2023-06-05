@@ -41,25 +41,26 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
     PROJECTILES {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
             when (itemStack.type) {
-                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.forEach {
-                    it.world.spawnArrow(
-                        it,
-                        it.direction,
-                        1f,
-                        1f
-                    )
-                }
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.vectors)
+                    .forEach {
+                        it.first.world.spawnArrow(
+                            it.first,
+                            it.second,
+                            1f,
+                            1f
+                        )
+                    }
 
-                Material.SPLASH_POTION -> input.locations.forEach {
-                    val potion = (it.world.spawnEntity(it, EntityType.SPLASH_POTION) as ThrownPotion)
+                Material.SPLASH_POTION -> input.locations.zip(input.vectors).forEach {
+                    val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
                     potion.item = itemStack
-                    potion.velocity = it.direction
+                    potion.velocity = it.second
                 }
 
                 Material.FIRE_CHARGE -> {
-                    input.locations.forEach {
-                        val fireball = it.world.spawnEntity(it, EntityType.SMALL_FIREBALL)
-                        fireball.velocity = it.direction
+                    input.locations.zip(input.vectors).forEach {
+                        val fireball = it.first.world.spawnEntity(it.first, EntityType.SMALL_FIREBALL)
+                        fireball.velocity = it.second
                     }
                 }
 
