@@ -1,15 +1,23 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Caster
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactItemsTextures
+import com.cludivers.kz2wdprison.gameplay.utils.Utils
+import net.kyori.adventure.text.Component
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 
 enum class BasicInputRunes : ArtifactInputInterface {
     ENTITY_CASTER {
-        override val customData: Int
-            get() = 5000
+        override val texture
+            get() = ArtifactItemsTextures.ENTITY_CASTER
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Caster"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -21,8 +29,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     ENTITY_SIGHT {
-        override val customData: Int
-            get() = 5001
+        override val texture
+            get() = ArtifactItemsTextures.ENTITY_SIGHT
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Entity at sight"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -35,8 +47,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     LOCATION_SIGHT {
-        override val customData: Int
-            get() = 5003
+        override val texture
+            get() = ArtifactItemsTextures.LOCATION_SIGHT
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Location at sight"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -50,8 +66,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     EMPTY_LOCATION_SIGHT {
-        override val customData: Int
-            get() = 5004
+        override val texture
+            get() = ArtifactItemsTextures.EMPTY_LOCATION_SIGHT
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Empty location at sight"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -65,8 +85,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     PROJECTILE_CASTING {
-        override val customData: Int
-            get() = 5005
+        override val texture
+            get() = ArtifactItemsTextures.PROJECTILE_CASTING
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Projectile casting"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -83,8 +107,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
     },
     CASTER_DIRECTION {
-        override val customData: Int
-            get() = 5006
+        override val texture
+            get() = ArtifactItemsTextures.CASTER_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Caster's direction"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -96,8 +124,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     ENTITIES_POSITION {
-        override val customData: Int
-            get() = 6000
+        override val texture
+            get() = ArtifactItemsTextures.ENTITIES_POSITION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Position of Entities"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -109,8 +141,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     ENTITIES_DIRECTION {
-        override val customData: Int
-            get() = 6004
+        override val texture
+            get() = ArtifactItemsTextures.ENTITIES_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Directions of entities"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -122,8 +158,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     POSITIONS_BELOW {
-        override val customData: Int
-            get() = 6005
+        override val texture
+            get() = ArtifactItemsTextures.POSITIONS_BELOW
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Positions below"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -135,8 +175,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     POSITIONS_ABOVE {
-        override val customData: Int
-            get() = 6006
+        override val texture
+            get() = ArtifactItemsTextures.POSITIONS_ABOVE
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Positions above"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -148,8 +192,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     POSITIONS_IN_FRONT {
-        override val customData: Int
-            get() = 6007
+        override val texture
+            get() = ArtifactItemsTextures.POSITIONS_IN_FRONT
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Positions in front"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -163,8 +211,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     POSITION_AROUND_FLAT {
-        override val customData: Int
-            get() = 6008
+        override val texture
+            get() = ArtifactItemsTextures.POSITION_AROUND_FLAT
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Flat positions around"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -181,8 +233,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     ENTITIES_AROUND {
-        override val customData: Int
-            get() = 6008
+        override val texture
+            get() = ArtifactItemsTextures.ENTITIES_AROUND
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Entities around entities"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -197,8 +253,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
     },
     DOWN_DIRECTION {
-        override val customData: Int
-            get() = 6009
+        override val texture
+            get() = ArtifactItemsTextures.DOWN_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Down direction"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -210,8 +270,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     UP_DIRECTION {
-        override val customData: Int
-            get() = 6010
+        override val texture
+            get() = ArtifactItemsTextures.UP_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Up direction"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -223,8 +287,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     INVERT_DIRECTION {
-        override val customData: Int
-            get() = 6011
+        override val texture
+            get() = ArtifactItemsTextures.INVERT_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Invert directions"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -236,8 +304,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     MULTIPLY_DIRECTION {
-        override val customData: Int
-            get() = 6012
+        override val texture
+            get() = ArtifactItemsTextures.MULTIPLY_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Multiply directions"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -249,8 +321,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
         }
     },
     DIVIDE_DIRECTION {
-        override val customData: Int
-            get() = 6013
+        override val texture
+            get() = ArtifactItemsTextures.DIVIDE_DIRECTION
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Divide directions"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -258,12 +334,16 @@ enum class BasicInputRunes : ArtifactInputInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.vectors = input.vectors.map { it.multiply(1 / inputRune.amount) }
+            input.vectors = input.vectors.map { it.multiply(1f / (inputRune.amount + 1)) }
         }
     },
     NONE {
-        override val customData: Int
-            get() = 4999
+        override val texture
+            get() = ArtifactItemsTextures.NONE
+
+        override val itemStack: ItemStack = run {
+            Utils.buildItemStack(Component.text("Void"), Material.IRON_NUGGET, texture.customData)
+        }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
@@ -276,7 +356,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
     };
 
     companion object {
-        private val map = BasicInputRunes.values().associateBy(BasicInputRunes::customData)
+        private val map = BasicInputRunes.values().associateBy { it.texture.customData }
         fun getInputRune(itemStack: ItemStack?): BasicInputRunes? {
             if (itemStack == null) {
                 return null
@@ -288,6 +368,8 @@ enum class BasicInputRunes : ArtifactInputInterface {
             }
         }
     }
-    abstract val customData: Int
+
+    abstract val texture: ArtifactItemsTextures
+    abstract val itemStack: ItemStack
 
 }

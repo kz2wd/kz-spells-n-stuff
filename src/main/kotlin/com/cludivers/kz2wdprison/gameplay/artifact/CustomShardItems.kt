@@ -5,81 +5,79 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-enum class CustomShardItems : CustomItem {
+enum class CustomShardItems {
     SHARDS {
-        override val flag: Int = 10000
+        override val texture = ArtifactItemsTextures.SHARDS
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Shards"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Shards"), Material.IRON_NUGGET, texture.customData)
         }
     },
     FIRE_SPARK {
-        override val flag: Int = 10001
+        override val texture = ArtifactItemsTextures.FIRE_SPARK
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Fire Spark"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Fire Spark"), Material.IRON_NUGGET, texture.customData)
 
         }
     },
     LIGHTNING_SPARK {
-        override val flag: Int = 10002
+        override val texture = ArtifactItemsTextures.LIGHTNING_SPARK
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Lighting Spark"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Lighting Spark"), Material.IRON_NUGGET, texture.customData)
         }
     },
     UP_RUNE {
-        override val flag: Int = 10003
+        override val texture = ArtifactItemsTextures.UP_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Up Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Up Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     DOWN_RUNE {
-        override val flag: Int = 10004
+        override val texture = ArtifactItemsTextures.DOWN_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Down Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Down Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     LEFT_RUNE {
-        override val flag: Int = 10005
+        override val texture = ArtifactItemsTextures.LEFT_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Left Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Left Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     RIGHT_RUNE {
-        override val flag: Int = 10006
+        override val texture = ArtifactItemsTextures.RIGHT_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Right Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Right Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     FRONT_RUNE {
-        override val flag: Int = 10007
+        override val texture = ArtifactItemsTextures.FRONT_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Front Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Front Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     BACK_RUNE {
-        override val flag: Int = 10008
+        override val texture = ArtifactItemsTextures.BACK_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Back Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Back Rune"), Material.IRON_NUGGET, texture.customData)
         }
     },
     MOVE_RUNE {
-        override val flag: Int = 10009
+        override val texture = ArtifactItemsTextures.MOVE_RUNE
         override val itemStack: ItemStack = run {
-            buildItemStack(Component.text("Move Rune"), Material.IRON_NUGGET, flag)
+            buildItemStack(Component.text("Move Rune"), Material.IRON_NUGGET, texture.customData)
         }
     }
-
     ;
 
     companion object {
-        private val allCustomItems: MutableMap<ItemStack, CustomItem> =
+        private val allCustomItems: MutableMap<ItemStack, CustomShardItems> =
             CustomShardItems.values().associateBy(CustomShardItems::itemStack).toMutableMap()
 
-        fun getCustomItemStack(itemStack: ItemStack): CustomItem? {
+        fun getCustomItemStack(itemStack: ItemStack): CustomShardItems? {
             return allCustomItems[itemStack]
         }
     }
 
-    // Flag must be unique for each custom item
-    protected abstract val flag: Int
+    protected abstract val texture: ArtifactItemsTextures
     abstract val itemStack: ItemStack
 }

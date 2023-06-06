@@ -3,7 +3,6 @@ package com.cludivers.kz2wdprison.gameplay.commands.artifact
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
-import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import com.cludivers.kz2wdprison.gameplay.utils.Utils.buildItemStack
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -18,7 +17,7 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
         }
 
         BasicInputRunes.values()
-            .map { Utils.buildItemStack(Component.text("Input : ${it.name}"), Material.DISPENSER, it.customData) }
+            .map { it.itemStack }
             .forEach {
                 sender.player?.inventory?.addItem(it.asQuantity(32))
             }
