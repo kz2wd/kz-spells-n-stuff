@@ -11,5 +11,5 @@ commands:
     description: nation utility
   artifact:
     description: artifact utility
-  item:
-    description: item utility
+  intrinsic:
+    description: intrinsic utility

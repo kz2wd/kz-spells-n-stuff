@@ -2,6 +2,7 @@ package com.cludivers.kz2wdprison.framework.persistance.beans.player
 
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import jakarta.persistence.*
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.hibernate.Session
@@ -19,11 +20,14 @@ class AttributeItem {
 
 
     @ElementCollection
-    var attributesRepartition: MutableMap<IntrinsicAttributes, Int> = mutableMapOf()
+    var attributesRepartition: MutableMap<IntrinsicAttributes, Int> =
+        IntrinsicAttributes.values().associateWith { 1 }.toMutableMap()
 
 
     @Convert(converter = ItemStackConverter::class)
     var linkedItemStack: ItemStack? = null
+
+    var isEquiped: Boolean = false
 
     companion object {
         val AttributeItems: MutableMap<ItemStack, AttributeItem> = mutableMapOf()
@@ -54,38 +58,39 @@ class AttributeItem {
      *
      * @return amount of shards in excess
      */
-    fun addShardPower(player: Player, playerData: PlayerBean, addedShardPower: Int): Int {
+    fun addShardPower(player: Player, addedShardPower: Int): Int {
         val amountAvailable = maxShardPower - shardPowerStored
         val addedAmount = min(amountAvailable, addedShardPower)
         shardPowerStored += addedAmount
 
-        increasePlayerAttributes(player, playerData, addedAmount)
+        if (isEquiped)
+            increasePlayerAttributes(player, addedAmount)
 
         return addedShardPower - addedAmount
     }
 
-    private fun increasePlayerAttributes(player: Player, playerData: PlayerBean, addedAmount: Int) {
+    fun increasePlayerAttributes(player: Player, addedAmount: Int) {
         val sum = attributesRepartition.values.sum()
 
         attributesRepartition.forEach {
             player.getAttribute(it.key.relatedAttribute)?.baseValue =
                 player.getAttribute(it.key.relatedAttribute)?.baseValue?.plus(
-                    it.key.intrinsicToGenericValue(it.value / sum * addedAmount)
+                    it.key.intrinsicToGenericValue(it.value.toDouble() / sum * addedAmount)
                 )!!
+
         }
-        playerData.intrinsic.updatePlayer(player)
     }
 
-    private fun decreasePlayerAttributes(player: Player, playerData: PlayerBean, removedAmount: Int) {
+    private fun decreasePlayerAttributes(player: Player, removedAmount: Int) {
         val sum = attributesRepartition.values.sum()
 
         attributesRepartition.forEach {
             player.getAttribute(it.key.relatedAttribute)?.baseValue =
                 player.getAttribute(it.key.relatedAttribute)?.baseValue?.minus(
-                    it.key.intrinsicToGenericValue(it.value / sum * removedAmount)
+                    it.key.intrinsicToGenericValue(it.value.toDouble() / sum * removedAmount)
                 )!!
+            player.sendMessage(Component.text("DEC ${it.key} : ${player.getAttribute(it.key.relatedAttribute)?.baseValue}"))
         }
-        playerData.intrinsic.updatePlayer(player)
     }
 
 
@@ -93,11 +98,11 @@ class AttributeItem {
      * WARNING : need to be in transaction
      * Do not use this function with negative number
      */
-    fun reduceShardPower(player: Player, playerData: PlayerBean, removedShardPower: Int) {
+    fun reduceShardPower(player: Player, removedShardPower: Int) {
         val reductionAmount = min(shardPowerStored, removedShardPower)
         shardPowerStored -= reductionAmount
-
-        decreasePlayerAttributes(player, playerData, reductionAmount)
+        if (isEquiped)
+            decreasePlayerAttributes(player, reductionAmount)
 
     }
 
@@ -106,11 +111,17 @@ class AttributeItem {
     }
 
     fun equip(player: Player, playerData: PlayerBean) {
-        increasePlayerAttributes(player, playerData, shardPowerStored)
+        if (isEquiped) return
+        isEquiped = true
+        playerData.equipedAttributeItem.add(this)
+        increasePlayerAttributes(player, shardPowerStored)
     }
 
     fun unequip(player: Player, playerData: PlayerBean) {
-        decreasePlayerAttributes(player, playerData, shardPowerStored)
+        if (!isEquiped) return
+        isEquiped = false
+        playerData.equipedAttributeItem.remove(this)
+        decreasePlayerAttributes(player, shardPowerStored)
     }
 
 }

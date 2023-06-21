@@ -11,5 +11,6 @@ object ListenersDeclaration {
         pluginManager.registerEvents(NationListener(session), plugin)
         pluginManager.registerEvents(MenuListener, plugin)
         pluginManager.registerEvents(ArtifactListener(session), plugin)
+        pluginManager.registerEvents(ShardListener(session), plugin)
     }
 }

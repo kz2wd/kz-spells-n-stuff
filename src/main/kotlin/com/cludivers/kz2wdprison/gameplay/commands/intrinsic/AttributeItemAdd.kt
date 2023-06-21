@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.commands.attribute
+package com.cludivers.kz2wdprison.gameplay.commands.intrinsic
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
@@ -31,7 +31,7 @@ class AttributeItemAdd(parentName: String, private val session: Session) : SubCo
 
         item.linkedItemStack = sender.inventory.itemInMainHand.clone()
         AttributeItem.registerAttributeItem(item, item.linkedItemStack!!)
-        sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouvel artefact à été lié avec l'objet dans votre main !"))
+        sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouveau équipement à été lié avec l'objet dans votre main !"))
         session.persist(item)
         session.transaction.commit()
 

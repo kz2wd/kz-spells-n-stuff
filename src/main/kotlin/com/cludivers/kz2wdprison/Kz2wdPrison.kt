@@ -4,8 +4,7 @@ import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationH
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.attribute.AttributeItemAdd
-import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
+import com.cludivers.kz2wdprison.gameplay.commands.intrinsic.*
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
@@ -29,18 +28,24 @@ class Kz2wdPrison : JavaPlugin() {
         NationDeclaration.declare(this, session)
         ArtifactDeclaration.declare(this, session)
 
-        BonusXpEvent.start(this)
 
         AttributeItem.initPersistentArtifactComplexRune(session)
-        val attributeItemCommandName = "item"
+        val attributeItemCommandName = "intrinsic"
         val attributeItemCommandExecutor = MainCommandExecutor(
             mapOf(
                 "create" to AttributeItemAdd(attributeItemCommandName, session),
+                "help" to IntrinsicHelpCommand(attributeItemCommandName, session),
+                "fill" to AttributeItemFill(attributeItemCommandName, session),
+                "unfill" to AttributeItemUnfill(attributeItemCommandName, session),
+                "equip" to AttributeItemEquip(attributeItemCommandName, session),
+                "unequip" to AttributeItemUnequip(attributeItemCommandName, session),
+                "info" to AttributeItemInfo(attributeItemCommandName, session),
             )
         )
 
         this.getCommand(attributeItemCommandName)?.setExecutor(attributeItemCommandExecutor)
         this.getCommand(attributeItemCommandName)?.tabCompleter = attributeItemCommandExecutor
+
 
     }
 

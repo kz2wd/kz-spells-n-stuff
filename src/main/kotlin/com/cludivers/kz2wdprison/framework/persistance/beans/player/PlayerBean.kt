@@ -34,6 +34,23 @@ class PlayerBean {
     @ManyToOne
     var permissionGroup: PermissionGroup? = null
 
+    @OneToMany
+    var equipedAttributeItem: MutableList<AttributeItem> = mutableListOf()
+
+    fun recomputePlayerIntrinsic(player: Player) {
+        IntrinsicAttributes.values().forEach {
+            recomputePlayerIntrinsic(player, it)
+        }
+        equipedAttributeItem.forEach {
+            it.increasePlayerAttributes(player, it.shardPowerStored)
+        }
+    }
+
+    fun recomputePlayerIntrinsic(player: Player, attribute: IntrinsicAttributes) {
+        player.getAttribute(attribute.relatedAttribute)?.baseValue =
+            attribute.intrinsicToGenericValue(intrinsic.attributes[attribute]!!)
+    }
+
     companion object {
         fun getPlayerPlayerBean(session: Session, player: Player): PlayerBean {
             var playerData = session
@@ -41,7 +58,7 @@ class PlayerBean {
                 .setParameter("uuid", player.uniqueId.toString())
                 .uniqueResult()
 
-            if (playerData == null){
+            if (playerData == null) {
                 playerData = PlayerBean()
                 playerData.uuid = player.uniqueId.toString()
                 session.persist(playerData)

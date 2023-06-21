@@ -1,6 +1,5 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
-import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -22,7 +21,9 @@ class ShardListener(private val session: Session) : Listener {
             event.player.sendMessage(Component.text("Rebonjour ${ChatColor.LIGHT_PURPLE}${event.player.name}"))
         }
         playerData.connectionAmount += 1
-        event.player.sendMessage(BonusXpEvent.getEventMessage())
+
+        playerData.recomputePlayerIntrinsic(event.player)
+
         transaction.commit()
 
         // Set resource pack
