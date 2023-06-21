@@ -3,6 +3,7 @@ package com.cludivers.kz2wdprison.framework.configuration
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.*
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
@@ -37,6 +38,7 @@ class HibernateConfigurationHandler {
                 PermissionGroup::class.java,
                 Artifact::class.java,
                 ArtifactComplexRune::class.java,
+                AttributeItem::class.java,
             )
 
             classes.forEach {

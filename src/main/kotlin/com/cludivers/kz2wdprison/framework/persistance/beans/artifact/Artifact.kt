@@ -55,19 +55,44 @@ class Artifact {
     var cooldown: Duration = Duration.ZERO
     var lastUsage: Instant? = null
 
-    fun activate(caster: Caster, inFlow: Int): Int {
+    var conductivity: Float = .5f
+
+    // Debuff logic down here
+    var levelToUse: Int = 0
+    var debuffStrength: Float = 1f
+    var debuffType: ArtifactDebuffs = ArtifactDebuffs.NONE
+
+
+    @Transient
+    var cooldownDebuff: Duration = Duration.ZERO
+
+    // Do not make this value go over 1f to ensures good behavior
+    @Transient
+    var conductivityDebuff: Float = 1f
+
+    fun activate(caster: Caster, inFlow: Float): Float {
+
+        cooldownDebuff = Duration.ZERO
+        conductivityDebuff = 1f
+
+        if (caster.getCasterLevel() < levelToUse) {
+            debuffType.applyDebuff(this, caster.getCasterLevel())
+        }
+
+        val currentFlow = inFlow * conductivity * conductivityDebuff
+
 
         if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown) {
-            return inFlow
+            return currentFlow
         }
         lastUsage = Instant.now()
 
-        val input = ArtifactInput(0)
+        val input = ArtifactInput(currentFlow)
         ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(inputRune, caster, input, mutableListOf())
 
         ArtifactRuneTypes.GENERIC_EFFECT_RUNE.triggerArtifactEffect(effectRune, input, caster.getSelf() as Player)
 
-        return 0
+        return 0f
     }
     fun generateEditorMenu(session: Session): StoringMenu {
         val inventorySize = 1 * 9

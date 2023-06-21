@@ -1,22 +1,14 @@
 package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.attributes.PlayerAttributesDeclaration
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactAddCommand
-import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactHelperCommand
-import com.cludivers.kz2wdprison.gameplay.commands.artifact.ArtifactInputRuneAddCommand
+import com.cludivers.kz2wdprison.gameplay.commands.attribute.AttributeItemAdd
 import com.cludivers.kz2wdprison.gameplay.event.BonusXpEvent
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -32,51 +24,29 @@ class Kz2wdPrison : JavaPlugin() {
         sessionFactory = HibernateConfigurationHandler.loadHibernateConfiguration(config)
         session = sessionFactory.openSession()
 
-        PlayerAttributesDeclaration.declare(this, session)
         ListenersDeclaration.declare(this, server.pluginManager, session)
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this, session)
+        ArtifactDeclaration.declare(this, session)
 
         BonusXpEvent.start(this)
 
-        Bukkit.addRecipe(getRecipe())
-
-        ArtifactComplexRune.initPersistentArtifactComplexRune(session)
-        Artifact.initPersistentArtifacts(session)
-
-        val artifactCommandName = "artifact"
-        val artifactCommandExecutor = MainCommandExecutor(
+        AttributeItem.initPersistentArtifactComplexRune(session)
+        val attributeItemCommandName = "item"
+        val attributeItemCommandExecutor = MainCommandExecutor(
             mapOf(
-                "runes" to ArtifactHelperCommand(artifactCommandName),
-                "create" to ArtifactAddCommand(artifactCommandName, session),
-                "create_input" to ArtifactInputRuneAddCommand(artifactCommandName, session),
+                "create" to AttributeItemAdd(attributeItemCommandName, session),
             )
         )
 
-        this.getCommand(artifactCommandName)?.setExecutor(artifactCommandExecutor)
-        this.getCommand(artifactCommandName)?.tabCompleter = artifactCommandExecutor
+        this.getCommand(attributeItemCommandName)?.setExecutor(attributeItemCommandExecutor)
+        this.getCommand(attributeItemCommandName)?.tabCompleter = attributeItemCommandExecutor
 
     }
 
     override fun onDisable() {
         session.close()
         sessionFactory.close()
-    }
-
-    private fun getRecipe(): ShapedRecipe {
-        val item = ItemStack(Material.GOLDEN_SWORD)
-        val meta = item.itemMeta
-        meta.setCustomModelData(1234567)
-        item.setItemMeta(meta)
-
-        val key = NamespacedKey(this, "custom_sword")
-        val recipe = ShapedRecipe(key, item)
-
-        recipe.shape(" B ", " B ", " R ")
-        recipe.setIngredient('B', Material.GOLD_BLOCK)
-        recipe.setIngredient('R', Material.BLAZE_ROD)
-
-        return recipe
     }
 
 }

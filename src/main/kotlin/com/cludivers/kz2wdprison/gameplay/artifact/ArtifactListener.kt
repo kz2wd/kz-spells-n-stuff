@@ -22,7 +22,7 @@ class ArtifactListener(private val session: Session): Listener {
             if (event.player.isSneaking) {
                 artifact.generateEditorMenu(session).open(event.player)
             } else {
-                artifact.activate(Caster.playerToCaster(event.player), 100)
+                artifact.activate(Caster.playerToCaster(event.player, session), 100f)
             }
             return
         }
