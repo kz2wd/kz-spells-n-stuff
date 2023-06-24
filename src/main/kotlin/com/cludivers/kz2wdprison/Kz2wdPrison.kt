@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.HibernateConfigurationHandler
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
+import com.cludivers.kz2wdprison.gameplay.attributes.namespaces.CustomNamespacesManager
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.commands.intrinsic.*
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
@@ -23,29 +23,26 @@ class Kz2wdPrison : JavaPlugin() {
         sessionFactory = HibernateConfigurationHandler.loadHibernateConfiguration(config)
         session = sessionFactory.openSession()
 
+        CustomNamespacesManager.initAllNamespacedKeys(this)
+
         ListenersDeclaration.declare(this, server.pluginManager, session)
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this, session)
         ArtifactDeclaration.declare(this, session)
 
-
-        AttributeItem.initPersistentArtifactComplexRune(session)
         val attributeItemCommandName = "intrinsic"
         val attributeItemCommandExecutor = MainCommandExecutor(
             mapOf(
-                "create" to AttributeItemAdd(attributeItemCommandName, session),
+                "create" to AttributeItemAdd(attributeItemCommandName),
                 "help" to IntrinsicHelpCommand(attributeItemCommandName, session),
-                "fill" to AttributeItemFill(attributeItemCommandName, session),
-                "unfill" to AttributeItemUnfill(attributeItemCommandName, session),
-                "equip" to AttributeItemEquip(attributeItemCommandName, session),
-                "unequip" to AttributeItemUnequip(attributeItemCommandName, session),
-                "info" to AttributeItemInfo(attributeItemCommandName, session),
+                "fill" to AttributeItemFill(attributeItemCommandName),
+                "unfill" to AttributeItemUnfill(attributeItemCommandName),
+                "info" to AttributeItemInfo(attributeItemCommandName),
             )
         )
 
         this.getCommand(attributeItemCommandName)?.setExecutor(attributeItemCommandExecutor)
         this.getCommand(attributeItemCommandName)?.tabCompleter = attributeItemCommandExecutor
-
 
     }
 

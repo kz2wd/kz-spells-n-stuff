@@ -36,8 +36,10 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
     @GeneratedValue
     var id: Long? = null
 
+    @Column(columnDefinition = "varbinary(500)")
     @Convert(converter = ItemStackConverter::class)
     var linkedItemStack: ItemStack? = null
+
 
     @ElementCollection(targetClass = ItemStack::class)
     @Convert(attributeName = "value", converter = ItemStackConverter::class)

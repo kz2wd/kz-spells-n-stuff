@@ -4,10 +4,7 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.Art
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
-import jakarta.persistence.Convert
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -17,6 +14,7 @@ import org.bukkit.inventory.ItemStack
 import org.hibernate.Session
 import java.time.Duration
 import java.time.Instant
+import kotlin.jvm.Transient
 
 @Entity
 class Artifact {
@@ -43,12 +41,15 @@ class Artifact {
     @GeneratedValue
     var id: Long? = null
 
+    @Column(columnDefinition = "varbinary(500)")
     @Convert(converter = ItemStackConverter::class)
     var linkedItemStack: ItemStack? = null
 
+    @Column(columnDefinition = "varbinary(500)")
     @Convert(converter = ItemStackConverter::class)
     var effectRune: ItemStack = defaultItemStack
 
+    @Column(columnDefinition = "varbinary(500)")
     @Convert(converter = ItemStackConverter::class)
     var inputRune: ItemStack = defaultItemStack
 

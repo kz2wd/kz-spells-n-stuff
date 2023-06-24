@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.commands.intrinsic
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.AttributeItem
+import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -8,9 +8,8 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class AttributeItemAdd(parentName: String, private val session: Session) : SubCommand(parentName) {
+class AttributeItemAdd(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false
@@ -20,21 +19,7 @@ class AttributeItemAdd(parentName: String, private val session: Session) : SubCo
             return false
         }
 
-        if (AttributeItem.isItemStackLinked(sender.inventory.itemInMainHand)) {
-            sender.sendMessage(Component.text("${ChatColor.GRAY}Cet objet est déjà lié. Essayez avec un autre."))
-            return false
-        }
-
-        session.beginTransaction()
-
-        val item = AttributeItem()
-
-        item.linkedItemStack = sender.inventory.itemInMainHand.clone()
-        AttributeItem.registerAttributeItem(item, item.linkedItemStack!!)
-        sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouveau équipement à été lié avec l'objet dans votre main !"))
-        session.persist(item)
-        session.transaction.commit()
-
+        AttributeItem.makeAttributeItem(sender.inventory.itemInMainHand)
         return true
     }
 
