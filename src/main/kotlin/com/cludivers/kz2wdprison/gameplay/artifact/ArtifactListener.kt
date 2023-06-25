@@ -8,6 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.ItemDespawnEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
@@ -36,6 +37,7 @@ class ArtifactListener : Listener {
 
     @EventHandler
     fun triggerAttackArtifact(event: EntityDamageByEntityEvent) {
+
         if (event.damager is Player) {
             val attacker = (event.damager as Player)
             val artifact: Artifact? = Artifact.getArtifact(attacker.inventory.itemInMainHand)
@@ -64,7 +66,16 @@ class ArtifactListener : Listener {
                     )
                 }
             }
-
         }
+    }
+
+    @EventHandler
+    fun onItemLinkedDestroyed(event: ItemDespawnEvent) {
+        val artifact = Artifact.getArtifact(event.entity.itemStack)
+        if (artifact != null) {
+            Artifact.deleteArtifact(artifact)
+        }
+
+
     }
 }

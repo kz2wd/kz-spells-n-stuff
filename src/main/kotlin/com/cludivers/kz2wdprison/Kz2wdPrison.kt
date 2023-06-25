@@ -26,7 +26,7 @@ class Kz2wdPrison : JavaPlugin() {
 
         CustomNamespacesManager.initAllNamespacedKeys(this)
 
-        ListenersDeclaration.declare(this, server.pluginManager)
+        ListenersDeclaration.declare(this, server)
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this)
         ArtifactDeclaration.declare(this)

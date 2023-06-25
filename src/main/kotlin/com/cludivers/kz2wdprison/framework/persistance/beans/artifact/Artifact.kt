@@ -33,6 +33,14 @@ class Artifact {
                 .uniqueResult()
         }
 
+        fun deleteArtifact(artifact: Artifact) {
+            HibernateSession.session
+                .createQuery("delete from Artifact A where id = :id", Artifact::class.java)
+                .setParameter("id", artifact.id)
+                .executeUpdate()
+
+        }
+
         fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK) {
             HibernateSession.session.beginTransaction()
             val artifact = Artifact()

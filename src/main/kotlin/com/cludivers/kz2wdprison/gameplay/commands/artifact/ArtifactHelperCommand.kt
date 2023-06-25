@@ -5,6 +5,7 @@ import com.cludivers.kz2wdprison.gameplay.artifact.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.utils.Utils.buildItemStack
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -15,19 +16,20 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
         if (sender !is Player) {
             return false
         }
+        val inventory = Bukkit.createInventory(sender, 9 * 6, Component.text("Runes"))
 
         BasicInputRunes.values()
             .map { it.itemStack }
             .forEach {
-                sender.player?.inventory?.addItem(it.asQuantity(32))
+                inventory.addItem(it.asQuantity(32))
             }
 
         CustomShardItems.values().map { it.itemStack }.forEach {
-            sender.player?.inventory?.addItem(it.asQuantity(32))
+            inventory.addItem(it.asQuantity(32))
         }
 
-        sender.player?.inventory?.addItem(buildItemStack(Component.text("Artifact wand"), Material.STICK, 1234567))
-
+        inventory.addItem(buildItemStack(Component.text("Artifact wand"), Material.STICK, 1234567))
+        sender.openInventory(inventory)
         return true
     }
 

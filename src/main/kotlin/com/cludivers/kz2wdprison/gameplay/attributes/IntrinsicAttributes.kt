@@ -20,7 +20,7 @@ enum class IntrinsicAttributes {
             get() = "Agilité"
 
         override fun intrinsicToGenericValue(value: Double): Double {
-            return value * 0.05
+            return value * 0.001
         }
     },
     STRENGTH {
