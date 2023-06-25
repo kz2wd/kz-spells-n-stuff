@@ -8,9 +8,8 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class ArtifactAddCommand(parentName: String, private val session: Session) : SubCommand(parentName) {
+class ArtifactAddCommand(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false
@@ -20,19 +19,8 @@ class ArtifactAddCommand(parentName: String, private val session: Session) : Sub
             return false
         }
 
-        if (Artifact.isItemStackLinked(sender.inventory.itemInMainHand)) {
-            sender.sendMessage(Component.text("${ChatColor.GRAY}Cet objet est déjà lié. Essayez avec un autre."))
-            return false
-        }
-
-        session.beginTransaction()
-
-        val artifact = Artifact()
-        artifact.linkedItemStack = sender.inventory.itemInMainHand.clone()
-        Artifact.registerArtifact(artifact, artifact.linkedItemStack!!)
+        Artifact.createArtifact(sender.inventory.itemInMainHand)
         sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouvel artefact à été lié avec l'objet dans votre main !"))
-        session.persist(artifact)
-        session.transaction.commit()
 
         return true
     }

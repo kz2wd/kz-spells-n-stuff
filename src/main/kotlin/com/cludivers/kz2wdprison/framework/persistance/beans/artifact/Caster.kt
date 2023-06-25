@@ -6,7 +6,6 @@ import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
 interface Caster {
     fun getLocation(): Location
@@ -24,7 +23,7 @@ interface Caster {
     fun getCasterLevel(): Int
 
     companion object {
-        fun playerToCaster(player: Player, session: Session): Caster {
+        fun playerToCaster(player: Player): Caster {
             return object : Caster {
                 override fun getLocation(): Location {
                     return player.location
@@ -51,7 +50,7 @@ interface Caster {
                 }
 
                 override fun getCasterLevel(): Int {
-                    return player.getData(session).intrinsic.skills[PlayerSkills.ARTIFACT_MASTERY] ?: 0
+                    return player.getData().intrinsic.skills[PlayerSkills.ARTIFACT_MASTERY] ?: 0
                 }
             }
         }

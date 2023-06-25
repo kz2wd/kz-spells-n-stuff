@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import jakarta.persistence.*
 import org.bukkit.Chunk
-import org.hibernate.Session
 
 @Entity
 class ChunkBean {
@@ -20,27 +20,28 @@ class ChunkBean {
 
     companion object {
 
-        fun getChunkBean(session: Session, chunk: Chunk): ChunkBean {
-            return getChunkBean(session, chunk.x, chunk.z)
+        fun getChunkBean(chunk: Chunk): ChunkBean {
+            return getChunkBean(chunk.x, chunk.z)
         }
-        fun getChunkBean(session: Session, x: Int, z: Int): ChunkBean {
-            val chunk = session
+
+        fun getChunkBean(x: Int, z: Int): ChunkBean {
+            val chunk = HibernateSession.session
                 .createQuery("from ChunkBean C where C.xCoord = :x AND C.zCoord = :z", ChunkBean::class.java)
                 .setParameter("x", x)
                 .setParameter("z", z)
                 .uniqueResult()
 
-            if (chunk is ChunkBean){
+            if (chunk is ChunkBean) {
                 return chunk
             }
 
             // Add the chunk
-            session.beginTransaction()
+            HibernateSession.session.beginTransaction()
             val chunkToAdd = ChunkBean()
             chunkToAdd.xCoord = x
             chunkToAdd.zCoord = z
-            session.persist(chunkToAdd)
-            session.transaction.commit()
+            HibernateSession.session.persist(chunkToAdd)
+            HibernateSession.session.transaction.commit()
             return chunkToAdd
         }
     }

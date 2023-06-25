@@ -9,9 +9,8 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class ArtifactInputRuneAddCommand(parentName: String, private val session: Session) : SubCommand(parentName) {
+class ArtifactInputRuneAddCommand(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false
@@ -21,20 +20,9 @@ class ArtifactInputRuneAddCommand(parentName: String, private val session: Sessi
             return false
         }
 
-        if (ArtifactComplexRune.isItemStackLinked(sender.inventory.itemInMainHand)) {
-            sender.sendMessage(Component.text("${ChatColor.GRAY}Cet objet est déjà lié. Essayez avec un autre."))
-            return false
-        }
-
-        session.beginTransaction()
-
-        val artifactComplexInput = ArtifactComplexRune()
-        artifactComplexInput.runeType = ArtifactRuneTypes.GENERIC_INPUT_RUNE
-        artifactComplexInput.linkedItemStack = sender.inventory.itemInMainHand.clone()
-        ArtifactComplexRune.registerArtifactComplexRune(artifactComplexInput, artifactComplexInput.linkedItemStack!!)
+        ArtifactComplexRune.createComplexRune(sender.inventory.itemInMainHand, ArtifactRuneTypes.GENERIC_INPUT_RUNE)
         sender.sendMessage(Component.text("${ChatColor.GREEN}Une nouvelle source d'artefact à été lié avec l'objet dans votre main !"))
-        session.persist(artifactComplexInput)
-        session.transaction.commit()
+
 
         return true
     }

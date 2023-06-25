@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
-import org.hibernate.Session
 
 @Entity
 class AreaPermission {
@@ -19,24 +19,25 @@ class AreaPermission {
     
     companion object {
 
-        fun getPersistentDefaultPermissions(session: Session): AreaPermission {
+        fun getPersistentDefaultPermissions(): AreaPermission {
             val perm = AreaPermission()
-            session.persist(perm)
-            return perm
-        }
-        fun getPersistentCitizenPermissions(session: Session): AreaPermission {
-            val perm = AreaPermission()
-            session.persist(perm)
+            HibernateSession.session.persist(perm)
             return perm
         }
 
-        fun getPersistentOfficerPermissions(session: Session): AreaPermission {
+        fun getPersistentCitizenPermissions(): AreaPermission {
+            val perm = AreaPermission()
+            HibernateSession.session.persist(perm)
+            return perm
+        }
+
+        fun getPersistentOfficerPermissions(): AreaPermission {
             val areaPermission = AreaPermission()
             areaPermission.canBreak = true
             areaPermission.canPlace = true
             areaPermission.canAttackPlayer = true
             areaPermission.canAttackFriendlyMob = true
-            session.persist(areaPermission)
+            HibernateSession.session.persist(areaPermission)
             return areaPermission
         }
 

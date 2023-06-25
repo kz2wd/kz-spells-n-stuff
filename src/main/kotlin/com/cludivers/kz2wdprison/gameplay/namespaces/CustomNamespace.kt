@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.attributes.namespaces
+package com.cludivers.kz2wdprison.gameplay.namespaces
 
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.meta.ItemMeta

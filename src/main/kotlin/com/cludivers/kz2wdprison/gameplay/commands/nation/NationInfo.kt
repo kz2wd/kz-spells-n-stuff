@@ -7,16 +7,15 @@ import com.cludivers.kz2wdprison.gameplay.player.sendNotificationMessage
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class NationInfo(parentName: String, val session: Session) : SubCommand(parentName ){
+class NationInfo(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (sender !is Player){
+        if (sender !is Player) {
             return false
         }
 
-        val nation = sender.getData(session).nation
-        if (nation is NationBean){
+        val nation = sender.getData().nation
+        if (nation is NationBean) {
             sender.sendNotificationMessage(nation.description())
         } else {
             sender.sendNotificationMessage("Vous n'appartenez à aucune nation.")

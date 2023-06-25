@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.attributes
 
-import com.cludivers.kz2wdprison.gameplay.attributes.namespaces.CustomNamespaces
-import com.cludivers.kz2wdprison.gameplay.attributes.namespaces.CustomNamespacesManager
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
 import org.bukkit.attribute.AttributeModifier

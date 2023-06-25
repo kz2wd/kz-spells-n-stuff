@@ -1,8 +1,11 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import jakarta.persistence.*
 import net.kyori.adventure.text.Component
@@ -11,7 +14,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.hibernate.Session
 import java.time.Duration
 import java.time.Instant
 import kotlin.jvm.Transient
@@ -22,18 +24,24 @@ class Artifact {
     companion object {
         val defaultItemStack = ItemStack(Material.AIR)
 
-        val artifacts: MutableMap<ItemStack, Artifact> = mutableMapOf()
-        fun registerArtifact(artifact: Artifact, itemStack: ItemStack) {
-            artifacts[itemStack] = artifact
+        fun getArtifact(itemStack: ItemStack): Artifact? {
+            val uuid =
+                CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.getData(itemStack.itemMeta) ?: return null
+            return HibernateSession.session
+                .createQuery("from Artifact A where A.id = :uuid", Artifact::class.java)
+                .setParameter("uuid", uuid.toString())
+                .uniqueResult()
         }
 
-        fun isItemStackLinked(item: ItemStack): Boolean {
-            return artifacts.containsKey(item)
-        }
-
-        fun initPersistentArtifacts(session: Session) {
-            val artifacts = session.createQuery("from Artifact A", Artifact::class.java).list()
-            artifacts.filter { it.linkedItemStack != null }.forEach { registerArtifact(it, it.linkedItemStack!!) }
+        fun createArtifact(item: ItemStack) {
+            HibernateSession.session.beginTransaction()
+            val artifact = Artifact()
+            artifact.linkedItemStack = item
+            HibernateSession.session.persist(artifact)
+            val meta = item.itemMeta
+            CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.setData(meta, artifact.id!!.toInt())
+            item.itemMeta = meta
+            HibernateSession.session.transaction.commit()
         }
     }
 
@@ -95,7 +103,8 @@ class Artifact {
 
         return 0f
     }
-    fun generateEditorMenu(session: Session): StoringMenu {
+
+    fun generateEditorMenu(): StoringMenu {
         val inventorySize = 1 * 9
         val effectSlot = 8
         val inputSlot = 0
@@ -120,14 +129,13 @@ class Artifact {
             }
 
             override fun close(player: Player) {
-                session.beginTransaction()
+                HibernateSession.session.beginTransaction()
                 inputRune = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
                 effectRune = player.openInventory.topInventory.getItem(effectSlot) ?: defaultItemStack
-                session.transaction.commit()
+                HibernateSession.session.transaction.commit()
             }
         }
 
         return editor
     }
-
 }

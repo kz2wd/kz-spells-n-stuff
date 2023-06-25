@@ -1,20 +1,18 @@
 package com.cludivers.kz2wdprison.gameplay.commands.nation
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.player.createNation
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class CreateNation(parentName: String, val session: Session) : SubCommand(parentName) {
+class CreateNation(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        if (sender !is Player){
+        if (sender !is Player) {
             return false
         }
 
-        sender.createNation(session)
+        sender.createNation()
         return true
     }
 

@@ -148,7 +148,8 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
     },
     COMPLEX {
         override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            val artifactComplexEffect = ArtifactComplexRune.artifactComplexRunes[itemStack] ?: return
+            val artifactComplexEffect = ArtifactComplexRune.getComplexRune(itemStack) ?: return
+
             if (artifactComplexEffect.runeType != ArtifactRuneTypes.GENERIC_EFFECT_RUNE) {
                 return
             }
@@ -369,7 +370,7 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
 
         fun getEffectType(itemStack: ItemStack): BasicArtifactEffects {
 
-            if (ArtifactComplexRune.isItemStackLinked(itemStack)) {
+            if (ArtifactComplexRune.getComplexRune(itemStack) != null) {
                 return COMPLEX
             }
             if (CustomShardItems.getCustomItemStack(itemStack) != null) {

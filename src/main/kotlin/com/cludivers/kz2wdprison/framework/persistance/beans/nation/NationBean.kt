@@ -1,14 +1,8 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
-import org.hibernate.Session
+import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.sql.Date
 
@@ -80,7 +74,7 @@ class NationBean {
         return null
     }
 
-    fun delete(session: Session){
+    fun delete() {
         this.owner!!.nation = null
         this.residents!!.forEach { group ->
             group.players!!.forEach {
@@ -89,10 +83,10 @@ class NationBean {
             }
             val areaPerm = group.areaPermission
             group.areaPermission = null
-            session.remove(areaPerm)
+            HibernateSession.session.remove(areaPerm)
             val nationPerm = group.nationPermission
             group.nationPermission = null
-            session.remove(nationPerm)
+            HibernateSession.session.remove(nationPerm)
         }
         this.chunks!!.forEach {
             it.nation = null
@@ -100,21 +94,21 @@ class NationBean {
     }
 
     companion object {
-        fun instantiateAndPersistDefaultNation(session: Session, owner: PlayerBean, name: String): NationBean {
+        fun instantiateAndPersistDefaultNation(owner: PlayerBean, name: String): NationBean {
             val nation = NationBean()
             nation.owner = owner
             nation.name = name
 
-            nation.defaultAreaRules = AreaPermission.getPersistentDefaultPermissions(session)
+            nation.defaultAreaRules = AreaPermission.getPersistentDefaultPermissions()
 
             nation.residents = mutableListOf(
-                PermissionGroup.getPersistentDefaultCitizenPermissionGroup(session),
-                PermissionGroup.getPersistentDefaultOfficerPermissionGroup(session)
+                PermissionGroup.getPersistentDefaultCitizenPermissionGroup(),
+                PermissionGroup.getPersistentDefaultOfficerPermissionGroup()
             )
             nation.chunks = mutableListOf()
             nation.level = 1
             nation.plots = mutableListOf()
-            session.persist(nation)
+            HibernateSession.session.persist(nation)
 
             return nation
         }

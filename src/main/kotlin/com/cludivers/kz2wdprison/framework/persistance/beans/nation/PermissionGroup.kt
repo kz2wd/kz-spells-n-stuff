@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import jakarta.persistence.*
 import org.bukkit.Bukkit
-import org.hibernate.Session
 import java.util.*
 
 @Entity
@@ -29,21 +29,21 @@ class PermissionGroup {
 
     companion object {
 
-        fun getPersistentDefaultCitizenPermissionGroup(session: Session): PermissionGroup {
+        fun getPersistentDefaultCitizenPermissionGroup(): PermissionGroup {
             val group = PermissionGroup()
             group.name = "Citoyens"
-            group.areaPermission = AreaPermission.getPersistentCitizenPermissions(session)
-            group.nationPermission = NationPermission.getPersistentCitizenPermissions(session)
-            session.persist(group)
+            group.areaPermission = AreaPermission.getPersistentCitizenPermissions()
+            group.nationPermission = NationPermission.getPersistentCitizenPermissions()
+            HibernateSession.session.persist(group)
             return group
         }
 
-        fun getPersistentDefaultOfficerPermissionGroup(session: Session): PermissionGroup {
+        fun getPersistentDefaultOfficerPermissionGroup(): PermissionGroup {
             val group = PermissionGroup()
             group.name = "Officers"
-            group.areaPermission = AreaPermission.getPersistentOfficerPermissions(session)
-            group.nationPermission = NationPermission.getPersistentOfficerPermissions(session)
-            session.persist(group)
+            group.areaPermission = AreaPermission.getPersistentOfficerPermissions()
+            group.nationPermission = NationPermission.getPersistentOfficerPermissions()
+            HibernateSession.session.persist(group)
             return group
         }
 

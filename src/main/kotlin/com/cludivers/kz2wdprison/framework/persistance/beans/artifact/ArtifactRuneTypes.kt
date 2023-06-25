@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.ArtifactEffectInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.BasicArtifactEffects
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
@@ -13,7 +14,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.hibernate.Session
 
 enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
     GENERIC_INPUT_RUNE {
@@ -23,14 +23,18 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
+            if (inputRune.itemMeta == null) {
+                return
+            }
+
             val basicRune = BasicInputRunes.getInputRune(inputRune)
             if (basicRune != null) {
                 basicRune.enrichArtifactInput(inputRune, caster, input, inputsTrace)
                 return
             }
 
-            // If it is not a basic input type :
-            val complexRune = ArtifactComplexRune.artifactComplexRunes[inputRune]
+            // If it is not a basic input type :s
+            val complexRune = ArtifactComplexRune.getComplexRune(inputRune)
             if (complexRune == null || complexRune.runeType != GENERIC_INPUT_RUNE) {
                 return
             }
@@ -57,7 +61,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
     },
     NONE;
 
-    open fun generateEditorMenu(session: Session, complexRune: ArtifactComplexRune): StoringMenu {
+    open fun generateEditorMenu(complexRune: ArtifactComplexRune): StoringMenu {
         val inventorySize = 5 * 9
         val itemStackSlots = (1 until inventorySize - 9)
         // Keep it there, I'll need it later
@@ -86,11 +90,11 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
             }
 
             override fun close(player: Player) {
-                session.beginTransaction()
+                HibernateSession.session.beginTransaction()
                 complexRune.stockedItemStack = itemStackSlots.associateWith {
                     player.openInventory.topInventory.getItem(it)
                 }.filter { it.value != null } as Map<Int, ItemStack>
-                session.transaction.commit()
+                HibernateSession.session.transaction.commit()
             }
         }
 
@@ -109,4 +113,6 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
     ) {
         // Do nothing
     }
+
+
 }

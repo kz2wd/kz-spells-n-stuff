@@ -6,9 +6,8 @@ import net.kyori.adventure.text.Component
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
-class IntrinsicHelpCommand(parentName: String, val session: Session) : SubCommand(parentName) {
+class IntrinsicHelpCommand(parentName: String) : SubCommand(parentName) {
 
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
@@ -16,7 +15,7 @@ class IntrinsicHelpCommand(parentName: String, val session: Session) : SubComman
         if (sender !is Player) {
             return false
         }
-        val playerData = sender.getData(session)
+        val playerData = sender.getData()
 
         sender.sendMessage(Component.text(playerData.intrinsic.attributes.map { "${it.key} : ${it.value}" }
             .joinToString("\n")))

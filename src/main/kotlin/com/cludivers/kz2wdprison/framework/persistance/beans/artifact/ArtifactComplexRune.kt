@@ -1,35 +1,41 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.ArtifactEffectInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputInterface
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
+import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import jakarta.persistence.*
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import org.hibernate.Session
 
 @Entity
 class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
 
     companion object {
-        val artifactComplexRunes: MutableMap<ItemStack, ArtifactComplexRune> = mutableMapOf()
-
-        fun registerArtifactComplexRune(rune: ArtifactComplexRune, itemStack: ItemStack) {
-            artifactComplexRunes[itemStack] = rune
+        fun getComplexRune(itemStack: ItemStack): ArtifactComplexRune? {
+            val uuid =
+                CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.getData(itemStack.itemMeta)
+                    ?: return null
+            return HibernateSession.session
+                .createQuery("from ArtifactComplexRune A where A.id = :uuid", ArtifactComplexRune::class.java)
+                .setParameter("uuid", uuid.toString())
+                .uniqueResult()
         }
 
-        fun isItemStackLinked(item: ItemStack): Boolean {
-            return artifactComplexRunes.containsKey(item)
+        fun createComplexRune(item: ItemStack, type: ArtifactRuneTypes) {
+            HibernateSession.session.beginTransaction()
+            val artifact = ArtifactComplexRune()
+            artifact.linkedItemStack = item
+            artifact.runeType = type
+            HibernateSession.session.persist(artifact)
+            val meta = item.itemMeta
+            CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.setData(meta, artifact.id!!.toInt())
+            item.itemMeta = meta
+            HibernateSession.session.transaction.commit()
         }
-
-        fun initPersistentArtifactComplexRune(session: Session) {
-            val artifactComplexInputs =
-                session.createQuery("from ArtifactComplexRune A", ArtifactComplexRune::class.java).list()
-            artifactComplexInputs.filter { it.linkedItemStack != null }
-                .forEach { registerArtifactComplexRune(it, it.linkedItemStack!!) }
-        }
-
     }
 
     @Id

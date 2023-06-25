@@ -1,8 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.ChunkBean
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
+import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.addInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.removeInvitation
@@ -14,19 +15,19 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
-import org.hibernate.Session
 
 
-fun Player.getData(session: Session): PlayerBean {
-    var playerData = session
+fun Player.getData(): PlayerBean {
+
+    var playerData = HibernateSession.session
         .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
         .setParameter("uuid", this.uniqueId.toString())
         .uniqueResult()
 
-    if (playerData == null){
+    if (playerData == null) {
         playerData = PlayerBean()
         playerData.uuid = this.uniqueId.toString()
-        session.persist(playerData)
+        HibernateSession.session.persist(playerData)
     }
 
     return playerData
@@ -76,35 +77,35 @@ fun Player.sendConfirmationMessage(text: String, onAccept: String, onRefuse: Str
          .appendSpace().append(refuseButton.clickEvent(refuseCLick).hoverEvent(refuseHover)))
 }
 
-fun Player.createNation(session: Session){
-    val playerData = this.getData(session)
-    if (playerData.nation is NationBean){
+fun Player.createNation() {
+    val playerData = this.getData()
+    if (playerData.nation is NationBean) {
         this.sendErrorMessage("Vous appartenez déjà à une nation")
         return
     }
 
-    session.beginTransaction()
+    HibernateSession.session.beginTransaction()
 
-    val nation = NationBean.instantiateAndPersistDefaultNation(session, playerData, "Nation de ${this.name}")
+    val nation = NationBean.instantiateAndPersistDefaultNation(playerData, "Nation de ${this.name}")
 
     playerData.nation = nation
 
-    session.transaction.commit()
+    HibernateSession.session.transaction.commit()
     this.sendSuccesMessage("Votre nation vient d'être créée !")
 }
 
-fun Player.invitePlayerToNation(session: Session, invitedPlayer: Player){
+fun Player.invitePlayerToNation(invitedPlayer: Player) {
 
-    val senderData = this.getData(session)
-    if (senderData.nation !is NationBean){
+    val senderData = this.getData()
+    if (senderData.nation !is NationBean) {
         this.sendErrorMessage("Vous n'appartenez à aucune nation")
         return
     }
-    if (invitedPlayer == this){
+    if (invitedPlayer == this) {
         this.sendErrorMessage("Vous essayez de vous inviter vous-même ?")
         return
     }
-    if (senderData.nation == invitedPlayer.getData(session).nation){
+    if (senderData.nation == invitedPlayer.getData().nation) {
         this.sendErrorMessage("${invitedPlayer.name} est déjà dans votre nation")
         return
     }
@@ -118,24 +119,24 @@ fun Player.invitePlayerToNation(session: Session, invitedPlayer: Player){
     this.sendSuccesMessage("Invitation envoyée à ${invitedPlayer.name}");
 }
 
-fun Player.acceptNationInvitation(session: Session, playerInviting: Player){
+fun Player.acceptNationInvitation(playerInviting: Player) {
 
-    val playerData = this.getData(session)
+    val playerData = this.getData()
 
-    if (playerData.nation is NationBean){
+    if (playerData.nation is NationBean) {
         this.sendErrorMessage("Vous appartenez déjà à une nation, quittez la pour en rejoindre une autre")
         return
     }
 
     val nation = removeInvitation(playerInviting, this)
-    if (nation !is NationBean){
+    if (nation !is NationBean) {
         this.sendErrorMessage("Vous n'avez pas été invité par cette personne")
         return
     }
 
-    session.beginTransaction()
+    HibernateSession.session.beginTransaction()
     nation.addMember(playerData)
-    session.transaction.commit()
+    HibernateSession.session.transaction.commit()
     this.sendSuccesMessage("Vous avez rejoint la nation ${nation.name}")
 }
 
@@ -149,20 +150,20 @@ fun Player.refuseNationInvitation(playerInviting: Player){
     this.sendSuccesMessage("Vous avez refusé l'invitation à rejoindre la nation : ${nation.name}")
 }
 
-fun Player.quitNation(session: Session){
-    val playerData = this.getData(session)
+fun Player.quitNation() {
+    val playerData = this.getData()
     val nation = playerData.nation
-    if (nation !is NationBean){
+    if (nation !is NationBean) {
         this.sendErrorMessage("Vous n'appartenez à aucune nation")
         return
     }
-    session.beginTransaction()
+    HibernateSession.session.beginTransaction()
     nation.removeMember(playerData)
 
-    if (nation.owner == playerData){
+    if (nation.owner == playerData) {
         val newOwner = nation.findNewOwner()
         if (newOwner !is PlayerBean){
-            nation.delete(session)
+            nation.delete()
             this.sendSuccesMessage("Votre nation à été supprimée")
         } else {
             nation.changeOwner(newOwner)
@@ -170,24 +171,24 @@ fun Player.quitNation(session: Session){
         }
 
     }
-    session.transaction.commit()
+    HibernateSession.session.transaction.commit()
     this.sendSuccesMessage("Vous avez quitté votre nation")
 }
 
-fun Player.claimChunk(session: Session){
-    val playerData = this.getData(session)
+fun Player.claimChunk() {
+    val playerData = this.getData()
     val playerNation = playerData.nation
-    if (playerNation !is NationBean){
+    if (playerNation !is NationBean) {
         this.sendErrorMessage("Vous n'appartenez à aucune nation")
         return
     }
 
-    if (!(playerData == playerNation.owner || playerData.permissionGroup!!.nationPermission!!.canClaim)){
+    if (!(playerData == playerNation.owner || playerData.permissionGroup!!.nationPermission!!.canClaim)) {
         this.sendErrorMessage("Vous n'avez pas la permission pour vous approprier des chunks")
         return
     }
 
-    val chunkData = ChunkBean.getChunkBean(session, this.chunk)
+    val chunkData = ChunkBean.getChunkBean(this.chunk)
     if (chunkData.nation is NationBean){
         this.sendErrorMessage("Ce chunk n'est pas disponible")
         return
@@ -198,12 +199,12 @@ fun Player.claimChunk(session: Session){
         return
     }
 
-    session.beginTransaction()
+    HibernateSession.session.beginTransaction()
 
     playerNation.chunkClaimTokens = playerNation.chunkClaimTokens!! - 1
     playerNation.chunks!!.add(chunkData)
     chunkData.nation = playerNation
-    session.transaction.commit()
+    HibernateSession.session.transaction.commit()
 
     this.sendSuccesMessage("Le chunk à bien été approprié")
 

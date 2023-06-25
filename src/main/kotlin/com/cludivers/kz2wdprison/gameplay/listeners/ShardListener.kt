@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import net.kyori.adventure.text.Component
@@ -12,15 +13,14 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityRegainHealthEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import org.hibernate.Session
 import kotlin.math.log10
 
-class ShardListener(private val session: Session) : Listener {
+class ShardListener() : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val transaction = session.beginTransaction()
-        val playerData = event.player.getData(session)
+        val transaction = HibernateSession.session.beginTransaction()
+        val playerData = event.player.getData()
         if (playerData.connectionAmount < 1) {
             Bukkit.broadcast(Component.text("Bienvenue à ${ChatColor.LIGHT_PURPLE}${event.player.name} ${ChatColor.WHITE} !"))
         } else {
