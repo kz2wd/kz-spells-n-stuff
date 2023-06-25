@@ -60,7 +60,7 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
 
     override fun enrichArtifactInput(
         inputRune: ItemStack,
-        caster: Caster,
+        artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>
     ) {
@@ -74,7 +74,7 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
         stockedItemStack.forEach {
             ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(
                 it.value,
-                caster,
+                artifactActivator,
                 input,
                 inputsTrace
             )

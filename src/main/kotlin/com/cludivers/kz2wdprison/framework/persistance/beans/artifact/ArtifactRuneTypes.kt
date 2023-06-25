@@ -19,7 +19,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
     GENERIC_INPUT_RUNE {
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -29,7 +29,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
 
             val basicRune = BasicInputRunes.getInputRune(inputRune)
             if (basicRune != null) {
-                basicRune.enrichArtifactInput(inputRune, caster, input, inputsTrace)
+                basicRune.enrichArtifactInput(inputRune, artifactActivator, input, inputsTrace)
                 return
             }
 
@@ -39,7 +39,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
                 return
             }
             // If a complexRune of type INPUT was found, then resolve its input
-            return complexRune.enrichArtifactInput(inputRune, caster, input, inputsTrace)
+            return complexRune.enrichArtifactInput(inputRune, artifactActivator, input, inputsTrace)
         }
     },
     GENERIC_EFFECT_RUNE {
@@ -51,7 +51,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
     BOUND_ENTITY_RUNE {
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -107,7 +107,7 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
 
     override fun enrichArtifactInput(
         inputRune: ItemStack,
-        caster: Caster,
+        artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>
     ) {

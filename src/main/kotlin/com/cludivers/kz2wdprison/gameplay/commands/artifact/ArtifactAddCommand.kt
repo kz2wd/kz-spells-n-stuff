@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.commands.artifact
 
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -19,7 +20,12 @@ class ArtifactAddCommand(parentName: String) : SubCommand(parentName) {
             return false
         }
 
-        Artifact.createArtifact(sender.inventory.itemInMainHand)
+        if (args.isEmpty()) {
+            return false
+        }
+
+        Artifact.createArtifact(sender.inventory.itemInMainHand, ArtifactTriggers.valueOf(args[0]))
+
         sender.sendMessage(Component.text("${ChatColor.GREEN}Un nouvel artefact à été lié avec l'objet dans votre main !"))
 
         return true
@@ -30,7 +36,7 @@ class ArtifactAddCommand(parentName: String) : SubCommand(parentName) {
         command: Command,
         label: String,
         args: Array<String>
-    ): MutableList<String>? {
-        return null
+    ): MutableList<String> {
+        return ArtifactTriggers.values().map { it.name }.toMutableList()
     }
 }

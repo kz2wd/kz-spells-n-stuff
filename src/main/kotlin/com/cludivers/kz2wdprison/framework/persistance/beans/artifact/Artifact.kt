@@ -33,10 +33,11 @@ class Artifact {
                 .uniqueResult()
         }
 
-        fun createArtifact(item: ItemStack) {
+        fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK) {
             HibernateSession.session.beginTransaction()
             val artifact = Artifact()
             artifact.linkedItemStack = item
+            artifact.triggerType = triggerType
             HibernateSession.session.persist(artifact)
             val meta = item.itemMeta
             CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.setData(meta, artifact.id!!.toInt())
@@ -71,6 +72,7 @@ class Artifact {
     var debuffStrength: Float = 1f
     var debuffType: ArtifactDebuffs = ArtifactDebuffs.NONE
 
+    var triggerType: ArtifactTriggers = ArtifactTriggers.CLICK
 
     @Transient
     var cooldownDebuff: Duration = Duration.ZERO
@@ -79,17 +81,17 @@ class Artifact {
     @Transient
     var conductivityDebuff: Float = 1f
 
-    fun activate(caster: Caster, inFlow: Float): Float {
+    fun activate(artifactActivator: ArtifactActivator, inFlow: Float, triggerType: ArtifactTriggers): Float {
+        if (triggerType != this.triggerType) return inFlow
 
         cooldownDebuff = Duration.ZERO
         conductivityDebuff = 1f
 
-        if (caster.getCasterLevel() < levelToUse) {
-            debuffType.applyDebuff(this, caster.getCasterLevel())
+        if (artifactActivator.getCasterLevel() < levelToUse) {
+            debuffType.applyDebuff(this, artifactActivator.getCasterLevel())
         }
 
         val currentFlow = inFlow * conductivity * conductivityDebuff
-
 
         if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown) {
             return currentFlow
@@ -97,9 +99,13 @@ class Artifact {
         lastUsage = Instant.now()
 
         val input = ArtifactInput(currentFlow)
-        ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(inputRune, caster, input, mutableListOf())
+        ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(inputRune, artifactActivator, input, mutableListOf())
 
-        ArtifactRuneTypes.GENERIC_EFFECT_RUNE.triggerArtifactEffect(effectRune, input, caster.getSelf() as Player)
+        ArtifactRuneTypes.GENERIC_EFFECT_RUNE.triggerArtifactEffect(
+            effectRune,
+            input,
+            artifactActivator.getSelf() as Player
+        )
 
         return 0f
     }

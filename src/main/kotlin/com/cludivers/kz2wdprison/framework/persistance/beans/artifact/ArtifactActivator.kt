@@ -7,7 +7,7 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
-interface Caster {
+interface ArtifactActivator {
     fun getLocation(): Location
     fun getSelf(): Entity
 
@@ -22,9 +22,13 @@ interface Caster {
 
     fun getCasterLevel(): Int
 
+    fun getAttacker(): Entity?
+
+    fun getAttacked(): Entity?
+
     companion object {
-        fun playerToCaster(player: Player): Caster {
-            return object : Caster {
+        fun playerToCaster(player: Player, attacker: Entity? = null, attacked: Entity? = null): ArtifactActivator {
+            return object : ArtifactActivator {
                 override fun getLocation(): Location {
                     return player.location
                 }
@@ -51,6 +55,14 @@ interface Caster {
 
                 override fun getCasterLevel(): Int {
                     return player.getData().intrinsic.skills[PlayerSkills.ARTIFACT_MASTERY] ?: 0
+                }
+
+                override fun getAttacker(): Entity? {
+                    return attacker
+                }
+
+                override fun getAttacked(): Entity? {
+                    return attacked
                 }
             }
         }

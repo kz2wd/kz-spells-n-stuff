@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Caster
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactItemsTextures
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import net.kyori.adventure.text.Component
@@ -16,16 +16,16 @@ enum class BasicInputRunes : ArtifactInputInterface {
             get() = ArtifactItemsTextures.ENTITY_CASTER
 
         override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Caster"), Material.IRON_NUGGET, texture.customData)
+            Utils.buildItemStack(Component.text("ArtifactActivator"), Material.IRON_NUGGET, texture.customData)
         }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities = (0 until inputRune.amount).map { caster.getSelf() }
+            input.entities = (0 until inputRune.amount).map { artifactActivator.getSelf() }
         }
     },
     ENTITY_SIGHT {
@@ -38,11 +38,11 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            val entitySight = caster.getSightEntity(caster.maxSightDistance()) ?: return
+            val entitySight = artifactActivator.getSightEntity(artifactActivator.maxSightDistance()) ?: return
             input.entities = (0 until inputRune.amount).map { entitySight }
         }
     },
@@ -56,12 +56,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
             val locationSight =
-                caster.getSightBlock(caster.maxSightDistance())?.location ?: return
+                artifactActivator.getSightBlock(artifactActivator.maxSightDistance())?.location ?: return
             input.locations = (0 until inputRune.amount).map { locationSight }
         }
     },
@@ -75,12 +75,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
             val locationSight =
-                caster.getSightAirBlock(caster.maxSightDistance())?.location ?: return
+                artifactActivator.getSightAirBlock(artifactActivator.maxSightDistance())?.location ?: return
             input.locations = (0 until inputRune.amount).map { locationSight }
         }
     },
@@ -94,15 +94,15 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            var forwardEyeLocation = (caster.getSelf() as Player).eyeLocation
+            var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
             forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
 
             input.locations = (0 until inputRune.amount).map { forwardEyeLocation }
-            input.vectors = (0 until inputRune.amount).map { caster.getLocation().direction }
+            input.vectors = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
         }
 
     },
@@ -111,16 +111,20 @@ enum class BasicInputRunes : ArtifactInputInterface {
             get() = ArtifactItemsTextures.CASTER_DIRECTION
 
         override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Caster's direction"), Material.IRON_NUGGET, texture.customData)
+            Utils.buildItemStack(
+                Component.text("ArtifactActivator's direction"),
+                Material.IRON_NUGGET,
+                texture.customData
+            )
         }
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.vectors = (0 until inputRune.amount).map { caster.getLocation().direction }
+            input.vectors = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
         }
     },
     ENTITIES_POSITION {
@@ -133,7 +137,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -150,7 +154,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -167,7 +171,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -184,7 +188,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -201,7 +205,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -220,7 +224,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -242,7 +246,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -262,7 +266,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -279,7 +283,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -296,7 +300,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -313,7 +317,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -330,7 +334,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
@@ -347,7 +351,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override fun enrichArtifactInput(
             inputRune: ItemStack,
-            caster: Caster,
+            artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
