@@ -1,0 +1,112 @@
+package com.cludivers.kz2wdprison.gameplay.artifact
+
+import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactTriggers
+import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
+import com.cludivers.kz2wdprison.gameplay.utils.Utils
+import net.kyori.adventure.text.Component
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+
+enum class DefaultArtifacts {
+    LIGHTING_SWORD{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Epée éclair"), Material.IRON_SWORD), ArtifactTriggers.ATTACKING)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            HibernateSession.session.beginTransaction()
+            inputRune.stockedItemStack = mapOf(
+                0 to BasicInputRunes.ATTACKED.itemStack,
+                1 to BasicInputRunes.ENTITIES_POSITION.itemStack)
+            artifact.inputRune = inputRune.linkedItemStack!!
+            artifact.effectRune = CustomShardItems.LIGHTNING_SPARK.itemStack
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+
+    },
+    PICKAXE{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Bonne pioche"), Material.GOLDEN_PICKAXE), ArtifactTriggers.CLICK)
+            HibernateSession.session.beginTransaction()
+            artifact.inputRune = BasicInputRunes.LOCATION_SIGHT.itemStack
+            artifact.effectRune = ItemStack(Material.DIAMOND_PICKAXE)
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+
+    },
+    MAGIC_WAND{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Baguette magique"), Material.BLAZE_ROD), ArtifactTriggers.CLICK)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            HibernateSession.session.beginTransaction()
+            inputRune.stockedItemStack = mapOf(
+                0 to BasicInputRunes.ENTITY_SIGHT.itemStack,
+                1 to BasicInputRunes.ENTITIES_POSITION.itemStack,
+                2 to BasicInputRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
+                3 to BasicInputRunes.DOWN_DIRECTION.itemStack)
+
+            artifact.inputRune = inputRune.linkedItemStack!!
+            artifact.effectRune = ItemStack(Material.ARROW)
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+    },
+    JUMP_FEATHER{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Saut magique"), Material.FEATHER), ArtifactTriggers.CLICK)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            HibernateSession.session.beginTransaction()
+            inputRune.stockedItemStack = mapOf(
+                0 to BasicInputRunes.ENTITY_CASTER.itemStack,
+                1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack)
+
+            artifact.inputRune = inputRune.linkedItemStack!!
+            artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+    },
+    FIRE_HELMET{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Casque de feu"), Material.LEATHER_HELMET), ArtifactTriggers.ATTACKED)
+            HibernateSession.session.beginTransaction()
+            artifact.inputRune = BasicInputRunes.ATTACKER.itemStack
+            artifact.effectRune = CustomShardItems.FIRE_SPARK.itemStack
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+    },
+    KNOCK_CHEST_PLATE{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Pousse-Plastron"), Material.IRON_CHESTPLATE), ArtifactTriggers.ATTACKED)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            HibernateSession.session.beginTransaction()
+            inputRune.stockedItemStack = mapOf(
+                0 to BasicInputRunes.ATTACKER.itemStack,
+                1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack,
+                2 to BasicInputRunes.INVERT_DIRECTION.itemStack)
+
+            artifact.inputRune = inputRune.linkedItemStack!!
+            artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+    }
+
+    ;
+
+
+    protected abstract fun buildArtifact(): Artifact
+    lateinit var artifact: Artifact
+
+    companion object {
+        fun initDefaultArtifacts(){
+            DefaultArtifacts.values().forEach { it.artifact = it.buildArtifact() }
+        }
+    }
+
+}

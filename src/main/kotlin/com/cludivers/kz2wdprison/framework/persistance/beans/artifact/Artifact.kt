@@ -41,7 +41,7 @@ class Artifact {
 
         }
 
-        fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK) {
+        fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK): Artifact {
             HibernateSession.session.beginTransaction()
             val artifact = Artifact()
             artifact.linkedItemStack = item
@@ -51,6 +51,7 @@ class Artifact {
             CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.setData(meta, artifact.id!!.toInt())
             item.itemMeta = meta
             HibernateSession.session.transaction.commit()
+            return artifact
         }
     }
 

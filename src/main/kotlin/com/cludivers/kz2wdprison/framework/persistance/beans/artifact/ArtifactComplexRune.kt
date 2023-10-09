@@ -25,16 +25,17 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
                 .uniqueResult()
         }
 
-        fun createComplexRune(item: ItemStack, type: ArtifactRuneTypes) {
+        fun createComplexRune(item: ItemStack, type: ArtifactRuneTypes): ArtifactComplexRune {
             HibernateSession.session.beginTransaction()
-            val artifact = ArtifactComplexRune()
-            artifact.linkedItemStack = item
-            artifact.runeType = type
-            HibernateSession.session.persist(artifact)
+            val complexRune = ArtifactComplexRune()
+            complexRune.linkedItemStack = item
+            complexRune.runeType = type
+            HibernateSession.session.persist(complexRune)
             val meta = item.itemMeta
-            CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.setData(meta, artifact.id!!.toInt())
+            CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.setData(meta, complexRune.id!!.toInt())
             item.itemMeta = meta
             HibernateSession.session.transaction.commit()
+            return complexRune
         }
     }
 

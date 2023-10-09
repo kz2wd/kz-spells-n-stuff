@@ -66,6 +66,18 @@ enum class CustomShardItems {
         override val itemStack: ItemStack = run {
             buildItemStack(Component.text("Move Rune"), Material.IRON_NUGGET, texture.customData)
         }
+    },
+    COMPLEX_INPUT_RUNE {
+        override val texture: ArtifactItemsTextures
+            get() = ArtifactItemsTextures.NONE
+        override val itemStack: ItemStack
+            get() = buildItemStack(Component.text("Unknown rune"), Material.IRON_NUGGET, texture.customData)
+    },
+    COMPLEX_EFFECT_RUNE {
+        override val texture: ArtifactItemsTextures
+            get() = ArtifactItemsTextures.NONE
+        override val itemStack: ItemStack
+            get() = buildItemStack(Component.text("Unknown rune"), Material.IRON_NUGGET, texture.customData)
     }
     ;
 
