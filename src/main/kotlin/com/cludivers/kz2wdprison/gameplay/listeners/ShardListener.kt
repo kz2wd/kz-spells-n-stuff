@@ -54,7 +54,6 @@ class ShardListener(private val server: Server, private val plugin: JavaPlugin) 
     }
 
     private fun updatePlayerHealthScaling(player: Player) {
-        Bukkit.broadcast(Component.text("Vie max: ${player.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value}"))
         player.healthScale = calculateScaledHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value)
         player.sendHealthUpdate()
     }
