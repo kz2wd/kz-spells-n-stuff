@@ -15,19 +15,25 @@ class AttributeItem {
     companion object {
 
         val shardPowerRatio = .01
-        val maxShards = 10000
 
-        fun makeAttributeItem(itemStack: ItemStack) {
-            val meta = itemStack.itemMeta
-            IntrinsicAttributes.values().mapNotNull {
+        fun makeAttributeItem(itemStack: ItemStack, baseShards: Int = 0, maxShards: Int = 1000) {
+            val attributes = IntrinsicAttributes.values().mapNotNull {
                 if (Random.nextBoolean()) it to Random.nextDouble() else null
-            }.map {
-                CustomNamespacesManager.float[it.first]!! to it.second
+            }.toMap()
+            makeAttributeItem(itemStack, attributes, baseShards, maxShards)
+        }
+
+        fun makeAttributeItem(itemStack: ItemStack, attributes: Map<IntrinsicAttributes, Double>, baseShards: Int = 0, maxShards: Int = 1000) {
+            val meta = itemStack.itemMeta
+
+            attributes
+            .map {
+                CustomNamespacesManager.float[it.key]!! to it.value
             }
-                .forEach {
-                    it.first.setData(meta, it.second)
-                }
-            CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.setData(meta, 0)
+            .forEach {
+                it.first.setData(meta, it.second)
+            }
+            CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.setData(meta, baseShards)
             CustomNamespacesManager.int[CustomNamespaces.MAX_SHARDS_STORAGE]!!.setData(meta, maxShards)
 
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)

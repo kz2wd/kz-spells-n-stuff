@@ -35,7 +35,7 @@ class Artifact {
 
         fun deleteArtifact(artifact: Artifact) {
             HibernateSession.session
-                .createQuery("delete from Artifact A where id = :id", Artifact::class.java)
+                .createQuery("delete from Artifact A where id = :id")
                 .setParameter("id", artifact.id)
                 .executeUpdate()
 

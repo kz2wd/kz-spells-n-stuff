@@ -18,7 +18,6 @@ import org.hibernate.SessionFactory
 class Kz2wdPrison : JavaPlugin() {
 
     lateinit var sessionFactory: SessionFactory
-    lateinit var session: Session
 
     override fun onEnable() {
         sessionFactory = HibernateConfigurationHandler.loadHibernateConfiguration(config)
@@ -48,7 +47,7 @@ class Kz2wdPrison : JavaPlugin() {
     }
 
     override fun onDisable() {
-        session.close()
+        HibernateSession.session.close()
         sessionFactory.close()
     }
 

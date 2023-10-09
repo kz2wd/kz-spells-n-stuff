@@ -6,6 +6,8 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactCo
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
+import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
+import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -72,17 +74,21 @@ enum class DefaultArtifacts {
     },
     FIRE_HELMET{
         override fun buildArtifact(): Artifact {
-            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Casque de feu"), Material.LEATHER_HELMET), ArtifactTriggers.ATTACKED)
+            val itemstack = Utils.buildItemStack(Component.text("Casque de feu"), Material.LEATHER_HELMET)
+            val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
             HibernateSession.session.beginTransaction()
             artifact.inputRune = BasicInputRunes.ATTACKER.itemStack
             artifact.effectRune = CustomShardItems.FIRE_SPARK.itemStack
             HibernateSession.session.transaction.commit()
+            val intrinsics = mapOf(IntrinsicAttributes.AGILITY to .3)
+            AttributeItem.makeAttributeItem(itemstack, intrinsics, 500, 800)
             return artifact
         }
     },
-    KNOCK_CHEST_PLATE{
+    KNOCK_CHEST_PLATE {
         override fun buildArtifact(): Artifact {
-            val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Pousse-Plastron"), Material.IRON_CHESTPLATE), ArtifactTriggers.ATTACKED)
+            val itemstack = Utils.buildItemStack(Component.text("Pousse-Plastron"), Material.IRON_CHESTPLATE)
+            val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
             HibernateSession.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
@@ -93,9 +99,26 @@ enum class DefaultArtifacts {
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
             HibernateSession.session.transaction.commit()
+
+            val intrinsics = mapOf(
+                IntrinsicAttributes.TOUGHNESS to .3,
+                IntrinsicAttributes.VIGOR to .5)
+            AttributeItem.makeAttributeItem(itemstack, intrinsics, 2000, 2500)
             return artifact
         }
-    }
+    },
+    FEEDER_BOOTS{
+        override fun buildArtifact(): Artifact {
+            val artifact: Artifact = Artifact.createArtifact(
+                Utils.buildItemStack(Component.text("Bottes nourrisseuses"),
+                Material.GOLDEN_BOOTS), ArtifactTriggers.ATTACKED)
+            HibernateSession.session.beginTransaction()
+            artifact.inputRune = BasicInputRunes.ATTACKED.itemStack
+            artifact.effectRune = ItemStack(Material.GOLDEN_APPLE)
+            HibernateSession.session.transaction.commit()
+            return artifact
+        }
+    },
 
     ;
 
