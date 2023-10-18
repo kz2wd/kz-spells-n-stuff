@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import jakarta.persistence.*
 import org.bukkit.Chunk
 
@@ -25,7 +25,7 @@ class ChunkBean {
         }
 
         fun getChunkBean(x: Int, z: Int): ChunkBean {
-            val chunk = HibernateSession.session
+            val chunk = PluginConfiguration.session
                 .createQuery("from ChunkBean C where C.xCoord = :x AND C.zCoord = :z", ChunkBean::class.java)
                 .setParameter("x", x)
                 .setParameter("z", z)
@@ -36,12 +36,12 @@ class ChunkBean {
             }
 
             // Add the chunk
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             val chunkToAdd = ChunkBean()
             chunkToAdd.xCoord = x
             chunkToAdd.zCoord = z
-            HibernateSession.session.persist(chunkToAdd)
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.persist(chunkToAdd)
+            PluginConfiguration.session.transaction.commit()
             return chunkToAdd
         }
     }

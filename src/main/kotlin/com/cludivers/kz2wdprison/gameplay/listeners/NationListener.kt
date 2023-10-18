@@ -6,8 +6,8 @@ import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.PermissionGroup
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.title.Title
-import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -17,8 +17,13 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import java.time.Duration
 
 class NationListener : Listener {
+
+    companion object {
+        val DEFAULT_TIME = Title.Times.times(Duration.ofMillis(500), Duration.ofMillis(500), Duration.ofMillis(500))
+    }
 
     @EventHandler
     fun onPlayerEnterChunk(event: PlayerMoveEvent) {
@@ -35,12 +40,18 @@ class NationListener : Listener {
         if (newChunkData.nation !is NationBean) {
             event.player.showTitle(
                 Title.title(
-                    Component.text("${ChatColor.DARK_GREEN}Zone neutre"),
-                    Component.text("")
+                    Component.text(""),
+                    Component.text("Zone neutre").color(NamedTextColor.GREEN),
+                    DEFAULT_TIME
+                )
+                )
+        } else {
+            event.player.showTitle(
+                Title.title(
+                    Component.text(""),
+                    Component.text(newChunkData.nation!!.name!!), DEFAULT_TIME
                 )
             )
-        } else {
-            event.player.showTitle(Title.title(Component.text(newChunkData.nation!!.name!!), Component.text("")))
         }
     }
 

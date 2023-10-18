@@ -1,11 +1,13 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.player.getData
+import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
@@ -17,22 +19,70 @@ import kotlin.math.log10
 
 class ShardListener(private val server: Server, private val plugin: JavaPlugin) : Listener {
 
+    private fun connectionWarning() {
+        if (PluginConfiguration.isDatabaseConnected) return
+        Bukkit.broadcast(
+            Component.text("Aucune connexion à une base de donnée [Pas de persistance effectuée]")
+                .color(NamedTextColor.RED)
+        )
+
+    }
+
+    private fun notInProductionMessage(player: Player) {
+        if (PluginConfiguration.isInProduction) return
+        player.sendMessage(Component.text("[MODE DE DEVELOPPEMENT] Si vous découvrez ce plugin, essayer les commandes suivantes, en clickant dessus :"))
+        player.sendMessage(
+            Utils.createClickableCommandReference(
+                "/artifact enable_resourcepack",
+                ": Active le pack de texture."
+            )
+        )
+        player.sendMessage(
+            Utils.createClickableCommandReference(
+                "/artifact demo",
+                ": Ouvre un inventaire rempli d'artefacts de test."
+            )
+        )
+        player.sendMessage(
+            Utils.createClickableCommandReference(
+                "/artifact runes",
+                ": Ouvre un inventaire rempli de runes d'artefact."
+            )
+        )
+        player.sendMessage(Utils.createClickableCommandReference("/nation create", ": Créer une nation à votre nom."))
+        player.sendMessage(
+            Utils.createClickableCommandReference(
+                "/nation claim",
+                ": Attribue le chunk courant à votre nation (nécessaire pour constuire)."
+            )
+        )
+    }
+
+    private fun playerNameFancy(player: Player): Component {
+        return Component.text(player.name).color(NamedTextColor.LIGHT_PURPLE).decorate(TextDecoration.ITALIC)
+    }
+
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val transaction = HibernateSession.session.beginTransaction()
+        val transaction = PluginConfiguration.session.beginTransaction()
         val playerData = event.player.getData()
         if (playerData.connectionAmount < 1) {
-            Bukkit.broadcast(Component.text("Bienvenue à ${ChatColor.LIGHT_PURPLE}${event.player.name} ${ChatColor.WHITE} !"))
+            Bukkit.broadcast(
+                Component.text("Bienvenue à ").append(
+                    playerNameFancy(event.player)
+                ).append(
+                    Component.text("!")
+                )
+            )
         } else {
-            event.player.sendMessage(Component.text("Rebonjour ${ChatColor.LIGHT_PURPLE}${event.player.name}"))
+            event.player.sendMessage(Component.text("Rebonjour ").append(playerNameFancy(event.player)))
         }
         playerData.connectionAmount += 1
 
+        connectionWarning()
+        notInProductionMessage(event.player)
+
         transaction.commit()
-
-        // Set resource pack
-        // event.player.setResourcePack("https://drive.google.com/uc?export=download&id=1VFzPQhxXNI_nk4dYYLVqazzHl_eEifND")
-
     }
 
     private fun calculateScaledHealth(health: Double): Double {

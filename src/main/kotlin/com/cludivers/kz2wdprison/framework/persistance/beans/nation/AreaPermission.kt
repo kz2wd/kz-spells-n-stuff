@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
@@ -21,13 +21,13 @@ class AreaPermission {
 
         fun getPersistentDefaultPermissions(): AreaPermission {
             val perm = AreaPermission()
-            HibernateSession.session.persist(perm)
+            PluginConfiguration.session.persist(perm)
             return perm
         }
 
         fun getPersistentCitizenPermissions(): AreaPermission {
             val perm = AreaPermission()
-            HibernateSession.session.persist(perm)
+            PluginConfiguration.session.persist(perm)
             return perm
         }
 
@@ -37,7 +37,7 @@ class AreaPermission {
             areaPermission.canPlace = true
             areaPermission.canAttackPlayer = true
             areaPermission.canAttackFriendlyMob = true
-            HibernateSession.session.persist(areaPermission)
+            PluginConfiguration.session.persist(areaPermission)
             return areaPermission
         }
 

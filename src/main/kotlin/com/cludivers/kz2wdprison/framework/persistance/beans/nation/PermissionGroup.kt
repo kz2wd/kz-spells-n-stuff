@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import jakarta.persistence.*
 import org.bukkit.Bukkit
@@ -34,7 +34,7 @@ class PermissionGroup {
             group.name = "Citoyens"
             group.areaPermission = AreaPermission.getPersistentCitizenPermissions()
             group.nationPermission = NationPermission.getPersistentCitizenPermissions()
-            HibernateSession.session.persist(group)
+            PluginConfiguration.session.persist(group)
             return group
         }
 
@@ -43,7 +43,7 @@ class PermissionGroup {
             group.name = "Officers"
             group.areaPermission = AreaPermission.getPersistentOfficerPermissions()
             group.nationPermission = NationPermission.getPersistentOfficerPermissions()
-            HibernateSession.session.persist(group)
+            PluginConfiguration.session.persist(group)
             return group
         }
 

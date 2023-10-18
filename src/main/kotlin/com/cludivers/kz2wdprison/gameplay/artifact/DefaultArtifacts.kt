@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
@@ -18,13 +18,13 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Epée éclair"), Material.IRON_SWORD), ArtifactTriggers.ATTACKING)
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
                 0 to BasicInputRunes.ATTACKED.itemStack,
                 1 to BasicInputRunes.ENTITIES_POSITION.itemStack)
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.LIGHTNING_SPARK.itemStack
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
 
@@ -32,10 +32,10 @@ enum class DefaultArtifacts {
     PICKAXE{
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Bonne pioche"), Material.GOLDEN_PICKAXE), ArtifactTriggers.CLICK)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             artifact.inputRune = BasicInputRunes.LOCATION_SIGHT.itemStack
             artifact.effectRune = ItemStack(Material.DIAMOND_PICKAXE)
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
 
@@ -44,7 +44,7 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Baguette magique"), Material.BLAZE_ROD), ArtifactTriggers.CLICK)
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
                 0 to BasicInputRunes.ENTITY_SIGHT.itemStack,
                 1 to BasicInputRunes.ENTITIES_POSITION.itemStack,
@@ -53,7 +53,7 @@ enum class DefaultArtifacts {
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = ItemStack(Material.ARROW)
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
     },
@@ -61,14 +61,14 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Saut magique"), Material.FEATHER), ArtifactTriggers.CLICK)
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
                 0 to BasicInputRunes.ENTITY_CASTER.itemStack,
                 1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack)
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
     },
@@ -76,10 +76,10 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val itemstack = Utils.buildItemStack(Component.text("Casque de feu"), Material.LEATHER_HELMET)
             val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             artifact.inputRune = BasicInputRunes.ATTACKER.itemStack
             artifact.effectRune = CustomShardItems.FIRE_SPARK.itemStack
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             val intrinsics = mapOf(IntrinsicAttributes.AGILITY to .3)
             AttributeItem.makeAttributeItem(itemstack, intrinsics, 500, 800)
             return artifact
@@ -90,7 +90,7 @@ enum class DefaultArtifacts {
             val itemstack = Utils.buildItemStack(Component.text("Pousse-Plastron"), Material.IRON_CHESTPLATE)
             val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
                 0 to BasicInputRunes.ATTACKER.itemStack,
                 1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack,
@@ -98,7 +98,7 @@ enum class DefaultArtifacts {
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
 
             val intrinsics = mapOf(
                 IntrinsicAttributes.TOUGHNESS to .3,
@@ -112,10 +112,10 @@ enum class DefaultArtifacts {
             val artifact: Artifact = Artifact.createArtifact(
                 Utils.buildItemStack(Component.text("Bottes nourrisseuses"),
                 Material.GOLDEN_BOOTS), ArtifactTriggers.ATTACKED)
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             artifact.inputRune = BasicInputRunes.ATTACKED.itemStack
             artifact.effectRune = ItemStack(Material.GOLDEN_APPLE)
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
     },

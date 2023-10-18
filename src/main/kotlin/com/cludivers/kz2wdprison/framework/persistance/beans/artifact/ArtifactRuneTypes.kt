@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.ArtifactEffectInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.BasicArtifactEffects
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
@@ -90,11 +90,11 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
             }
 
             override fun close(player: Player) {
-                HibernateSession.session.beginTransaction()
+                PluginConfiguration.session.beginTransaction()
                 complexRune.stockedItemStack = itemStackSlots.associateWith {
                     player.openInventory.topInventory.getItem(it)
                 }.filter { it.value != null } as Map<Int, ItemStack>
-                HibernateSession.session.transaction.commit()
+                PluginConfiguration.session.transaction.commit()
             }
         }
 

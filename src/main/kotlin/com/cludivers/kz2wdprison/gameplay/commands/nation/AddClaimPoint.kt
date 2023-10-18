@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.commands.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.player.getData
 import org.bukkit.command.Command
@@ -19,9 +19,9 @@ class AddClaimPoint(parentName: String) : SubCommand(parentName) {
             args[0].toIntOrNull() ?: 0
         }
         val playerData = sender.getData()
-        HibernateSession.session.beginTransaction()
+        PluginConfiguration.session.beginTransaction()
         playerData.nation?.chunkClaimTokens = playerData.nation?.chunkClaimTokens?.plus(amount)
-        HibernateSession.session.transaction.commit()
+        PluginConfiguration.session.transaction.commit()
         return true
     }
 

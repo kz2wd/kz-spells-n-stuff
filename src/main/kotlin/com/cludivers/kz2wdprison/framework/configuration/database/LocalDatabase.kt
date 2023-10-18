@@ -1,11 +1,9 @@
-package com.cludivers.kz2wdprison
+package com.cludivers.kz2wdprison.framework.configuration.database
 
-import org.hibernate.SessionFactory
-import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 
 object LocalDatabase {
-    fun loadAndBuildDB(classes: List<Class<*>>): SessionFactory {
+    fun loadLocalDatabase(): StandardServiceRegistryBuilder {
 
         val serviceRegistry = StandardServiceRegistryBuilder().apply {
 
@@ -23,15 +21,6 @@ object LocalDatabase {
             applySetting("hibernate.current_session_context_class", "thread")
         }
 
-        val meta = MetadataSources(serviceRegistry.build()).apply {
-
-            classes.forEach {
-                addAnnotatedClass(it)
-            }
-        }
-
-
-        return  meta.buildMetadata().buildSessionFactory()
-
+        return serviceRegistry
     }
 }

@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
@@ -22,14 +22,14 @@ class NationPermission {
     companion object {
         fun getPersistentCitizenPermissions(): NationPermission {
             val perm = NationPermission()
-            HibernateSession.session.persist(perm)
+            PluginConfiguration.session.persist(perm)
             return perm
         }
 
         fun getPersistentOfficerPermissions(): NationPermission {
             val nationPermission = NationPermission()
             nationPermission.canInvite = true
-            HibernateSession.session.persist(nationPermission)
+            PluginConfiguration.session.persist(nationPermission)
             return nationPermission
         }
     }

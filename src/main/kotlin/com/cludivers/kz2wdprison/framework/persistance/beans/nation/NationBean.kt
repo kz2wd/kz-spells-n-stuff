@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.nation
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -83,10 +83,10 @@ class NationBean {
             }
             val areaPerm = group.areaPermission
             group.areaPermission = null
-            HibernateSession.session.remove(areaPerm)
+            PluginConfiguration.session.remove(areaPerm)
             val nationPerm = group.nationPermission
             group.nationPermission = null
-            HibernateSession.session.remove(nationPerm)
+            PluginConfiguration.session.remove(nationPerm)
         }
         this.chunks!!.forEach {
             it.nation = null
@@ -108,7 +108,7 @@ class NationBean {
             nation.chunks = mutableListOf()
             nation.level = 1
             nation.plots = mutableListOf()
-            HibernateSession.session.persist(nation)
+            PluginConfiguration.session.persist(nation)
 
             return nation
         }

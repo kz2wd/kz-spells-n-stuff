@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.effects.ArtifactEffectInterface
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInputInterface
@@ -19,22 +19,22 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
             val uuid =
                 CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.getData(itemStack.itemMeta)
                     ?: return null
-            return HibernateSession.session
+            return PluginConfiguration.session
                 .createQuery("from ArtifactComplexRune A where A.id = :uuid", ArtifactComplexRune::class.java)
                 .setParameter("uuid", uuid.toString())
                 .uniqueResult()
         }
 
         fun createComplexRune(item: ItemStack, type: ArtifactRuneTypes): ArtifactComplexRune {
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             val complexRune = ArtifactComplexRune()
             complexRune.linkedItemStack = item
             complexRune.runeType = type
-            HibernateSession.session.persist(complexRune)
+            PluginConfiguration.session.persist(complexRune)
             val meta = item.itemMeta
             CustomNamespacesManager.int[CustomNamespaces.COMPLEX_RUNE_UUID]!!.setData(meta, complexRune.id!!.toInt())
             item.itemMeta = meta
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return complexRune
         }
     }

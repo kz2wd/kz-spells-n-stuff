@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.artifact
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
@@ -25,16 +25,17 @@ class Artifact {
         val defaultItemStack = ItemStack(Material.AIR)
 
         fun getArtifact(itemStack: ItemStack): Artifact? {
+            if (itemStack.itemMeta == null) return null
             val uuid =
                 CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.getData(itemStack.itemMeta) ?: return null
-            return HibernateSession.session
+            return PluginConfiguration.session
                 .createQuery("from Artifact A where A.id = :uuid", Artifact::class.java)
                 .setParameter("uuid", uuid.toString())
                 .uniqueResult()
         }
 
         fun deleteArtifact(artifact: Artifact) {
-            HibernateSession.session
+            PluginConfiguration.session
                 .createQuery("delete from Artifact A where id = :id")
                 .setParameter("id", artifact.id)
                 .executeUpdate()
@@ -42,15 +43,15 @@ class Artifact {
         }
 
         fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK): Artifact {
-            HibernateSession.session.beginTransaction()
+            PluginConfiguration.session.beginTransaction()
             val artifact = Artifact()
             artifact.linkedItemStack = item
             artifact.triggerType = triggerType
-            HibernateSession.session.persist(artifact)
+            PluginConfiguration.session.persist(artifact)
             val meta = item.itemMeta
             CustomNamespacesManager.int[CustomNamespaces.ARTIFACT_UUID]!!.setData(meta, artifact.id!!.toInt())
             item.itemMeta = meta
-            HibernateSession.session.transaction.commit()
+            PluginConfiguration.session.transaction.commit()
             return artifact
         }
     }
@@ -59,7 +60,7 @@ class Artifact {
     @GeneratedValue
     var id: Long? = null
 
-    @Column(columnDefinition = "varbinary(500)")
+    @Column(columnDefinition = "varbinary(1000)")
     @Convert(converter = ItemStackConverter::class)
     var linkedItemStack: ItemStack? = null
 
@@ -144,10 +145,10 @@ class Artifact {
             }
 
             override fun close(player: Player) {
-                HibernateSession.session.beginTransaction()
+                PluginConfiguration.session.beginTransaction()
                 inputRune = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
                 effectRune = player.openInventory.topInventory.getItem(effectSlot) ?: defaultItemStack
-                HibernateSession.session.transaction.commit()
+                PluginConfiguration.session.transaction.commit()
             }
         }
 

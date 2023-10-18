@@ -1,6 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
-import com.cludivers.kz2wdprison.framework.configuration.HibernateSession
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.ChunkBean
 import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
@@ -19,7 +19,7 @@ import org.bukkit.entity.Player
 
 fun Player.getData(): PlayerBean {
 
-    var playerData = HibernateSession.session
+    var playerData = PluginConfiguration.session
         .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
         .setParameter("uuid", this.uniqueId.toString())
         .uniqueResult()
@@ -27,7 +27,7 @@ fun Player.getData(): PlayerBean {
     if (playerData == null) {
         playerData = PlayerBean()
         playerData.uuid = this.uniqueId.toString()
-        HibernateSession.session.persist(playerData)
+        PluginConfiguration.session.persist(playerData)
     }
 
     return playerData
@@ -84,13 +84,13 @@ fun Player.createNation() {
         return
     }
 
-    HibernateSession.session.beginTransaction()
+    PluginConfiguration.session.beginTransaction()
 
     val nation = NationBean.instantiateAndPersistDefaultNation(playerData, "Nation de ${this.name}")
 
     playerData.nation = nation
 
-    HibernateSession.session.transaction.commit()
+    PluginConfiguration.session.transaction.commit()
     this.sendSuccesMessage("Votre nation vient d'être créée !")
 }
 
@@ -134,9 +134,9 @@ fun Player.acceptNationInvitation(playerInviting: Player) {
         return
     }
 
-    HibernateSession.session.beginTransaction()
+    PluginConfiguration.session.beginTransaction()
     nation.addMember(playerData)
-    HibernateSession.session.transaction.commit()
+    PluginConfiguration.session.transaction.commit()
     this.sendSuccesMessage("Vous avez rejoint la nation ${nation.name}")
 }
 
@@ -157,7 +157,7 @@ fun Player.quitNation() {
         this.sendErrorMessage("Vous n'appartenez à aucune nation")
         return
     }
-    HibernateSession.session.beginTransaction()
+    PluginConfiguration.session.beginTransaction()
     nation.removeMember(playerData)
 
     if (nation.owner == playerData) {
@@ -171,7 +171,7 @@ fun Player.quitNation() {
         }
 
     }
-    HibernateSession.session.transaction.commit()
+    PluginConfiguration.session.transaction.commit()
     this.sendSuccesMessage("Vous avez quitté votre nation")
 }
 
@@ -199,12 +199,12 @@ fun Player.claimChunk() {
         return
     }
 
-    HibernateSession.session.beginTransaction()
+    PluginConfiguration.session.beginTransaction()
 
     playerNation.chunkClaimTokens = playerNation.chunkClaimTokens!! - 1
     playerNation.chunks!!.add(chunkData)
     chunkData.nation = playerNation
-    HibernateSession.session.transaction.commit()
+    PluginConfiguration.session.transaction.commit()
 
     this.sendSuccesMessage("Le chunk à bien été approprié")
 

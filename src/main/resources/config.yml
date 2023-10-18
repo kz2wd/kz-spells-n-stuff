@@ -1,0 +1,7 @@
+connectDatabase: false # false | true
+databaseLogin: db-login-here
+databasePassword: db-password-here
+databasePort: 3306
+databaseName: db-name-here
+databaseHBM: create # validate | create-only | drop | update | create | create-drop
+inProduction: false # true | false

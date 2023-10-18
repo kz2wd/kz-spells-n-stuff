@@ -19,12 +19,12 @@ repositories {
 }
 
 dependencies {
-    implementation("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    implementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.hibernate:hibernate-core:6.1.1.Final")
-    implementation("mysql:mysql-connector-java:8.0.29")
+    implementation("mysql:mysql-connector-java:8.0.33")
+    implementation("com.h2database:h2:2.2.224")
 
-    testImplementation("com.h2database:h2:2.1.214")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation(kotlin("test"))
     testImplementation("org.apache.logging.log4j:log4j-core:2.20.0")
@@ -44,7 +44,8 @@ tasks.withType<ShadowJar> {
         include(dependency("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1"))
 
         // Hibernates and persistence
-        include(dependency("mysql:mysql-connector-java:8.0.29"))
+        include(dependency("mysql:mysql-connector-java:8.0.33"))
+        include(dependency("com.h2database:h2:2.2.224"))
         include(dependency("org.hibernate.orm:hibernate-core:6.1.1.Final"))
         include(dependency("jakarta.persistence:jakarta.persistence-api:3.0.0"))
         include(dependency("jakarta.transaction:jakarta.transaction-api:2.0.0"))
