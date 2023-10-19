@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.commands
 
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -20,7 +20,7 @@ class ArtifactInputRuneAddCommand(parentName: String) : SubCommand(parentName) {
             return false
         }
 
-        ArtifactComplexRune.createComplexRune(sender.inventory.itemInMainHand, ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+        ArtifactComplexRune.createComplexRune(sender.inventory.itemInMainHand, ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE)
         sender.sendMessage(Component.text("${ChatColor.GREEN}Une nouvelle source d'artefact à été lié avec l'objet dans votre main !"))
 
 

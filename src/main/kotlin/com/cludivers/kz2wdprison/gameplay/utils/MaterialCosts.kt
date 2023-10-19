@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.artifact.effects
+package com.cludivers.kz2wdprison.gameplay.utils
 
 import org.bukkit.Material
 

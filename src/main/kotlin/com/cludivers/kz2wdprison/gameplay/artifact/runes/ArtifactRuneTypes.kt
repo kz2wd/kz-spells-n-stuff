@@ -1,12 +1,9 @@
-package com.cludivers.kz2wdprison.gameplay.artifact
+package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.artifact.effects.ArtifactEffectInterface
-import com.cludivers.kz2wdprison.gameplay.artifact.effects.BasicArtifactEffects
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInput
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInputInterface
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import net.kyori.adventure.text.Component
@@ -16,48 +13,45 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
-    GENERIC_INPUT_RUNE {
-        override fun enrichArtifactInput(
+enum class ArtifactRuneTypes : ArtifactRuneInterface {
+    GENERIC_ARTIFACT_RUNE {
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             if (inputRune.itemMeta == null) {
                 return
             }
 
-            val basicRune = BasicInputRunes.getInputRune(inputRune)
+            val basicRune = ArtifactRunes.getArtifactRune(inputRune)
             if (basicRune != null) {
-                basicRune.enrichArtifactInput(inputRune, artifactActivator, input, inputsTrace)
+                basicRune.processArtifactActivation(inputRune, artifactActivator, input, inputsTrace, player)
                 return
             }
 
             // If it is not a basic input type :s
             val complexRune = ArtifactComplexRune.getComplexRune(inputRune)
-            if (complexRune == null || complexRune.runeType != GENERIC_INPUT_RUNE) {
+            if (complexRune == null || complexRune.runeType != GENERIC_ARTIFACT_RUNE) {
                 return
             }
             // If a complexRune of type INPUT was found, then resolve its input
-            return complexRune.enrichArtifactInput(inputRune, artifactActivator, input, inputsTrace)
-        }
-    },
-    GENERIC_EFFECT_RUNE {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            BasicArtifactEffects.getEffectType(itemStack).triggerArtifactEffect(itemStack, input, player)
+            return complexRune.processArtifactActivation(inputRune, artifactActivator, input, inputsTrace, player)
         }
     },
 
     BOUND_ENTITY_RUNE {
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             // TODO
-            input.entities
+
         }
     },
     NONE;
@@ -102,15 +96,12 @@ enum class ArtifactRuneTypes : ArtifactInputInterface, ArtifactEffectInterface {
         return editor
     }
 
-    override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-        // Do nothing
-    }
-
-    override fun enrichArtifactInput(
+    override fun processArtifactActivation(
         inputRune: ItemStack,
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
-        inputsTrace: MutableList<ItemStack>
+        inputsTrace: MutableList<ItemStack>,
+        player: Player?
     ) {
         // Do nothing
     }

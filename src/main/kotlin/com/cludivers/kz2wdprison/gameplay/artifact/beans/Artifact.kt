@@ -1,11 +1,11 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
@@ -113,13 +113,12 @@ class Artifact {
         lastUsage = Instant.now()
 
         val input = ArtifactInput(currentFlow)
-        ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(inputRune, artifactActivator, input, mutableListOf())
-
-        ArtifactRuneTypes.GENERIC_EFFECT_RUNE.triggerArtifactEffect(
-            effectRune,
-            input,
+        val player = if (artifactActivator.getSelf() is Player){
             artifactActivator.getSelf() as Player
-        )
+        } else {
+            null
+        }
+        ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE.processArtifactActivation(inputRune, artifactActivator, input, mutableListOf(), player)
 
         return 0f
     }

@@ -1,9 +1,9 @@
-package com.cludivers.kz2wdprison.gameplay.artifact.effects
+package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactRuneTypes
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.*
@@ -14,9 +14,15 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
 
 
-enum class BasicArtifactEffects : ArtifactEffectInterface {
+enum class ArtifactRunes : ArtifactRuneInterface {
     BLOCKS {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
             if (player == null) {
                 return
             }
@@ -33,14 +39,20 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
                 )
                 Bukkit.getPluginManager().callEvent(event)
                 if (!event.isCancelled) {
-                    it.block.type = itemStack.type
+                    it.block.type = inputRune.type
                 }
             }
         }
     },
     PROJECTILES {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            when (itemStack.type) {
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            when (inputRune.type) {
                 Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.vectors)
                     .forEach {
                         it.first.world.spawnArrow(
@@ -53,7 +65,7 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
 
                 Material.SPLASH_POTION -> input.locations.zip(input.vectors).forEach {
                     val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
-                    potion.item = itemStack
+                    potion.item = inputRune
                     potion.velocity = it.second
                 }
 
@@ -69,9 +81,15 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         }
     },
     CONSUMABLE {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            input.entities.forEach { foodEffect(it, itemStack.type) }
-            input.entities.forEach { potionEffect(it, itemStack) }
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            input.entities.forEach { foodEffect(it, inputRune.type) }
+            input.entities.forEach { potionEffect(it, inputRune) }
         }
 
         private fun potionEffect(entity: Entity, itemStack: ItemStack) {
@@ -83,11 +101,17 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         }
     },
     TOOLS {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
             if (player == null) {
                 return
             }
-            when (itemStack.type) {
+            when (inputRune.type) {
                 Material.DIAMOND_PICKAXE -> {
                     input.locations.forEach {
                         if (it.block.type == Material.BEDROCK) { // Blacklist blocks here
@@ -96,7 +120,7 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
                         val event = BlockBreakEvent(it.block, player)
                         Bukkit.getPluginManager().callEvent(event)
                         if (!event.isCancelled) {
-                            it.block.breakNaturally(itemStack)
+                            it.block.breakNaturally(inputRune)
                         }
                     }
                 }
@@ -115,8 +139,14 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         }
     },
     ENTITY {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            val entity = entityTypeFromItemStack(itemStack)
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            val entity = entityTypeFromItemStack(inputRune)
             if (entity === null) {
                 return
             }
@@ -124,8 +154,14 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         }
     },
     CUSTOM {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            when (itemStack) {
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            when (inputRune) {
                 CustomShardItems.FIRE_SPARK.itemStack -> {
                     input.entities.forEach { it.fireTicks = 100 }
                 }
@@ -147,18 +183,26 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
         }
     },
     COMPLEX {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-            val artifactComplexEffect = ArtifactComplexRune.getComplexRune(itemStack) ?: return
-
-            if (artifactComplexEffect.runeType != ArtifactRuneTypes.GENERIC_EFFECT_RUNE) {
-                return
-            }
-            artifactComplexEffect.triggerArtifactEffect(itemStack, input, player)
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            val artifactComplexEffect = ArtifactComplexRune.getComplexRune(inputRune) ?: return
+            artifactComplexEffect.processArtifactActivation(inputRune, artifactActivator, input, inputsTrace, player)
         }
     },
 
     None {
-        override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
+        override fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
             // Do nothing
         }
     };
@@ -368,7 +412,13 @@ enum class BasicArtifactEffects : ArtifactEffectInterface {
             Material.DETECTOR_RAIL, Material.RAIL, Material.ACTIVATOR_RAIL
         )
 
-        fun getEffectType(itemStack: ItemStack): BasicArtifactEffects {
+        fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {
+
+            if (itemStack == null) return null
+            val enrichingRune = EnrichingArtifactRunes.getArtifactRune(itemStack.asOne())
+            if (enrichingRune != null){
+                return enrichingRune
+            }
 
             if (ArtifactComplexRune.getComplexRune(itemStack) != null) {
                 return COMPLEX

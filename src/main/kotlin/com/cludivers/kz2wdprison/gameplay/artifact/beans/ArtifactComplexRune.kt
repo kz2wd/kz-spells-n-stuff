@@ -1,12 +1,11 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.artifact.effects.ArtifactEffectInterface
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInput
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.ArtifactInputInterface
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneInterface
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneTypes
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import jakarta.persistence.*
@@ -14,7 +13,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 @Entity
-class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
+class ArtifactComplexRune : ArtifactRuneInterface {
 
     companion object {
         fun getComplexRune(itemStack: ItemStack): ArtifactComplexRune? {
@@ -56,16 +55,12 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
 
     var runeType: ArtifactRuneTypes = ArtifactRuneTypes.NONE
 
-
-    override fun triggerArtifactEffect(itemStack: ItemStack, input: ArtifactInput, player: Player?) {
-        // Do nothing
-    }
-
-    override fun enrichArtifactInput(
+    override fun processArtifactActivation(
         inputRune: ItemStack,
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
-        inputsTrace: MutableList<ItemStack>
+        inputsTrace: MutableList<ItemStack>,
+        player: Player?
     ) {
         // Prevent infinite loop
 
@@ -75,11 +70,12 @@ class ArtifactComplexRune : ArtifactInputInterface, ArtifactEffectInterface {
         inputsTrace.add(inputRune)
 
         stockedItemStack.forEach {
-            ArtifactRuneTypes.GENERIC_INPUT_RUNE.enrichArtifactInput(
+            ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE.processArtifactActivation(
                 it.value,
                 artifactActivator,
                 input,
-                inputsTrace
+                inputsTrace,
+                player
             )
         }
     }

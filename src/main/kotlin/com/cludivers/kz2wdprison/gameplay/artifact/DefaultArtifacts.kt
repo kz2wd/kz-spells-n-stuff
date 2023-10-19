@@ -4,7 +4,8 @@ import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.artifact.inputs.BasicInputRunes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.EnrichingArtifactRunes
 import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
@@ -16,11 +17,11 @@ enum class DefaultArtifacts {
     LIGHTING_SWORD{
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Epée éclair"), Material.IRON_SWORD), ArtifactTriggers.ATTACKING)
-            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                1 to BasicInputRunes.ATTACKED.itemStack,
-                2 to BasicInputRunes.ENTITIES_POSITION.itemStack)
+                1 to EnrichingArtifactRunes.ATTACKED.itemStack,
+                2 to EnrichingArtifactRunes.ENTITIES_POSITION.itemStack)
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.LIGHTNING_SPARK.itemStack
             PluginConfiguration.session.transaction.commit()
@@ -32,7 +33,7 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Bonne pioche"), Material.GOLDEN_PICKAXE), ArtifactTriggers.CLICK)
             PluginConfiguration.session.beginTransaction()
-            artifact.inputRune = BasicInputRunes.LOCATION_SIGHT.itemStack
+            artifact.inputRune = EnrichingArtifactRunes.LOCATION_SIGHT.itemStack
             artifact.effectRune = ItemStack(Material.DIAMOND_PICKAXE)
             PluginConfiguration.session.transaction.commit()
             return artifact
@@ -42,13 +43,13 @@ enum class DefaultArtifacts {
     MAGIC_WAND{
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Baguette magique"), Material.BLAZE_ROD), ArtifactTriggers.CLICK)
-            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                1 to BasicInputRunes.ENTITY_SIGHT.itemStack,
-                2 to BasicInputRunes.ENTITIES_POSITION.itemStack,
-                3 to BasicInputRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
-                4 to BasicInputRunes.DOWN_DIRECTION.itemStack
+                1 to EnrichingArtifactRunes.ENTITY_SIGHT.itemStack,
+                2 to EnrichingArtifactRunes.ENTITIES_POSITION.itemStack,
+                3 to EnrichingArtifactRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
+                4 to EnrichingArtifactRunes.DOWN_DIRECTION.itemStack
             )
 
             artifact.inputRune = inputRune.linkedItemStack!!
@@ -60,11 +61,11 @@ enum class DefaultArtifacts {
     JUMP_FEATHER{
         override fun buildArtifact(): Artifact {
             val artifact: Artifact = Artifact.createArtifact(Utils.buildItemStack(Component.text("Saut magique"), Material.FEATHER), ArtifactTriggers.CLICK)
-            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                1 to BasicInputRunes.ENTITY_CASTER.itemStack,
-                2 to BasicInputRunes.ENTITIES_DIRECTION.itemStack
+                1 to EnrichingArtifactRunes.ENTITY_CASTER.itemStack,
+                2 to EnrichingArtifactRunes.ENTITIES_DIRECTION.itemStack
             )
 
             artifact.inputRune = inputRune.linkedItemStack!!
@@ -78,7 +79,7 @@ enum class DefaultArtifacts {
             val itemstack = Utils.buildItemStack(Component.text("Casque de feu"), Material.LEATHER_HELMET)
             val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
             PluginConfiguration.session.beginTransaction()
-            artifact.inputRune = BasicInputRunes.ATTACKER.itemStack
+            artifact.inputRune = EnrichingArtifactRunes.ATTACKER.itemStack
             artifact.effectRune = CustomShardItems.FIRE_SPARK.itemStack
             PluginConfiguration.session.transaction.commit()
             val intrinsics = mapOf(IntrinsicAttributes.AGILITY to .3)
@@ -90,12 +91,12 @@ enum class DefaultArtifacts {
         override fun buildArtifact(): Artifact {
             val itemstack = Utils.buildItemStack(Component.text("Pousse-Plastron"), Material.IRON_CHESTPLATE)
             val artifact: Artifact = Artifact.createArtifact(itemstack, ArtifactTriggers.ATTACKED)
-            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
+            val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                1 to BasicInputRunes.ATTACKER.itemStack,
-                2 to BasicInputRunes.ENTITIES_DIRECTION.itemStack,
-                3 to BasicInputRunes.INVERT_DIRECTION.itemStack
+                1 to EnrichingArtifactRunes.ATTACKER.itemStack,
+                2 to EnrichingArtifactRunes.ENTITIES_DIRECTION.itemStack,
+                3 to EnrichingArtifactRunes.INVERT_DIRECTION.itemStack
             )
 
             artifact.inputRune = inputRune.linkedItemStack!!
@@ -115,7 +116,7 @@ enum class DefaultArtifacts {
                 Utils.buildItemStack(Component.text("Bottes nourrisseuses"),
                 Material.GOLDEN_BOOTS), ArtifactTriggers.ATTACKED)
             PluginConfiguration.session.beginTransaction()
-            artifact.inputRune = BasicInputRunes.ATTACKED.itemStack
+            artifact.inputRune = EnrichingArtifactRunes.ATTACKED.itemStack
             artifact.effectRune = ItemStack(Material.GOLDEN_APPLE)
             PluginConfiguration.session.transaction.commit()
             return artifact

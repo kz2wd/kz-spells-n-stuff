@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.artifact.inputs
+package com.cludivers.kz2wdprison.gameplay.artifact
 
 import org.bukkit.Location
 import org.bukkit.entity.Entity

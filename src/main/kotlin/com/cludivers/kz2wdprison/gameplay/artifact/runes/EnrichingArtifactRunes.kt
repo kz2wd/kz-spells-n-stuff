@@ -1,6 +1,7 @@
-package com.cludivers.kz2wdprison.gameplay.artifact.inputs
+package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactItemsTextures
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import net.kyori.adventure.text.Component
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 
-enum class BasicInputRunes : ArtifactInputInterface {
+enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     ENTITY_CASTER {
         override val texture
             get() = ArtifactItemsTextures.ENTITY_CASTER
@@ -19,11 +20,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Lanceur"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.entities = (0 until inputRune.amount).map { artifactActivator.getSelf() }
         }
@@ -36,11 +38,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Entité à vue"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             val entitySight = artifactActivator.getSightEntity(artifactActivator.maxSightDistance()) ?: return
             input.entities = (0 until inputRune.amount).map { entitySight }
@@ -54,11 +57,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Position à vue"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             val locationSight =
                 artifactActivator.getSightBlock(artifactActivator.maxSightDistance())?.location ?: return
@@ -73,11 +77,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Vide à vue"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             val locationSight =
                 artifactActivator.getSightAirBlock(artifactActivator.maxSightDistance())?.location ?: return
@@ -92,11 +97,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Lancement de projectile"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
             forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
@@ -118,11 +124,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             )
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
         }
@@ -135,11 +142,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Positions des entités"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.locations = input.entities.map { it.location }
         }
@@ -152,11 +160,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Directions des entités"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = input.entities.map { it.location.direction }
         }
@@ -169,11 +178,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Positions en-bas"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.locations = input.locations.map { it.subtract(Vector(0, inputRune.amount, 0)) }
         }
@@ -186,11 +196,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Positions en-haut"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.locations = input.locations.map { it.add(Vector(0, inputRune.amount, 0)) }
         }
@@ -203,11 +214,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Positions devant"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.locations =
                 input.locations.zip(input.vectors)
@@ -222,11 +234,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Positions autour plates"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.locations = locationAroundFlat(input.locations.random(), inputRune.amount)
         }
@@ -248,11 +261,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             )
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             val a = inputRune.amount.toDouble()
             input.entities = input.entities.map { it.getNearbyEntities(a, a, a) }.flatten()
@@ -268,11 +282,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Bas"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = (0 until inputRune.amount).map { Vector(0, -1, 0) }
         }
@@ -285,11 +300,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Haut"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = (0 until inputRune.amount).map { Vector(0, 1, 0) }
         }
@@ -302,11 +318,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Invertion des directions"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = input.vectors.map { it.multiply(-1) }
         }
@@ -323,11 +340,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             )
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = input.vectors.map { it.multiply(inputRune.amount) }
         }
@@ -340,11 +358,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Division des directions"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.vectors = input.vectors.map { it.multiply(1f / (inputRune.amount + 1)) }
         }
@@ -357,11 +376,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Vide"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             return
         }
@@ -373,11 +393,12 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Attaquant"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacker() }
         }
@@ -390,20 +411,21 @@ enum class BasicInputRunes : ArtifactInputInterface {
             Utils.buildItemStack(Component.text("Attaqué"), Material.IRON_NUGGET, texture.customData)
         }
 
-        override fun enrichArtifactInput(
+        override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
         ) {
             input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacked() }
         }
-    }
+    },
     ;
 
     companion object {
-        private val map = BasicInputRunes.values().associateBy { it.itemStack }
-        fun getInputRune(itemStack: ItemStack?): BasicInputRunes? {
+        private val map = EnrichingArtifactRunes.values().associateBy { it.itemStack }
+        internal fun getArtifactRune(itemStack: ItemStack?): EnrichingArtifactRunes? {
             if (itemStack == null) {
                 return null
             }
