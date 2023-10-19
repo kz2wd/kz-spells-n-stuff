@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.nation
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.nation.*
+import com.cludivers.kz2wdprison.gameplay.nation.commands.*
 import org.bukkit.plugin.java.JavaPlugin
 
 object NationDeclaration {

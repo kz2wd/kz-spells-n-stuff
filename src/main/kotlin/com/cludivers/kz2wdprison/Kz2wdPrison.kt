@@ -2,7 +2,7 @@ package com.cludivers.kz2wdprison
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
-import com.cludivers.kz2wdprison.gameplay.intrinsics.IntrinsicDeclaration
+import com.cludivers.kz2wdprison.gameplay.attributes.AttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
@@ -24,7 +24,7 @@ class Kz2wdPrison : JavaPlugin() {
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this)
         ArtifactDeclaration.declare(this)
-        IntrinsicDeclaration.declare(this)
+        AttributesDeclaration.declare(this)
 
     }
 

@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
+import com.cludivers.kz2wdprison.gameplay.artifact.commands.*
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.artifact.*
 import org.bukkit.plugin.java.JavaPlugin
 
 object ArtifactDeclaration {

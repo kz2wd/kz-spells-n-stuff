@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.framework.persistance.beans.player
 
-import com.cludivers.kz2wdprison.framework.persistance.beans.nation.NationBean
-import com.cludivers.kz2wdprison.framework.persistance.beans.nation.PermissionGroup
+import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
+import com.cludivers.kz2wdprison.gameplay.nation.beans.PermissionGroup
 import com.cludivers.kz2wdprison.framework.persistance.beans.ores.OresMinedStatistics
 import jakarta.persistence.*
 import org.bukkit.entity.Player

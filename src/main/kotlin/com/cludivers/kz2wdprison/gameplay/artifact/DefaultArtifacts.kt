@@ -1,11 +1,10 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactRuneTypes
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactTriggers
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.inputs.BasicInputRunes
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
+import com.cludivers.kz2wdprison.gameplay.CustomShardItems
+import com.cludivers.kz2wdprison.gameplay.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
@@ -20,8 +19,8 @@ enum class DefaultArtifacts {
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                0 to BasicInputRunes.ATTACKED.itemStack,
-                1 to BasicInputRunes.ENTITIES_POSITION.itemStack)
+                1 to BasicInputRunes.ATTACKED.itemStack,
+                2 to BasicInputRunes.ENTITIES_POSITION.itemStack)
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.LIGHTNING_SPARK.itemStack
             PluginConfiguration.session.transaction.commit()

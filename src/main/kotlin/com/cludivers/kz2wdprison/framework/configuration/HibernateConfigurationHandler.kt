@@ -2,17 +2,17 @@ package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.configuration.database.LocalDatabase
 import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.Artifact
-import com.cludivers.kz2wdprison.framework.persistance.beans.artifact.ArtifactComplexRune
-import com.cludivers.kz2wdprison.framework.persistance.beans.nation.*
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.gameplay.nation.beans.*
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
 
 class HibernateConfigurationHandler {
     companion object {
-        fun loadSessionFactory(config: FileConfiguration): SessionFactory {
+        fun loadSessionFactory(config: FileConfiguration?): SessionFactory {
 
             val classes = listOf(
                 PlayerBean::class.java,
@@ -26,7 +26,7 @@ class HibernateConfigurationHandler {
                 ArtifactComplexRune::class.java,
             )
 
-            val serviceRegistryBuilder = if (PluginConfiguration.isDatabaseConnected) {
+            val serviceRegistryBuilder = if (config != null && PluginConfiguration.isDatabaseConnected) {
                 RemoteDatabase.loadRemoteDatabase(config)
             } else {
                 LocalDatabase.loadLocalDatabase()

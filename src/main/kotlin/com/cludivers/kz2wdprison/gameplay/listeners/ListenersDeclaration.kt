@@ -1,7 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactListener
+import com.cludivers.kz2wdprison.gameplay.artifact.listeners.ArtifactListener
 import com.cludivers.kz2wdprison.gameplay.menu.MenuListener
+import com.cludivers.kz2wdprison.gameplay.nation.listeners.NationListener
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 

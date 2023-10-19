@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.world.mines
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.commands.mine.MineListCommand
-import com.cludivers.kz2wdprison.gameplay.commands.mine.MineResetCommand
+import com.cludivers.kz2wdprison.gameplay.world.mines.commands.MineListCommand
+import com.cludivers.kz2wdprison.gameplay.world.mines.commands.MineResetCommand
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.BlockPattern
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.Cuboid
 import org.bukkit.Bukkit
