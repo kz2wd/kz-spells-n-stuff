@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
+import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
-import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.inputs.BasicInputRunes
 import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
@@ -45,10 +45,11 @@ enum class DefaultArtifacts {
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                0 to BasicInputRunes.ENTITY_SIGHT.itemStack,
-                1 to BasicInputRunes.ENTITIES_POSITION.itemStack,
-                2 to BasicInputRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
-                3 to BasicInputRunes.DOWN_DIRECTION.itemStack)
+                1 to BasicInputRunes.ENTITY_SIGHT.itemStack,
+                2 to BasicInputRunes.ENTITIES_POSITION.itemStack,
+                3 to BasicInputRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
+                4 to BasicInputRunes.DOWN_DIRECTION.itemStack
+            )
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = ItemStack(Material.ARROW)
@@ -62,8 +63,9 @@ enum class DefaultArtifacts {
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                0 to BasicInputRunes.ENTITY_CASTER.itemStack,
-                1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack)
+                1 to BasicInputRunes.ENTITY_CASTER.itemStack,
+                2 to BasicInputRunes.ENTITIES_DIRECTION.itemStack
+            )
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack
@@ -91,9 +93,10 @@ enum class DefaultArtifacts {
             val inputRune = ArtifactComplexRune.createComplexRune(CustomShardItems.COMPLEX_INPUT_RUNE.itemStack.clone(), ArtifactRuneTypes.GENERIC_INPUT_RUNE)
             PluginConfiguration.session.beginTransaction()
             inputRune.stockedItemStack = mapOf(
-                0 to BasicInputRunes.ATTACKER.itemStack,
-                1 to BasicInputRunes.ENTITIES_DIRECTION.itemStack,
-                2 to BasicInputRunes.INVERT_DIRECTION.itemStack)
+                1 to BasicInputRunes.ATTACKER.itemStack,
+                2 to BasicInputRunes.ENTITIES_DIRECTION.itemStack,
+                3 to BasicInputRunes.INVERT_DIRECTION.itemStack
+            )
 
             artifact.inputRune = inputRune.linkedItemStack!!
             artifact.effectRune = CustomShardItems.MOVE_RUNE.itemStack

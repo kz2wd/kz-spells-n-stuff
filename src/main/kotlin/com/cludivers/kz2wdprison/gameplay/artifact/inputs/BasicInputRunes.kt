@@ -112,7 +112,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
 
         override val itemStack: ItemStack = run {
             Utils.buildItemStack(
-                Component.text("Directeur lanceur"),
+                Component.text("Direction du lanceur"),
                 Material.IRON_NUGGET,
                 texture.customData
             )
@@ -408,7 +408,7 @@ enum class BasicInputRunes : ArtifactInputInterface {
                 return null
             }
             return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()) {
-                map[itemStack]
+                map[itemStack.asOne()]
             } else {
                 null
             }
