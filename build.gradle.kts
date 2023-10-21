@@ -15,11 +15,11 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    implementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     implementation("commons-io:commons-io:2.11.0")
     implementation("org.hibernate:hibernate-core:6.1.1.Final")
     implementation("mysql:mysql-connector-java:8.0.33")
@@ -55,6 +55,8 @@ tasks.withType<ShadowJar> {
         include(dependency("net.bytebuddy:byte-buddy:1.12.9"))
         include(dependency("org.hibernate.common:hibernate-commons-annotations:6.0.2.Final"))
         include(dependency("org.antlr:antlr4-runtime:4.10"))
+
+        archiveFileName.set("kzSpells.jar")
     }
 }
 

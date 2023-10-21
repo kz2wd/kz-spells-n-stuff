@@ -1,6 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.artifact
 
-import com.cludivers.kz2wdprison.gameplay.artifact.commands.*
+import com.cludivers.kz2wdprison.gameplay.artifact.commands.ArtifactAddCommand
+import com.cludivers.kz2wdprison.gameplay.artifact.commands.ArtifactDemoCommand
+import com.cludivers.kz2wdprison.gameplay.artifact.commands.ArtifactHelperCommand
+import com.cludivers.kz2wdprison.gameplay.artifact.commands.ArtifactResourcePackCommand
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -13,7 +16,6 @@ object ArtifactDeclaration {
             mapOf(
                 "runes" to ArtifactHelperCommand(artifactCommandName),
                 "create" to ArtifactAddCommand(artifactCommandName),
-                "create_input" to ArtifactInputRuneAddCommand(artifactCommandName),
                 "demo" to ArtifactDemoCommand(artifactCommandName),
                 "enable_resourcepack" to ArtifactResourcePackCommand(artifactCommandName),
             )

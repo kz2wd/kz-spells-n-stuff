@@ -2,9 +2,8 @@ package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.configuration.database.LocalDatabase
 import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
-import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
-import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.nation.beans.*
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
@@ -23,7 +22,6 @@ class HibernateConfigurationHandler {
                 NationPlot::class.java,
                 PermissionGroup::class.java,
                 Artifact::class.java,
-                ArtifactComplexRune::class.java,
             )
 
             val serviceRegistryBuilder = if (config != null && PluginConfiguration.isDatabaseConnected) {

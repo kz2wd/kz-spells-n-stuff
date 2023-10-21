@@ -1,6 +1,5 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
-import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
@@ -12,6 +11,8 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
 
 enum class ArtifactRunes : ArtifactRuneInterface {
@@ -173,25 +174,13 @@ enum class ArtifactRunes : ArtifactRuneInterface {
                 CustomShardItems.MOVE_RUNE.itemStack -> {
                     input.entities.zip(input.vectors).forEach {
 
-                        it.first.velocity = it.first.velocity.add(it.second.multiply(3))
+                        it.first.velocity = it.first.velocity.add(it.second)
                     }
                 }
 
                 else -> {}
 
             }
-        }
-    },
-    COMPLEX {
-        override fun processArtifactActivation(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
-        ) {
-            val artifactComplexEffect = ArtifactComplexRune.getComplexRune(inputRune) ?: return
-            artifactComplexEffect.processArtifactActivation(inputRune, artifactActivator, input, inputsTrace, player)
         }
     },
 
@@ -412,7 +401,29 @@ enum class ArtifactRunes : ArtifactRuneInterface {
             Material.DETECTOR_RAIL, Material.RAIL, Material.ACTIVATOR_RAIL
         )
 
-        fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {
+        fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            if (inputRune.itemMeta == null) {
+                return
+            }
+
+            // Resolve rune and apply effects
+            getArtifactRune(inputRune)?.processArtifactActivation(
+                inputRune,
+                artifactActivator,
+                input,
+                inputsTrace,
+                player
+            )
+
+        }
+
+        private fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {
 
             if (itemStack == null) return null
             val enrichingRune = EnrichingArtifactRunes.getArtifactRune(itemStack.asOne())
@@ -420,9 +431,6 @@ enum class ArtifactRunes : ArtifactRuneInterface {
                 return enrichingRune
             }
 
-            if (ArtifactComplexRune.getComplexRune(itemStack) != null) {
-                return COMPLEX
-            }
             if (CustomShardItems.getCustomItemStack(itemStack) != null) {
                 return CUSTOM
             }
@@ -477,8 +485,18 @@ enum class ArtifactRunes : ArtifactRuneInterface {
             Material.COOKED_SALMON -> feedPlayer(entity, 9.6f, 6)
             Material.COOKIE -> feedPlayer(entity, 0.4f, 2)
             Material.DRIED_KELP -> feedPlayer(entity, 0.6f, 1)
-            Material.ENCHANTED_GOLDEN_APPLE -> feedPlayer(entity, 9.6f, 4)
-            Material.GOLDEN_APPLE -> feedPlayer(entity, 9.6f, 4)
+            Material.ENCHANTED_GOLDEN_APPLE -> {
+                feedPlayer(entity, 9.6f, 4)
+                entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 30 * 20, 3))
+                entity.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 300, 0))
+                entity.addPotionEffect(PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 300, 0))
+            }
+
+            Material.GOLDEN_APPLE -> {
+                feedPlayer(entity, 9.6f, 4)
+                entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 100, 1))
+                entity.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, 20 * 120, 0))
+            }
             Material.GLOW_BERRIES -> feedPlayer(entity, 0.4f, 2)
             Material.GOLDEN_CARROT -> feedPlayer(entity, 14.4f, 6)
             Material.HONEY_BOTTLE -> feedPlayer(entity, 1.2f, 6)

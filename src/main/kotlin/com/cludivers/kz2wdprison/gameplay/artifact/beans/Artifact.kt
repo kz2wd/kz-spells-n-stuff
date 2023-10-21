@@ -1,12 +1,12 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
-import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRuneTypes
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRunes
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
@@ -46,9 +46,16 @@ class Artifact {
 
         }
 
-        fun createArtifact(item: ItemStack, triggerType: ArtifactTriggers = ArtifactTriggers.CLICK): Artifact {
+        fun createArtifact(
+            item: ItemStack,
+            triggerType: ArtifactTriggers = ArtifactTriggers.CLICK,
+            runes: List<ItemStack>? = null
+        ): Artifact {
             PluginConfiguration.session.beginTransaction()
             val artifact = Artifact()
+
+            artifact.runes = runes?.withIndex()?.associate { it.index to it.value } ?: mapOf()
+
             artifact.linkedItemStack = item
             artifact.triggerType = triggerType
             PluginConfiguration.session.persist(artifact)
@@ -68,13 +75,9 @@ class Artifact {
     @Convert(converter = ItemStackConverter::class)
     var linkedItemStack: ItemStack? = null
 
-    @Column(columnDefinition = "varbinary(500)")
-    @Convert(converter = ItemStackConverter::class)
-    var effectRune: ItemStack = defaultItemStack
-
-    @Column(columnDefinition = "varbinary(500)")
-    @Convert(converter = ItemStackConverter::class)
-    var inputRune: ItemStack = defaultItemStack
+    @ElementCollection(targetClass = ItemStack::class)
+    @Convert(attributeName = "value", converter = ItemStackConverter::class)
+    var runes: Map<Int, ItemStack> = mapOf()
 
     var cooldown: Duration = Duration.ZERO
     var lastUsage: Instant? = null
@@ -118,23 +121,37 @@ class Artifact {
         } else {
             null
         }
-        ArtifactRuneTypes.GENERIC_ARTIFACT_RUNE.processArtifactActivation(inputRune, artifactActivator, input, mutableListOf(), player)
+
+        runes.forEach {
+
+            ArtifactRunes.processArtifactActivation(
+                it.value,
+                artifactActivator,
+                input,
+                mutableListOf(),
+                player
+            )
+        }
 
         return 0f
     }
 
     fun generateEditorMenu(): StoringMenu {
-        val inventorySize = 1 * 9
-        val effectSlot = 8
-        val inputSlot = 0
+        val inventorySize = 5 * 9
+        val itemStackSlots = (0 until inventorySize - 9)
+        // Keep it there, I'll need it later
+//        val itemStackSlots =
+//            (1 until 5).map { (1 * it until 5 * it).toList() }.reduce { acc, ints -> acc + ints } - 22
 
-        val fillingSlots = (0 until inventorySize) - effectSlot - inputSlot
-        val slots: Set<Int> = setOf(effectSlot, inputSlot)
+        val fillingSlots = (0 until inventorySize) - itemStackSlots
+        val slots: Set<Int> = (itemStackSlots).toSet()
         val editor = object : StoringMenu(slots, true) {
             override fun generateInventory(player: Player): Inventory {
-                val inventory = Bukkit.createInventory(player, inventorySize, Component.text("Artifact Edition"))
-                inventory.setItem(effectSlot, effectRune)
-                inventory.setItem(inputSlot, inputRune)
+                val inventory = Bukkit.createInventory(player, inventorySize, Component.text("Edition d'artefacte"))
+
+                runes.forEach {
+                    inventory.setItem(it.key, it.value)
+                }
 
                 val fillingItem =
                     Utils.buildItemStack(
@@ -149,8 +166,9 @@ class Artifact {
 
             override fun close(player: Player) {
                 PluginConfiguration.session.beginTransaction()
-                inputRune = player.openInventory.topInventory.getItem(inputSlot) ?: defaultItemStack
-                effectRune = player.openInventory.topInventory.getItem(effectSlot) ?: defaultItemStack
+                runes = itemStackSlots.associateWith {
+                    player.openInventory.topInventory.getItem(it)
+                }.filter { it.value != null } as Map<Int, ItemStack>
                 PluginConfiguration.session.transaction.commit()
             }
         }

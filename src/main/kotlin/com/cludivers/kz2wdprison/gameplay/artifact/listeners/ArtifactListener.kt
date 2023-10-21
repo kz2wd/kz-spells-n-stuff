@@ -3,7 +3,6 @@ package com.cludivers.kz2wdprison.gameplay.artifact.listeners
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
-import com.cludivers.kz2wdprison.gameplay.artifact.beans.ArtifactComplexRune
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -28,10 +27,6 @@ class ArtifactListener : Listener {
                 artifact.activate(ArtifactActivator.playerToCaster(event.player), 100f, ArtifactTriggers.CLICK)
             }
             return
-        }
-        val artifactComplexRune: ArtifactComplexRune? = ArtifactComplexRune.getComplexRune(event.item!!)
-        if (artifactComplexRune !== null) {
-            artifactComplexRune.runeType.generateEditorMenu(artifactComplexRune).open(event.player)
         }
     }
 
