@@ -1,8 +1,13 @@
 package com.cludivers.kz2wdprison.gameplay.nation.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
+import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation
+import com.cludivers.kz2wdprison.gameplay.player.sendErrorMessage
+import com.cludivers.kz2wdprison.gameplay.player.sendSuccessMessage
 import jakarta.persistence.*
+import org.bukkit.entity.Player
 import org.hibernate.annotations.CreationTimestamp
 import java.sql.Date
 
@@ -94,7 +99,7 @@ class NationBean {
     }
 
     companion object {
-        fun instantiateAndPersistDefaultNation(owner: PlayerBean, name: String): NationBean {
+        private fun instantiateAndPersistDefaultNation(owner: PlayerBean, name: String): NationBean {
             val nation = NationBean()
             nation.owner = owner
             nation.name = name
@@ -111,6 +116,137 @@ class NationBean {
             PluginConfiguration.session.persist(nation)
 
             return nation
+        }
+
+        fun Player.createNation() {
+            val playerData = this.getData()
+            if (playerData.nation is NationBean) {
+                this.sendErrorMessage("Vous appartenez déjà à une nation")
+                return
+            }
+            PluginConfiguration.session.beginTransaction()
+
+            val nation = instantiateAndPersistDefaultNation(playerData, "Nation de ${this.name}")
+
+            playerData.nation = nation
+
+            PluginConfiguration.session.transaction.commit()
+            this.sendSuccessMessage("Votre nation vient d'être créée !")
+        }
+
+        fun Player.invitePlayerToNation(invitedPlayer: Player) {
+
+            val senderData = this.getData()
+            if (senderData.nation !is NationBean) {
+                this.sendErrorMessage("Vous n'appartenez à aucune nation")
+                return
+            }
+            if (invitedPlayer == this) {
+                this.sendErrorMessage("Vous essayez de vous inviter vous-même ?")
+                return
+            }
+            if (senderData.nation == invitedPlayer.getData().nation) {
+                this.sendErrorMessage("${invitedPlayer.name} est déjà dans votre nation")
+                return
+            }
+
+            if (NationInvitation.doInvitationExist(this, invitedPlayer)) {
+                this.sendErrorMessage("Vous avez déjà invité ${invitedPlayer.name}");
+                return
+            }
+            NationInvitation.addInvitation(this, invitedPlayer, senderData.nation!!)
+            NationInvitation.sendInvitationNotification(this, invitedPlayer, senderData.nation!!)
+            this.sendSuccessMessage("Invitation envoyée à ${invitedPlayer.name}");
+        }
+
+        fun Player.acceptNationInvitation(playerInviting: Player) {
+
+            val playerData = this.getData()
+
+            if (playerData.nation is NationBean) {
+                this.sendErrorMessage("Vous appartenez déjà à une nation, quittez la pour en rejoindre une autre")
+                return
+            }
+
+            val nation = NationInvitation.removeInvitation(playerInviting, this)
+            if (nation !is NationBean) {
+                this.sendErrorMessage("Vous n'avez pas été invité par cette personne")
+                return
+            }
+
+            PluginConfiguration.session.beginTransaction()
+            nation.addMember(playerData)
+            PluginConfiguration.session.transaction.commit()
+            this.sendSuccessMessage("Vous avez rejoint la nation ${nation.name}")
+        }
+
+        fun Player.refuseNationInvitation(playerInviting: Player) {
+
+            val nation = NationInvitation.removeInvitation(playerInviting, this)
+            if (nation !is NationBean) {
+                this.sendErrorMessage("Cette personne ne vous à pas invitée")
+                return
+            }
+            this.sendSuccessMessage("Vous avez refusé l'invitation à rejoindre la nation : ${nation.name}")
+        }
+
+        fun Player.quitNation() {
+            val playerData = this.getData()
+            val nation = playerData.nation
+            if (nation !is NationBean) {
+                this.sendErrorMessage("Vous n'appartenez à aucune nation")
+                return
+            }
+            PluginConfiguration.session.beginTransaction()
+            nation.removeMember(playerData)
+
+            if (nation.owner == playerData) {
+                val newOwner = nation.findNewOwner()
+                if (newOwner !is PlayerBean) {
+                    nation.delete()
+                    this.sendSuccessMessage("Votre nation à été supprimée")
+                } else {
+                    nation.changeOwner(newOwner)
+
+                }
+            }
+            PluginConfiguration.session.transaction.commit()
+            this.sendSuccessMessage("Vous avez quitté votre nation")
+        }
+
+        fun Player.claimChunk() {
+            val playerData = this.getData()
+            val playerNation = playerData.nation
+            if (playerNation !is NationBean) {
+                this.sendErrorMessage("Vous n'appartenez à aucune nation")
+                return
+            }
+
+            if (!(playerData == playerNation.owner || playerData.permissionGroup!!.nationPermission!!.canClaim)) {
+                this.sendErrorMessage("Vous n'avez pas la permission pour vous approprier des chunks")
+                return
+            }
+
+            val chunkData = ChunkBean.getChunkBean(this.chunk)
+            if (chunkData.nation is NationBean) {
+                this.sendErrorMessage("Ce chunk n'est pas disponible")
+                return
+            }
+
+            if (playerNation.chunkClaimTokens!! <= 0) {
+                this.sendErrorMessage("Vous n'avez plus de jeton d'appropriation de chunk")
+                return
+            }
+
+            PluginConfiguration.session.beginTransaction()
+
+            playerNation.chunkClaimTokens = playerNation.chunkClaimTokens!! - 1
+            playerNation.chunks!!.add(chunkData)
+            chunkData.nation = playerNation
+            PluginConfiguration.session.transaction.commit()
+
+            this.sendSuccessMessage("Le chunk à bien été approprié")
+
         }
     }
 

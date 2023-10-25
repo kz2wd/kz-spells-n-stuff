@@ -1,10 +1,10 @@
 package com.cludivers.kz2wdprison.gameplay.nation.listeners
 
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
 import com.cludivers.kz2wdprison.gameplay.nation.beans.AreaPermission
 import com.cludivers.kz2wdprison.gameplay.nation.beans.ChunkBean
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
 import com.cludivers.kz2wdprison.gameplay.nation.beans.PermissionGroup
-import com.cludivers.kz2wdprison.gameplay.player.getData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.title.Title

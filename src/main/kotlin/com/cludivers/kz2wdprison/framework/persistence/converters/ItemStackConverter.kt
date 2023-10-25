@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.persistance.converters
+package com.cludivers.kz2wdprison.framework.persistence.converters
 
 import jakarta.persistence.AttributeConverter
 import org.bukkit.Material

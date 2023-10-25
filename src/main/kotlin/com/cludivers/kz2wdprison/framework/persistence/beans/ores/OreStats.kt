@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.ores
+package com.cludivers.kz2wdprison.framework.persistence.beans.ores
 
 import jakarta.persistence.Embeddable
 

@@ -1,7 +1,7 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.player
+package com.cludivers.kz2wdprison.framework.persistence.beans.player
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.framework.persistance.beans.ores.OresMinedStatistics
+import com.cludivers.kz2wdprison.framework.persistence.beans.ores.OresMinedStatistics
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
 import com.cludivers.kz2wdprison.gameplay.nation.beans.PermissionGroup
 import jakarta.persistence.*
@@ -35,7 +35,7 @@ class PlayerBean {
     var permissionGroup: PermissionGroup? = null
 
     companion object {
-        fun getPlayerPlayerBean(player: Player): PlayerBean {
+        private fun getPlayerPlayerBean(player: Player): PlayerBean {
             var playerData = PluginConfiguration.session
                 .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
                 .setParameter("uuid", player.uniqueId.toString())
@@ -46,8 +46,11 @@ class PlayerBean {
                 playerData.uuid = player.uniqueId.toString()
                 PluginConfiguration.session.persist(playerData)
             }
-
             return playerData
+        }
+
+        fun Player.getData(): PlayerBean {
+            return PlayerBean.getPlayerPlayerBean(this)
         }
     }
 }

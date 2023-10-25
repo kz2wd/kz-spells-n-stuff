@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.world.cuboid
 
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,6 +28,14 @@ class Cuboid(loc1: Location, loc2: Location) {
         val iter = goOver()
         while (iter.hasNext()){
             iter.next().block.type = pattern.getMaterial()
+        }
+    }
+
+    companion object {
+        fun Player.isInArea(cuboid: Cuboid): Boolean {
+            return cuboid.start.x <= this.location.x && this.location.x <= cuboid.end.x &&
+                    cuboid.start.y <= this.location.y && this.location.y <= cuboid.end.y &&
+                    cuboid.start.z <= this.location.z && this.location.z <= cuboid.end.z
         }
     }
 }

@@ -3,6 +3,7 @@ package com.cludivers.kz2wdprison.gameplay.artifact.runes
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -60,6 +61,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         ) {
             input.locations = input.entities.filterIsInstance<LivingEntity>()
                 .mapNotNull { it.getTargetBlockExact(inputRune.amount)?.location }
+            Bukkit.broadcast(Component.text("${input.locations}"))
         }
     },
 
@@ -350,20 +352,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     },
 
     //</editor-fold>
-    //<editor-fold desc="NONE" defaultstate="collapsed">
-    NONE {
-        override fun artifactActivationWithRequirements(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
-        ) {
-            return
-        }
-    },
-
-    //</editor-fold>
     //<editor-fold desc="ENTITY_ATTACKER" defaultstate="collapsed">
     ENTITY_ATTACKER {
         override fun artifactActivationWithRequirements(
@@ -393,6 +381,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     },
 
     //</editor-fold>
+    //<editor-fold desc="PLACE_BLOCK" defaultstate="collapsed">
     PLACE_BLOCK {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -422,6 +411,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="LAUNCH_PROJECTILE" defaultstate="collapsed">
     LAUNCH_PROJECTILE {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -458,6 +450,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="EAT_FOOD" defaultstate="collapsed">
     EAT_FOOD {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -469,6 +464,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input.entities.forEach { foodEffect(it, inputRune.type) }
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="DRINK_POTION" defaultstate="collapsed">
     DRINK_POTION {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -488,6 +486,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             (entity as LivingEntity).addPotionEffects(meta.customEffects)
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="USE_TOOL" defaultstate="collapsed">
     USE_TOOL {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -503,7 +504,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                 Material.DIAMOND_PICKAXE -> {
                     input.locations.forEach {
                         if (it.block.type == Material.BEDROCK) { // Blacklist blocks here
-                            return
+                            return@forEach
                         }
                         val event = BlockBreakEvent(it.block, player)
                         Bukkit.getPluginManager().callEvent(event)
@@ -519,6 +520,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                             it.block.type = Material.FIRE
                         }
                     }
+                    input.entities.forEach {
+                        it.fireTicks = 40
+                    }
                 }
 
                 else -> {}
@@ -526,6 +530,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
 
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="SUMMON_ENTITY" defaultstate="collapsed">
     SUMMON_ENTITY {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -541,6 +548,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input.locations.forEach { it.world.spawnEntity(it, entity) }
         }
     },
+
+    //</editor-fold>
+    //<editor-fold desc="LIGHTNING_SPARK" defaultstate="collapsed">
     LIGHTNING_SPARK {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -551,8 +561,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         ) {
             input.locations.forEach { it.world.strikeLightning(it) }
         }
-
     },
+
+    //</editor-fold>
+    //<editor-fold desc="MOVE_RUNE" defaultstate="collapsed">
     MOVE_RUNE {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -567,8 +579,22 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         }
 
     },
-    ;
 
+    //</editor-fold>
+    //<editor-fold desc="NONE" defaultstate="collapsed">
+    NONE {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            return
+        }
+    },
+    //</editor-fold>
+    ;
 
     protected open val requirement: RuneRequirements = RuneRequirements.NONE
     override fun processArtifactActivation(
@@ -616,17 +642,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         private fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {
 
             if (itemStack == null) return null
-            val enrichingRune = EnrichingArtifactRunes.getArtifactRune(itemStack.asOne())
-            if (enrichingRune != null) {
-                return enrichingRune
-            }
 
             val customShardItems = CustomShardItems.getCustomItemStack(itemStack)
             if (customShardItems != null) {
                 return customShardItems.runeBehavior
             }
-
-
             // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation
             if (itemStack.type.isBlock) {
                 return PLACE_BLOCK
@@ -639,7 +659,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             return when (itemStack.type) {
                 Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.SPLASH_POTION, Material.FIRE_CHARGE -> LAUNCH_PROJECTILE
 
-                Material.DIAMOND_PICKAXE -> USE_TOOL
+                Material.DIAMOND_PICKAXE, Material.FLINT_AND_STEEL -> USE_TOOL
 
                 // Add all spawn eggs, boring . . .
                 Material.COW_SPAWN_EGG, Material.CHICKEN_SPAWN_EGG, Material.GOAT_SPAWN_EGG -> SUMMON_ENTITY

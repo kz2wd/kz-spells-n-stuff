@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.player
+package com.cludivers.kz2wdprison.framework.persistence.beans.player
 
 enum class PlayerSkills {
     ARTIFACT_MASTERY,

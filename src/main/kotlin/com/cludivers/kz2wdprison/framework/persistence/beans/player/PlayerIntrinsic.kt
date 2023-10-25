@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.player
+package com.cludivers.kz2wdprison.framework.persistence.beans.player
 
 import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
 import jakarta.persistence.ElementCollection

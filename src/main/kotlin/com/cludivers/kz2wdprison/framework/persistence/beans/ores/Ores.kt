@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.framework.persistance.beans.ores
+package com.cludivers.kz2wdprison.framework.persistence.beans.ores
 
 enum class Ores(val minXp: Float) {
     STONE(1f),

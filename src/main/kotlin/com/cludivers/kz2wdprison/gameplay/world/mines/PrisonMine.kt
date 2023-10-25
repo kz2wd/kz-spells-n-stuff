@@ -1,8 +1,8 @@
 package com.cludivers.kz2wdprison.gameplay.world.mines
 
-import com.cludivers.kz2wdprison.gameplay.player.isInArea
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.BlockPattern
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.Cuboid
+import com.cludivers.kz2wdprison.gameplay.world.cuboid.Cuboid.Companion.isInArea
 import org.bukkit.Bukkit
 import org.bukkit.Location
 

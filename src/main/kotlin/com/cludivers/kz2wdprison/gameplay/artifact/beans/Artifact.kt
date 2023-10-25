@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.framework.persistance.converters.ItemStackConverter
+import com.cludivers.kz2wdprison.framework.persistence.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
@@ -119,7 +119,6 @@ class Artifact {
         }
 
         runes.forEach {
-
             RunesBehaviors.processArtifactActivation(
                 it.value,
                 artifactActivator,

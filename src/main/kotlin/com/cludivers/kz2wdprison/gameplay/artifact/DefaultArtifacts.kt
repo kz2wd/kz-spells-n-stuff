@@ -2,7 +2,6 @@ package com.cludivers.kz2wdprison.gameplay.artifact
 
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
-import com.cludivers.kz2wdprison.gameplay.artifact.runes.EnrichingArtifactRunes
 import com.cludivers.kz2wdprison.gameplay.attributes.AttributeItem
 import com.cludivers.kz2wdprison.gameplay.attributes.IntrinsicAttributes
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
@@ -20,8 +19,8 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.ATTACKING,
                 listOf(
-                    EnrichingArtifactRunes.ATTACKED.itemStack,
-                    EnrichingArtifactRunes.ENTITIES_POSITION.itemStack,
+                    CustomShardItems.ENTITY_ATTACKED_RUNE.itemStack,
+                    CustomShardItems.ENTITIES_POSITION_RUNE.itemStack,
                     CustomShardItems.LIGHTNING_SPARK.itemStack,
                 )
             )
@@ -37,7 +36,7 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    EnrichingArtifactRunes.LOCATION_SIGHT.itemStack,
+                    CustomShardItems.LOCATION_SIGHT_RUNE.itemStack.asQuantity(10),
                     ItemStack(Material.DIAMOND_PICKAXE)
                 )
             )
@@ -53,10 +52,10 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    EnrichingArtifactRunes.ENTITIES_IN_SIGHT.itemStack,
-                    EnrichingArtifactRunes.ENTITIES_POSITION.itemStack,
-                    EnrichingArtifactRunes.LOCATIONS_ABOVE.itemStack.asQuantity(5),
-                    EnrichingArtifactRunes.DOWN_DIRECTION.itemStack,
+                    CustomShardItems.ENTITIES_IN_SIGHT_RUNE.itemStack.asQuantity(10),
+                    CustomShardItems.ENTITIES_POSITION_RUNE.itemStack,
+                    CustomShardItems.LOCATIONS_ABOVE_RUNE.itemStack.asQuantity(5),
+                    CustomShardItems.DOWN_DIRECTION_RUNE.itemStack,
                     ItemStack(Material.ARROW)
 
                 )
@@ -72,8 +71,8 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    EnrichingArtifactRunes.ENTITY_CASTER.itemStack,
-                    EnrichingArtifactRunes.ENTITIES_DIRECTION.itemStack,
+                    CustomShardItems.ENTITY_CASTER_RUNE.itemStack,
+                    CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
                 )
             )
@@ -88,8 +87,8 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.ATTACKED,
                 listOf(
-                    EnrichingArtifactRunes.ATTACKER.itemStack,
-                    CustomShardItems.FIRE_SPARK.itemStack,
+                    CustomShardItems.ENTITY_ATTACKER_RUNE.itemStack,
+                    ItemStack(Material.FLINT_AND_STEEL),
                 )
             )
             val intrinsics = mapOf(IntrinsicAttributes.AGILITY to .3)
@@ -107,9 +106,9 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.ATTACKED,
                 listOf(
-                    EnrichingArtifactRunes.ATTACKER.itemStack,
-                    EnrichingArtifactRunes.ENTITIES_DIRECTION.itemStack,
-                    EnrichingArtifactRunes.INVERT_DIRECTION.itemStack,
+                    CustomShardItems.ENTITY_ATTACKER_RUNE.itemStack,
+                    CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
+                    CustomShardItems.INVERT_DIRECTIONS_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
                 )
             )
@@ -129,7 +128,7 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.ATTACKED,
                 listOf(
-                    EnrichingArtifactRunes.ATTACKED.itemStack,
+                    CustomShardItems.ENTITY_ATTACKED_RUNE.itemStack,
                     ItemStack(Material.GOLDEN_APPLE),
                 )
             )

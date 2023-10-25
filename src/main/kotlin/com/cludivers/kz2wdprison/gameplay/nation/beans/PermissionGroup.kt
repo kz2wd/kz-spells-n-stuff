@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.nation.beans
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
 import jakarta.persistence.*
 import org.bukkit.Bukkit
 import java.util.*

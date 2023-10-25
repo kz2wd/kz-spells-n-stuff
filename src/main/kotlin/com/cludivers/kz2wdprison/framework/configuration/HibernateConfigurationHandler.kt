@@ -2,7 +2,7 @@ package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.configuration.database.LocalDatabase
 import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
-import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.nation.beans.*
 import org.bukkit.configuration.file.FileConfiguration

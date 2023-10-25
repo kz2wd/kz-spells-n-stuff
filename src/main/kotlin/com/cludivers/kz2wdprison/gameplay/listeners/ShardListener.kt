@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.listeners
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.player.getData
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent
 import net.kyori.adventure.text.Component

@@ -24,8 +24,6 @@ enum class RuneRequirements {
             } else {
                 input.locations = listOf(activator.getSelf().location)
             }
-
-
         }
     },
     DIRECTION {

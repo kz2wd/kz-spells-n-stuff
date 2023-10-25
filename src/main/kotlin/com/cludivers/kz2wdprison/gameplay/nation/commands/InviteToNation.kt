@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.nation.commands
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
-import com.cludivers.kz2wdprison.gameplay.player.invitePlayerToNation
+import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean.Companion.invitePlayerToNation
 import com.cludivers.kz2wdprison.gameplay.player.sendErrorMessage
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

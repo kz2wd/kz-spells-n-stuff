@@ -1,6 +1,5 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.commands
 
-import com.cludivers.kz2wdprison.gameplay.artifact.runes.EnrichingArtifactRunes
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import com.cludivers.kz2wdprison.gameplay.utils.Utils.buildItemStack
@@ -17,12 +16,6 @@ class ArtifactHelperCommand(parentName: String): SubCommand(parentName) {
             return false
         }
         val inventory = Bukkit.createInventory(sender, 9 * 6, Component.text("Runes"))
-
-        EnrichingArtifactRunes.values()
-            .map { it.itemStack }
-            .forEach {
-                inventory.addItem(it.asQuantity(32))
-            }
 
         CustomShardItems.values().map { it.itemStack }.forEach {
             inventory.addItem(it.asQuantity(32))
