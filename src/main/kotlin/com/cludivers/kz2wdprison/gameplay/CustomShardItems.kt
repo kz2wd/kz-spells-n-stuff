@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay
 
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactItemsTextures
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.RunesBehaviors
 import com.cludivers.kz2wdprison.gameplay.utils.Utils.buildItemStack
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
@@ -81,6 +82,8 @@ enum class CustomShardItems {
             get() = buildItemStack(Component.text("Unknown rune"), Material.IRON_NUGGET, texture.customData)
     }
     ;
+
+    open val runeBehavior: RunesBehaviors = RunesBehaviors.NONE
 
     companion object {
         private val allCustomItems: MutableMap<ItemStack, CustomShardItems> =

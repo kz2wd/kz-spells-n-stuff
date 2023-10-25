@@ -1,28 +1,25 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
+import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactItemsTextures
-import com.cludivers.kz2wdprison.gameplay.utils.Utils
-import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import kotlin.math.min
 
-enum class EnrichingArtifactRunes : ArtifactRuneInterface {
+enum class RunesBehaviors : ArtifactRuneInterface {
     //<editor-fold desc="ENTITY_CASTER" defaultstate="collapsed">
     ENTITY_CASTER {
-        override val texture
-            get() = ArtifactItemsTextures.ENTITY_CASTER
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Lanceur"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -37,15 +34,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="ENTITIES_IN_SIGHT" defaultstate="collapsed">
     ENTITIES_IN_SIGHT {
-
         override val requirement = RuneRequirements.ENTITY
-        override val texture
-            get() = ArtifactItemsTextures.ENTITY_SIGHT
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Entités à vue"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -61,16 +50,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATION_SIGHT" defaultstate="collapsed">
     LOCATION_SIGHT {
-
         override val requirement: RuneRequirements = RuneRequirements.ENTITY
-
-        override val texture
-            get() = ArtifactItemsTextures.LOCATION_SIGHT
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Position à vue"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -86,15 +66,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="EMPTY_LOCATION_SIGHT" defaultstate="collapsed">
     EMPTY_LOCATION_SIGHT {
-
         override val requirement: RuneRequirements = RuneRequirements.ENTITY
-        override val texture
-            get() = ArtifactItemsTextures.EMPTY_LOCATION_SIGHT
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Vide à vue"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -110,13 +82,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="PROJECTILE_CASTING" defaultstate="collapsed">
     PROJECTILE_CASTING {
-        override val texture
-            get() = ArtifactItemsTextures.PROJECTILE_CASTING
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Entité tire"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -136,13 +101,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="CASTER_PROJECTILE" defaultstate="collapsed">
     CASTER_PROJECTILE {
-        override val texture
-            get() = ArtifactItemsTextures.CASTER_PROJECTILE
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("lanceur tire"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -160,16 +118,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="CASTER_DIRECTION" defaultstate="collapsed">
     CASTER_DIRECTION {
-        override val texture
-            get() = ArtifactItemsTextures.CASTER_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(
-                Component.text("Direction du lanceur"),
-                Material.IRON_NUGGET,
-                texture.customData
-            )
-        }
 
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -185,15 +133,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="ENTITIES_POSITION">
     ENTITIES_POSITION {
-
         override val requirement = RuneRequirements.ENTITY
-        override val texture
-            get() = ArtifactItemsTextures.ENTITIES_POSITION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions des entités"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -209,13 +149,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="ENTITIES_DIRECTION" defaultstate="collapsed">
     ENTITIES_DIRECTION {
         override val requirement = RuneRequirements.ENTITY
-        override val texture
-            get() = ArtifactItemsTextures.ENTITIES_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Directions des entités"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -231,13 +164,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATIONS_BELOW" defaultstate="collapsed">
     LOCATIONS_BELOW {
         override val requirement = RuneRequirements.LOCATION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATIONS_BELOW
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions en-bas"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -253,13 +179,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATIONS_ABOVE" defaultstate="collapsed">
     LOCATIONS_ABOVE {
         override val requirement = RuneRequirements.LOCATION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATIONS_ABOVE
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions en-haut"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -275,13 +194,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATIONS_IN_FRONT" defaultstate="collapsed">
     LOCATIONS_IN_FRONT {
         override val requirement = RuneRequirements.LOCATION_DIRECTION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATIONS_IN_FRONT
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions devant"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -299,13 +211,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATI0NS_BEHIND" defaultstate="collapsed">
     LOCATIONS_BEHIND {
         override val requirement = RuneRequirements.LOCATION_DIRECTION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATIONS_BEHIND
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions devant"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -327,13 +232,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATION_AROUND" defaultstate="collapsed">
     LOCATION_AROUND {
         override val requirement = RuneRequirements.LOCATION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATION_AROUND
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions autour"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -350,13 +248,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="LOCATION_AROUND_FLAT" defaultstate="collapsed">
     LOCATION_AROUND_FLAT {
         override val requirement = RuneRequirements.LOCATION
-        override val texture
-            get() = ArtifactItemsTextures.LOCATION_AROUND_FLAT
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Positions autour plates"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -373,17 +264,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="ENTITIES_AROUND", defaultstate="collapsed">
     ENTITIES_AROUND {
         override val requirement = RuneRequirements.ENTITY
-        override val texture
-            get() = ArtifactItemsTextures.ENTITIES_AROUND
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(
-                Component.text("Entités aux alentours des entités"),
-                Material.IRON_NUGGET,
-                texture.customData
-            )
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -399,13 +279,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="DOWN_DIRECTION" defaultstate="collapsed">
     DOWN_DIRECTION {
-        override val texture
-            get() = ArtifactItemsTextures.DOWN_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Bas"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -420,13 +293,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="UP_DIRECTION" defaultstate="collapsed">
     UP_DIRECTION {
-        override val texture
-            get() = ArtifactItemsTextures.UP_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Haut"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -442,13 +308,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="INVERT_DIRECTION" defaultstate="collapsed">
     INVERT_DIRECTION {
         override val requirement = RuneRequirements.DIRECTION
-        override val texture
-            get() = ArtifactItemsTextures.INVERT_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Invertion des directions"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -464,17 +323,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="MULTIPLY_DIRECTION" defaultstate="collapsed">
     MULTIPLY_DIRECTION {
         override val requirement = RuneRequirements.DIRECTION
-        override val texture
-            get() = ArtifactItemsTextures.MULTIPLY_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(
-                Component.text("Multiplication des directions"),
-                Material.IRON_NUGGET,
-                texture.customData
-            )
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -490,13 +338,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //<editor-fold desc="DIVIDE_DIRECTION" defaultstate="collapsed">
     DIVIDE_DIRECTION {
         override val requirement = RuneRequirements.DIRECTION
-        override val texture
-            get() = ArtifactItemsTextures.DIVIDE_DIRECTION
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Division des directions"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -511,13 +352,6 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="NONE" defaultstate="collapsed">
     NONE {
-        override val texture
-            get() = ArtifactItemsTextures.NONE
-
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Vide"), Material.IRON_NUGGET, texture.customData)
-        }
-
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -531,13 +365,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
 
     //</editor-fold>
     //<editor-fold desc="ENTITY_ATTACKER" defaultstate="collapsed">
-    ATTACKER {
-        override val texture: ArtifactItemsTextures
-            get() = ArtifactItemsTextures.NONE
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Attaquant"), Material.IRON_NUGGET, texture.customData)
-        }
-
+    ENTITY_ATTACKER {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -552,13 +380,7 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
 
     //</editor-fold>
     //<editor-fold desc="ENTITY_ATTACKED" defaultstate="collapsed">
-    ATTACKED {
-        override val texture: ArtifactItemsTextures
-            get() = ArtifactItemsTextures.NONE
-        override val itemStack: ItemStack = run {
-            Utils.buildItemStack(Component.text("Attaqué"), Material.IRON_NUGGET, texture.customData)
-        }
-
+    ENTITY_ATTACKED {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -569,9 +391,186 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
             input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacked() }
         }
     },
+
     //</editor-fold>
+    PLACE_BLOCK {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            if (player == null) {
+                return
+            }
+            input.locations.forEach {
+                // Don't really know how to implement it right, I don't think I have enough data in this scope
+                val event = BlockPlaceEvent(
+                    it.block,
+                    it.block.state,
+                    it.block,
+                    player.inventory.itemInMainHand,
+                    player,
+                    true,
+                    EquipmentSlot.HAND
+                )
+                Bukkit.getPluginManager().callEvent(event)
+                if (!event.isCancelled) {
+                    it.block.type = inputRune.type
+                }
+            }
+        }
+    },
+    LAUNCH_PROJECTILE {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            when (inputRune.type) {
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.directions)
+                    .forEach {
+                        it.first.world.spawnArrow(
+                            it.first,
+                            it.second,
+                            1f,
+                            1f
+                        )
+                    }
+
+                Material.SPLASH_POTION -> input.locations.zip(input.directions).forEach {
+                    val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
+                    potion.item = inputRune
+                    potion.velocity = it.second
+                }
+
+                Material.FIRE_CHARGE -> {
+                    input.locations.zip(input.directions).forEach {
+                        val fireball = it.first.world.spawnEntity(it.first, EntityType.SMALL_FIREBALL)
+                        fireball.velocity = it.second
+                    }
+                }
+
+                else -> {}
+            }
+        }
+    },
+    EAT_FOOD {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            input.entities.forEach { foodEffect(it, inputRune.type) }
+        }
+    },
+    DRINK_POTION {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            input.entities.forEach { potionEffect(it, inputRune) }
+        }
+
+        private fun potionEffect(entity: Entity, itemStack: ItemStack) {
+            if (itemStack.type != Material.POTION) {
+                return
+            }
+            val meta = itemStack.itemMeta as PotionMeta
+            (entity as LivingEntity).addPotionEffects(meta.customEffects)
+        }
+    },
+    USE_TOOL {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            if (player == null) {
+                return
+            }
+            when (inputRune.type) {
+                Material.DIAMOND_PICKAXE -> {
+                    input.locations.forEach {
+                        if (it.block.type == Material.BEDROCK) { // Blacklist blocks here
+                            return
+                        }
+                        val event = BlockBreakEvent(it.block, player)
+                        Bukkit.getPluginManager().callEvent(event)
+                        if (!event.isCancelled) {
+                            it.block.breakNaturally(inputRune)
+                        }
+                    }
+                }
+
+                Material.FLINT_AND_STEEL -> {
+                    input.locations.forEach {
+                        if (it.block.type == Material.AIR) {
+                            it.block.type = Material.FIRE
+                        }
+                    }
+                }
+
+                else -> {}
+            }
+
+        }
+    },
+    SUMMON_ENTITY {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            val entity = entityTypeFromItemStack(inputRune)
+            if (entity === null) {
+                return
+            }
+            input.locations.forEach { it.world.spawnEntity(it, entity) }
+        }
+    },
+    LIGHTNING_SPARK {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            input.locations.forEach { it.world.strikeLightning(it) }
+        }
+
+    },
+    MOVE_RUNE {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            input.entities.zip(input.directions).forEach {
+                it.first.velocity = it.first.velocity.add(it.second)
+            }
+        }
+
+    },
     ;
 
+
+    protected open val requirement: RuneRequirements = RuneRequirements.NONE
     override fun processArtifactActivation(
         inputRune: ItemStack,
         artifactActivator: ArtifactActivator,
@@ -591,36 +590,144 @@ enum class EnrichingArtifactRunes : ArtifactRuneInterface {
         player: Player?
     )
 
-    protected open val requirement: RuneRequirements = RuneRequirements.NONE
-    abstract val texture: ArtifactItemsTextures
-    abstract val itemStack: ItemStack
-
-
     companion object {
-        private val map = EnrichingArtifactRunes.values().associateBy { it.itemStack }
-        internal fun getArtifactRune(itemStack: ItemStack?): EnrichingArtifactRunes? {
-            if (itemStack == null) {
-                return null
+        fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?
+        ) {
+            if (inputRune.itemMeta == null) {
+                return
             }
-            return if (itemStack.itemMeta != null && itemStack.itemMeta.hasCustomModelData()) {
-                map[itemStack.asOne()]
-            } else {
-                null
+
+            // Resolve rune and apply effects
+            getArtifactRune(inputRune)?.processArtifactActivation(
+                inputRune,
+                artifactActivator,
+                input,
+                inputsTrace,
+                player
+            )
+
+        }
+
+        private fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {
+
+            if (itemStack == null) return null
+            val enrichingRune = EnrichingArtifactRunes.getArtifactRune(itemStack.asOne())
+            if (enrichingRune != null) {
+                return enrichingRune
+            }
+
+            val customShardItems = CustomShardItems.getCustomItemStack(itemStack)
+            if (customShardItems != null) {
+                return customShardItems.runeBehavior
+            }
+
+
+            // Handle blocks separately, too much cases to be in a when, causes a stackoverflow at compilation
+            if (itemStack.type.isBlock) {
+                return PLACE_BLOCK
+            }
+
+            if (itemStack.type.isEdible) {
+                return EAT_FOOD
+            }
+
+            return when (itemStack.type) {
+                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.SPLASH_POTION, Material.FIRE_CHARGE -> LAUNCH_PROJECTILE
+
+                Material.DIAMOND_PICKAXE -> USE_TOOL
+
+                // Add all spawn eggs, boring . . .
+                Material.COW_SPAWN_EGG, Material.CHICKEN_SPAWN_EGG, Material.GOAT_SPAWN_EGG -> SUMMON_ENTITY
+                else -> NONE
             }
         }
 
-        internal fun locationAroundFlat(location: Location, radius: Int): List<Location> {
+        private fun locationAroundFlat(location: Location, radius: Int): List<Location> {
             return (-radius..radius).map { (-radius..radius).map { itt -> Pair(it, itt) } }.flatten()
                 .map { location.clone().add(Vector(it.first, 0, it.second)) }
         }
 
-
-        internal fun locationAround(location: Location, radius: Int): List<Location> {
+        private fun locationAround(location: Location, radius: Int): List<Location> {
             return (-radius..radius).map { locationAroundFlat(location.clone().add(Vector(0, it, 0)), radius) }
                 .flatten()
         }
+
+        private fun foodEffect(entity: Entity, material: Material) {
+            if (entity !is Player) {
+                return
+            }
+            when (material) {
+                Material.APPLE -> feedPlayer(entity, 2.4f, 4)
+                Material.BAKED_POTATO -> feedPlayer(entity, 6f, 5)
+                Material.BEETROOT -> feedPlayer(entity, 1.2f, 1)
+                Material.BEETROOT_SOUP -> feedPlayer(entity, 7.2f, 6)
+                Material.BREAD -> feedPlayer(entity, 5f, 6)
+                Material.CAKE -> feedPlayer(entity, 0.4f, 2)
+                Material.CARROT -> feedPlayer(entity, 3.6f, 3)
+                Material.CHORUS_FRUIT -> feedPlayer(entity, 2.4f, 4)
+                Material.COOKED_CHICKEN -> feedPlayer(entity, 7.2f, 6)
+                Material.COOKED_COD -> feedPlayer(entity, 6f, 5)
+                Material.COOKED_MUTTON -> feedPlayer(entity, 9.6f, 6)
+                Material.COOKED_PORKCHOP -> feedPlayer(entity, 12.8f, 8)
+                Material.COOKED_RABBIT -> feedPlayer(entity, 6f, 5)
+                Material.COOKED_SALMON -> feedPlayer(entity, 9.6f, 6)
+                Material.COOKIE -> feedPlayer(entity, 0.4f, 2)
+                Material.DRIED_KELP -> feedPlayer(entity, 0.6f, 1)
+                Material.ENCHANTED_GOLDEN_APPLE -> {
+                    feedPlayer(entity, 9.6f, 4)
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 30 * 20, 3))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 300, 0))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 300, 0))
+                }
+
+                Material.GOLDEN_APPLE -> {
+                    feedPlayer(entity, 9.6f, 4)
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 100, 1))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, 20 * 120, 0))
+                }
+
+                Material.GLOW_BERRIES -> feedPlayer(entity, 0.4f, 2)
+                Material.GOLDEN_CARROT -> feedPlayer(entity, 14.4f, 6)
+                Material.HONEY_BOTTLE -> feedPlayer(entity, 1.2f, 6)
+                Material.MELON_SLICE -> feedPlayer(entity, 1.2f, 2)
+                Material.MUSHROOM_STEW -> feedPlayer(entity, 7.2f, 6)
+                Material.POISONOUS_POTATO -> feedPlayer(entity, 1.2f, 2)
+                Material.POTATO -> feedPlayer(entity, 0.6f, 1)
+                Material.PUFFERFISH -> feedPlayer(entity, 0.2f, 1)
+                Material.PUMPKIN_PIE -> feedPlayer(entity, 4.8f, 8)
+                Material.RABBIT_STEW -> feedPlayer(entity, 12f, 10)
+                Material.BEEF -> feedPlayer(entity, 1.8f, 3)
+                Material.CHICKEN -> feedPlayer(entity, 1.2f, 2)
+                Material.COD -> feedPlayer(entity, 0.4f, 2)
+                Material.MUTTON -> feedPlayer(entity, 1.2f, 2)
+                Material.PORKCHOP -> feedPlayer(entity, 1.8f, 3)
+                Material.RABBIT -> feedPlayer(entity, 1.8f, 3)
+                Material.SALMON -> feedPlayer(entity, 0.4f, 2)
+                Material.ROTTEN_FLESH -> feedPlayer(entity, 0.8f, 4)
+                Material.SPIDER_EYE -> feedPlayer(entity, 3.2f, 2)
+                Material.COOKED_BEEF -> feedPlayer(entity, 12.8f, 8)
+                Material.SUSPICIOUS_STEW -> feedPlayer(entity, 7.2f, 6)
+                Material.SWEET_BERRIES -> feedPlayer(entity, 0.4f, 2)
+                Material.TROPICAL_FISH -> feedPlayer(entity, 0.2f, 1)
+                else -> {}
+            }
+        }
+
+        private fun entityTypeFromItemStack(itemStack: ItemStack): EntityType? {
+            return when (itemStack.type) {
+                Material.COW_SPAWN_EGG -> EntityType.COW
+                else -> null
+            }
+        }
+
+        private fun feedPlayer(player: Player, saturationDelta: Float, foodDelta: Int) {
+            player.saturation += saturationDelta
+            player.foodLevel += foodDelta
+        }
     }
-
-
-
 }

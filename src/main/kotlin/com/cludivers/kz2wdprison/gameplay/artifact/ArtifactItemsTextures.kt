@@ -55,16 +55,16 @@ enum class ArtifactItemsTextures {
     ENTITIES_DIRECTION {
         override val customData: Int = 6004
     },
-    POSITIONS_BELOW {
+    LOCATIONS_BELOW {
         override val customData: Int = 6005
     },
-    POSITIONS_ABOVE {
+    LOCATIONS_ABOVE {
         override val customData: Int = 6006
     },
-    POSITIONS_IN_FRONT {
+    LOCATIONS_IN_FRONT {
         override val customData: Int = 6007
     },
-    POSITION_AROUND_FLAT {
+    LOCATION_AROUND_FLAT {
         override val customData: Int = 6008
     },
     DOWN_DIRECTION {
@@ -88,6 +88,15 @@ enum class ArtifactItemsTextures {
     NONE {
         override val customData: Int = 4999
     },
+    LOCATIONS_BEHIND {
+        override val customData: Int = 6015
+    },
+    LOCATION_AROUND {
+        override val customData: Int = 6016
+    },
+    CASTER_PROJECTILE {
+        override val customData: Int = 6017
+    }
     ;
 
     abstract val customData: Int

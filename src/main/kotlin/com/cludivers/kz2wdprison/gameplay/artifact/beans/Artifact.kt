@@ -6,7 +6,7 @@ import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
-import com.cludivers.kz2wdprison.gameplay.artifact.runes.ArtifactRunes
+import com.cludivers.kz2wdprison.gameplay.artifact.runes.RunesBehaviors
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
@@ -39,11 +39,7 @@ class Artifact {
         }
 
         fun deleteArtifact(artifact: Artifact) {
-            PluginConfiguration.session
-                .createQuery("delete from Artifact A where id = :id")
-                .setParameter("id", artifact.id)
-                .executeUpdate()
-
+            PluginConfiguration.session.remove(artifact)
         }
 
         fun createArtifact(
@@ -124,7 +120,7 @@ class Artifact {
 
         runes.forEach {
 
-            ArtifactRunes.processArtifactActivation(
+            RunesBehaviors.processArtifactActivation(
                 it.value,
                 artifactActivator,
                 input,

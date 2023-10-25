@@ -1,13 +1,13 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.nation.beans.ChunkBean
-import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
 import com.cludivers.kz2wdprison.framework.persistance.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.addInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.removeInvitation
 import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation.sendInvitationNotification
+import com.cludivers.kz2wdprison.gameplay.nation.beans.ChunkBean
+import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
 import com.cludivers.kz2wdprison.gameplay.world.cuboid.Cuboid
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
@@ -19,18 +19,7 @@ import org.bukkit.entity.Player
 
 fun Player.getData(): PlayerBean {
 
-    var playerData = PluginConfiguration.session
-        .createQuery("from PlayerBean P where P.uuid = :uuid", PlayerBean::class.java)
-        .setParameter("uuid", this.uniqueId.toString())
-        .uniqueResult()
-
-    if (playerData == null) {
-        playerData = PlayerBean()
-        playerData.uuid = this.uniqueId.toString()
-        PluginConfiguration.session.persist(playerData)
-    }
-
-    return playerData
+    return PlayerBean.getPlayerPlayerBean(this)
 }
 fun Player.isInArea(cuboid: Cuboid): Boolean{
     return cuboid.start.x <= this.location.x && this.location.x <= cuboid.end.x &&

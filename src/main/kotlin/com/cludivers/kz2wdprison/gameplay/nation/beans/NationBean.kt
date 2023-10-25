@@ -39,7 +39,7 @@ class NationBean {
 
     var level: Int? = 0
 
-    var chunkClaimTokens: Int? = 1
+    var chunkClaimTokens: Int? = 5
 
     fun description(): String{
         val residentAmount: Int = if (residents.isNullOrEmpty()) 0 else residents!!.map {

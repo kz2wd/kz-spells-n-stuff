@@ -9,7 +9,7 @@ class ArtifactInput(
     var flow: Float = 0f,
     var locations: List<Location> = listOf(),
     var entities: List<Entity> = listOf(),
-    var vectors: List<Vector> = listOf(),
+    var directions: List<Vector> = listOf(),
 )
 
 

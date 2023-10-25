@@ -53,9 +53,9 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    EnrichingArtifactRunes.ENTITY_SIGHT.itemStack,
+                    EnrichingArtifactRunes.ENTITIES_IN_SIGHT.itemStack,
                     EnrichingArtifactRunes.ENTITIES_POSITION.itemStack,
-                    EnrichingArtifactRunes.POSITIONS_ABOVE.itemStack.asQuantity(5),
+                    EnrichingArtifactRunes.LOCATIONS_ABOVE.itemStack.asQuantity(5),
                     EnrichingArtifactRunes.DOWN_DIRECTION.itemStack,
                     ItemStack(Material.ARROW)
 
