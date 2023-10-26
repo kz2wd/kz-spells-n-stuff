@@ -3,7 +3,6 @@ package com.cludivers.kz2wdprison.gameplay.artifact.runes
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
-import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -61,7 +60,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         ) {
             input.locations = input.entities.filterIsInstance<LivingEntity>()
                 .mapNotNull { it.getTargetBlockExact(inputRune.amount)?.location }
-            Bukkit.broadcast(Component.text("${input.locations}"))
         }
     },
 

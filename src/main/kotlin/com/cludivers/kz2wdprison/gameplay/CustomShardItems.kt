@@ -174,7 +174,7 @@ enum class CustomShardItems {
             CustomShardItems.values().associateBy(CustomShardItems::itemStack).toMutableMap()
 
         fun getCustomItemStack(itemStack: ItemStack): CustomShardItems? {
-            return allCustomItems[itemStack]
+            return allCustomItems[itemStack.asOne()]
         }
     }
 
