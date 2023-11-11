@@ -1,4 +1,4 @@
-name: Kz2wdPrison
+name: kzSpells
 version: '${version}'
 main: com.cludivers.kz2wdprison.Kz2wdPrison
 api-version: 1.19
