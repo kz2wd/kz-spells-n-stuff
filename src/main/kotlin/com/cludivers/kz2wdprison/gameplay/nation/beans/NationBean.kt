@@ -42,9 +42,23 @@ class NationBean {
     @OneToOne
     var defaultAreaRules: AreaPermission? = null
 
-    var level: Int? = 0
+    var level: Int = 0
 
-    var chunkClaimTokens: Int? = 5
+    var shards: Int = 0
+
+    // The idea is that players put shards into their nation, and as long as a nation is charged with shards, it can enforce
+    // their rules.
+
+    // Other players can attack the nation by using shards. The protected ratio increase the amount needed for attackers
+    // if protected ratio is at 3, a nation containing 100 shards will require 300 shards to be destroyed.
+
+    // The greater the protectionRatio, the shorter the attacks influence
+    // Attacking a nation with shards doesn't instantly make it lose shards. Let's say, by default, it is 24h
+
+    // Attackers can attack with the amount they want.
+    var protectionRatio: Double = 1.0
+
+    var chunkClaimTokens: Int = 5
 
     fun description(): String{
         val residentAmount: Int = if (residents.isNullOrEmpty()) 0 else residents!!.map {
