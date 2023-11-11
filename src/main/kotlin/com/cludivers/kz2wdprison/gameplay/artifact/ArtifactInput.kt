@@ -10,6 +10,7 @@ class ArtifactInput(
     var locations: List<Location> = listOf(),
     var entities: List<Entity> = listOf(),
     var directions: List<Vector> = listOf(),
+    var enableRequirements: Boolean = true
 )
 
 

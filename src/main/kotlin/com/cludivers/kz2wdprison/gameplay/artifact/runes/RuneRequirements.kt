@@ -11,6 +11,7 @@ enum class RuneRequirements {
     },
     ENTITY {
         override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
+            if (!input.enableRequirements) return
             if (input.entities.isEmpty()) {
                 input.entities = listOf(activator.getSelf())
             }
@@ -18,6 +19,7 @@ enum class RuneRequirements {
     },
     LOCATION {
         override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
+            if (!input.enableRequirements) return
             if (input.locations.isNotEmpty()) return
             if (input.entities.isNotEmpty()) {
                 input.locations = input.entities.map { it.location }
@@ -28,6 +30,7 @@ enum class RuneRequirements {
     },
     DIRECTION {
         override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
+            if (!input.enableRequirements) return
             if (input.directions.isNotEmpty()) return
             if (input.entities.isNotEmpty()) {
                 input.directions = input.entities.map { it.location.direction }

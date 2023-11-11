@@ -42,6 +42,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>,
             player: Player?
         ) {
+            input.enableRequirements = false
             input.entities =
                 input.entities.filterIsInstance<LivingEntity>().mapNotNull { it.getTargetEntity(inputRune.amount) }
         }
@@ -58,6 +59,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>,
             player: Player?
         ) {
+            input.enableRequirements = false
             input.locations = input.entities.filterIsInstance<LivingEntity>()
                 .mapNotNull { it.getTargetBlockExact(inputRune.amount)?.location }
         }
@@ -74,6 +76,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>,
             player: Player?
         ) {
+            input.enableRequirements = false
             input.locations = input.entities.filterIsInstance<LivingEntity>()
                 .mapNotNull { it.getLastTwoTargetBlocks(null, inputRune.amount)[0]?.location }
         }
