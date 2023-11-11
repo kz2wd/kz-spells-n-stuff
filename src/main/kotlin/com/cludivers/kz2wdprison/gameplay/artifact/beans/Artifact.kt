@@ -13,8 +13,11 @@ import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import jakarta.persistence.*
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -45,13 +48,14 @@ class Artifact {
         fun createArtifact(
             item: ItemStack,
             triggerType: ArtifactTriggers = ArtifactTriggers.CLICK,
-            runes: List<ItemStack>? = null
+            runes: List<ItemStack>? = null,
+            coolDown: Duration = Duration.ZERO
+
         ): Artifact {
             PluginConfiguration.session.beginTransaction()
             val artifact = Artifact()
-
             artifact.runes = runes?.withIndex()?.associate { it.index to it.value } ?: mapOf()
-
+            artifact.cooldown = coolDown
             artifact.linkedItemStack = item
             artifact.triggerType = triggerType
             PluginConfiguration.session.persist(artifact)
@@ -107,6 +111,14 @@ class Artifact {
         val currentFlow = inFlow * conductivity * conductivityDebuff
 
         if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown) {
+            val activator = artifactActivator.getSelf()
+            if (activator is Player && triggerType == ArtifactTriggers.CLICK) {
+                activator.sendActionBar(
+                    Component.text("********").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
+                )
+                activator.location.world.playSound(activator, Sound.BLOCK_BEACON_DEACTIVATE, 1f, 0f)
+            }
+
             return currentFlow
         }
         lastUsage = Instant.now()

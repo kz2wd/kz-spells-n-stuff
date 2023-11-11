@@ -8,6 +8,7 @@ import com.cludivers.kz2wdprison.gameplay.utils.Utils
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import java.time.Duration
 
 enum class DefaultArtifacts {
     LIGHTING_SWORD{
@@ -22,7 +23,8 @@ enum class DefaultArtifacts {
                     CustomShardItems.ENTITY_ATTACKED_RUNE.itemStack,
                     CustomShardItems.ENTITIES_POSITION_RUNE.itemStack,
                     CustomShardItems.LIGHTNING_SPARK.itemStack,
-                )
+                ),
+                Duration.ofSeconds(2)
             )
         }
 
@@ -38,7 +40,8 @@ enum class DefaultArtifacts {
                 listOf(
                     CustomShardItems.LOCATION_SIGHT_RUNE.itemStack.asQuantity(10),
                     ItemStack(Material.DIAMOND_PICKAXE)
-                )
+                ),
+                Duration.ofSeconds(2)
             )
         }
 
@@ -58,7 +61,8 @@ enum class DefaultArtifacts {
                     CustomShardItems.DOWN_DIRECTION_RUNE.itemStack,
                     ItemStack(Material.ARROW)
 
-                )
+                ),
+                Duration.ofSeconds(2)
             )
         }
     },
@@ -74,7 +78,8 @@ enum class DefaultArtifacts {
                     CustomShardItems.ENTITY_CASTER_RUNE.itemStack,
                     CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
-                )
+                ),
+                Duration.ofSeconds(2)
             )
         }
     },
@@ -89,7 +94,8 @@ enum class DefaultArtifacts {
                 listOf(
                     CustomShardItems.ENTITY_ATTACKER_RUNE.itemStack,
                     ItemStack(Material.FLINT_AND_STEEL),
-                )
+                ),
+                Duration.ofSeconds(2)
             )
             val intrinsics = mapOf(IntrinsicAttributes.AGILITY to .3)
             AttributeItem.makeAttributeItem(artifact.linkedItemStack!!, intrinsics, 500, 800)
@@ -110,7 +116,8 @@ enum class DefaultArtifacts {
                     CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
                     CustomShardItems.INVERT_DIRECTIONS_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
-                )
+                ),
+                Duration.ofSeconds(2)
             )
             val intrinsics = mapOf(
                 IntrinsicAttributes.TOUGHNESS to .3,
@@ -130,7 +137,8 @@ enum class DefaultArtifacts {
                 listOf(
                     CustomShardItems.ENTITY_ATTACKED_RUNE.itemStack,
                     ItemStack(Material.GOLDEN_APPLE),
-                )
+                ),
+                Duration.ofSeconds(30)
             )
         }
     },
