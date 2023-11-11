@@ -615,12 +615,36 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     )
 
     companion object {
+
         fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            player: Player?,
+            nextActivation: () -> Unit
+        ) {
+            if (inputRune.itemMeta == null) {
+                return
+            }
+
+            // Resolve rune and apply effects
+            processArtifactActivation(
+                inputRune,
+                artifactActivator,
+                input,
+                inputsTrace,
+                player,
+            )
+            nextActivation()
+        }
+
+        private fun processArtifactActivation(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?,
         ) {
             if (inputRune.itemMeta == null) {
                 return
@@ -632,9 +656,8 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                 artifactActivator,
                 input,
                 inputsTrace,
-                player
+                player,
             )
-
         }
 
         private fun getArtifactRune(itemStack: ItemStack?): ArtifactRuneInterface? {

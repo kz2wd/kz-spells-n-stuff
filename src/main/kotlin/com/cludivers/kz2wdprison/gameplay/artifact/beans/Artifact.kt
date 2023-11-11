@@ -118,18 +118,29 @@ class Artifact {
             null
         }
 
-        runes.forEach {
-            RunesBehaviors.processArtifactActivation(
-                it.value,
-                artifactActivator,
-                input,
-                mutableListOf(),
-                player
-            )
+        val runesOrdered = runes.filter {
+            it.value.type != Material.AIR
+        }.toList().sortedBy { it.first }.map { it.second }
+
+        fun generateActivation(runeIndex: Int): () -> Unit {
+            if (runesOrdered.size <= runeIndex) return {}
+            return {
+                RunesBehaviors.processArtifactActivation(
+                    runesOrdered[runeIndex],
+                    artifactActivator,
+                    input,
+                    mutableListOf(),
+                    player,
+                    generateActivation(runeIndex + 1)
+                )
+            }
         }
+
+        generateActivation(0)()
 
         return 0f
     }
+
 
     fun generateEditorMenu(): StoringMenu {
         val inventorySize = 5 * 9
