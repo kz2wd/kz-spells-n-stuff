@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.player
 
+import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -46,5 +47,26 @@ fun Player.sendConfirmationMessage(text: String, onAccept: String, onRefuse: Str
      this.sendMessage(msg
          .appendNewline().append(acceptButton.clickEvent(acceptClick).hoverEvent(acceptHover))
          .appendSpace().append(refuseButton.clickEvent(refuseCLick).hoverEvent(refuseHover)))
+}
+
+fun Player.requestShards(args: Array<String>, index: Int): Int? {
+    if (args.size < index + 1) {
+        this.sendErrorMessage("Vous devez préciser une quantité de fragments à ajouter.")
+        return null
+    }
+
+    val shardAmount = try {
+        args[index].toInt()
+    } catch (e: NumberFormatException) {
+        this.sendErrorMessage("Quantité invalide : ${args[1]}.")
+        return null
+    }
+
+    if (this.getData().shards < shardAmount) {
+        this.sendErrorMessage("Vous n'avez pas assez de fragments.")
+        return null
+    }
+
+    return shardAmount
 }
 

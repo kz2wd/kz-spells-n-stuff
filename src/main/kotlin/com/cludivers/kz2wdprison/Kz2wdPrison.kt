@@ -14,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin
 class Kz2wdPrison : JavaPlugin() {
 
 
-
     override fun onEnable() {
         PluginConfiguration.loadConfigurationAndDatabase(config)
 

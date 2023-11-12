@@ -7,6 +7,8 @@ import com.cludivers.kz2wdprison.gameplay.nation.NationInvitation
 import com.cludivers.kz2wdprison.gameplay.player.sendErrorMessage
 import com.cludivers.kz2wdprison.gameplay.player.sendSuccessMessage
 import jakarta.persistence.*
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.hibernate.annotations.CreationTimestamp
 import java.sql.Date
@@ -18,7 +20,7 @@ class NationBean {
     @Column(name = "id", nullable = false)
     var id: Long? = null
 
-    var name: String? = null
+    var name: String = ""
 
     // Owner
     @OneToOne
@@ -56,6 +58,7 @@ class NationBean {
     // Attacking a nation with shards doesn't instantly make it lose shards. Let's say, by default, it is 24h
 
     // Attackers can attack with the amount they want.
+    @Enumerated
     var protectionTier: ProtectionTiers = ProtectionTiers.TIER2
 
     @ManyToMany
@@ -97,6 +100,7 @@ class NationBean {
     }
 
     fun delete() {
+        removeNationName(this)
         this.owner!!.nation = null
         this.residents!!.forEach { group ->
             group.players!!.forEach {
@@ -115,7 +119,48 @@ class NationBean {
         }
     }
 
+    // If player resolution from uuid is bad, this function will suck, performance wise
+    fun messagePlayers(content: Component) {
+        residents?.forEach { group -> group.players?.forEach { Bukkit.getPlayer(it.uuid!!)?.sendMessage(content) } }
+    }
+
     companion object {
+
+        // A bit painful, but I can't instantiate it directly, as the session is not built
+        private fun buildNameToNationMap(): MutableMap<String, NationBean> {
+            val query = PluginConfiguration.session.createQuery("from NationBean", NationBean::class.java)
+            return query.list().associateBy { it.name }.toMutableMap()
+        }
+
+        private var nationsFromName: MutableMap<String, NationBean>? = null
+        fun getNationFromName(name: String): NationBean? {
+            if (nationsFromName == null) {
+                nationsFromName = buildNameToNationMap()
+            }
+            return nationsFromName!![name]
+        }
+
+        fun getNationMatching(name: String): Map<String, NationBean> {
+            if (nationsFromName == null) {
+                nationsFromName = buildNameToNationMap()
+            }
+            return nationsFromName!!.filter { name in it.key }
+        }
+
+        private fun addNationName(nationBean: NationBean) {
+            if (nationsFromName == null) {
+                nationsFromName = buildNameToNationMap()
+            }
+            nationsFromName!![nationBean.name] = nationBean
+        }
+
+        private fun removeNationName(nationBean: NationBean) {
+            if (nationsFromName == null) {
+                nationsFromName = buildNameToNationMap()
+            }
+            nationsFromName!!.remove(nationBean.name)
+        }
+
         private fun instantiateAndPersistDefaultNation(owner: PlayerBean, name: String): NationBean {
             val nation = NationBean()
             nation.owner = owner
@@ -149,6 +194,8 @@ class NationBean {
 
             PluginConfiguration.session.transaction.commit()
             this.sendSuccessMessage("Votre nation vient d'être créée !")
+
+            addNationName(nation)
         }
 
         fun Player.invitePlayerToNation(invitedPlayer: Player) {
@@ -250,19 +297,33 @@ class NationBean {
                 return
             }
 
-            if (playerNation.chunkClaimTokens!! <= 0) {
+            if (playerNation.chunkClaimTokens <= 0) {
                 this.sendErrorMessage("Vous n'avez plus de jeton d'appropriation de chunk")
                 return
             }
 
             PluginConfiguration.session.beginTransaction()
 
-            playerNation.chunkClaimTokens = playerNation.chunkClaimTokens!! - 1
+            playerNation.chunkClaimTokens -= 1
             playerNation.chunks!!.add(chunkData)
             chunkData.nation = playerNation
             PluginConfiguration.session.transaction.commit()
 
             this.sendSuccessMessage("Le chunk à bien été approprié")
+        }
+
+        fun Player.showPendingAttacks() {
+            val playerData = this.getData()
+            val playerNation = playerData.nation
+            if (playerNation !is NationBean) {
+                this.sendErrorMessage("Vous n'appartenez à aucune nation")
+                return
+            }
+
+            playerNation.pendingAttacks!!.forEach { this.sendMessage(it.compactDescription()) }
+            if (playerNation.pendingAttacks!!.isEmpty()) {
+                this.sendMessage(Component.text("Il n'y aucune attaque sur votre nation en ce moment"))
+            }
 
         }
     }

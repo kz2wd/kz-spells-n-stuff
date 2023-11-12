@@ -3,11 +3,12 @@ package com.cludivers.kz2wdprison.gameplay.nation.commands
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
+import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class AddClaimPoint(parentName: String) : SubCommand(parentName) {
+class AddClaimPoint : SubCommand(NationDeclaration.NATION_COMMAND_NAME) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false
@@ -20,7 +21,7 @@ class AddClaimPoint(parentName: String) : SubCommand(parentName) {
         }
         val playerData = sender.getData()
         PluginConfiguration.session.beginTransaction()
-        playerData.nation?.chunkClaimTokens = playerData.nation?.chunkClaimTokens?.plus(amount)
+        playerData.nation?.chunkClaimTokens = playerData.nation?.chunkClaimTokens?.plus(amount) ?: 0
         PluginConfiguration.session.transaction.commit()
         return true
     }

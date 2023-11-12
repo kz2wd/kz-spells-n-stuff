@@ -6,25 +6,27 @@ import org.bukkit.plugin.java.JavaPlugin
 
 object NationDeclaration {
 
+    const val NATION_COMMAND_NAME = "nation"
+
     fun declare(plugin: JavaPlugin) {
-
-        val nationCommandName = "nation"
-
 
         val nationCommandsExecutor = MainCommandExecutor(
             mapOf(
-                "create" to CreateNation(nationCommandName),
-                "invite" to InviteToNation(nationCommandName),
-                "join" to JoinNation(nationCommandName),
-                "refuse" to RefuseInvitation(nationCommandName),
-                "quit" to QuitNation(nationCommandName),
-                "claim" to NationClaim(nationCommandName),
-                "info" to NationInfo(nationCommandName),
-                "add" to AddClaimPoint(nationCommandName)
+                "create" to CreateNation(),
+                "invite" to InviteToNation(),
+                "join" to JoinNation(),
+                "refuse" to RefuseInvitation(),
+                "quit" to QuitNation(),
+                "claim" to NationClaim(),
+                "info" to NationInfo(),
+                "claim" to AddClaimPoint(),
+                "fill" to AddShardsToNation(),
+                "attack" to AttackNation(),
+                "show_attacks" to ShowPendingAttacks(),
             )
         )
 
-        plugin.getCommand(nationCommandName)?.setExecutor(nationCommandsExecutor)
-        plugin.getCommand(nationCommandName)?.tabCompleter = nationCommandsExecutor
+        plugin.getCommand(NATION_COMMAND_NAME)?.setExecutor(nationCommandsExecutor)
+        plugin.getCommand(NATION_COMMAND_NAME)?.tabCompleter = nationCommandsExecutor
     }
 }

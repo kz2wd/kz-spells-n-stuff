@@ -7,7 +7,7 @@ import org.hibernate.SessionFactory
 
 object PluginConfiguration {
     lateinit var session: Session
-    lateinit var sessionFactory: SessionFactory
+    private lateinit var sessionFactory: SessionFactory
     var isDatabaseConnected: Boolean = false
     var isInProduction: Boolean = false
 

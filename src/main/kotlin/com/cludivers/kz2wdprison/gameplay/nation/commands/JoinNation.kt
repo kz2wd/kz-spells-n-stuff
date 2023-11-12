@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.nation.commands
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
+import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean.Companion.acceptNationInvitation
 import com.cludivers.kz2wdprison.gameplay.player.sendErrorMessage
 import org.bukkit.Bukkit
@@ -8,7 +9,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class JoinNation(parentName: String) : SubCommand(parentName) {
+class JoinNation : SubCommand(NationDeclaration.NATION_COMMAND_NAME) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (sender !is Player) {
             return false

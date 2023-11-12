@@ -14,14 +14,15 @@ class HibernateConfigurationHandler {
         fun loadSessionFactory(config: FileConfiguration?): SessionFactory {
 
             val classes = listOf(
+                NationBean::class.java,
                 PlayerBean::class.java,
                 AreaPermission::class.java,
                 ChunkBean::class.java,
-                NationBean::class.java,
                 NationPermission::class.java,
                 NationPlot::class.java,
                 PermissionGroup::class.java,
                 Artifact::class.java,
+                NationAttack::class.java,
             )
 
             val serviceRegistryBuilder = if (config != null && PluginConfiguration.isDatabaseConnected) {
