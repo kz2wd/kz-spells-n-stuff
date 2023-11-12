@@ -50,13 +50,16 @@ class NationBean {
     // their rules.
 
     // Other players can attack the nation by using shards. The protected ratio increase the amount needed for attackers
-    // if protected ratio is at 3, a nation containing 100 shards will require 300 shards to be destroyed.
+    // if protected tier is at 3, a nation containing 100 shards will require 300 shards to be destroyed.
 
     // The greater the protectionRatio, the shorter the attacks influence
     // Attacking a nation with shards doesn't instantly make it lose shards. Let's say, by default, it is 24h
 
     // Attackers can attack with the amount they want.
-    var protectionRatio: Double = 1.0
+    var protectionTier: ProtectionTiers = ProtectionTiers.TIER2
+
+    @ManyToMany
+    var pendingAttacks: MutableList<NationAttack>? = null
 
     var chunkClaimTokens: Int = 5
 
