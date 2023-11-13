@@ -13,6 +13,10 @@ interface ArtifactRuneInterface {
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>,
-        player: Player?
+        player: Player?,
+        nextActivation: () -> Unit
     )
+
+    fun triggerNext(nextActivation: () -> Unit)
+
 }

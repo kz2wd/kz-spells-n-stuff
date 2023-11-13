@@ -3,6 +3,7 @@ package com.cludivers.kz2wdprison.gameplay.artifact.runes
 import com.cludivers.kz2wdprison.gameplay.CustomShardItems
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.listeners.ArtifactListener
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -98,7 +99,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input.locations = input.entities.map { it.location }
             input.directions = input.entities.map { it.location.direction }
         }
-
     },
 
     //</editor-fold>
@@ -416,39 +416,49 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LAUNCH_PROJECTILE" defaultstate="collapsed">
     LAUNCH_PROJECTILE {
+        private var projectiles: MutableList<Projectile> = emptyList<Projectile>().toMutableList()
+
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            player: Player?,
         ) {
             when (inputRune.type) {
                 Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.directions)
                     .forEach {
-                        it.first.world.spawnArrow(
+                        val arrow = it.first.world.spawnArrow(
                             it.first,
                             it.second,
                             1f,
                             1f
                         )
+                        projectiles.add(arrow)
                     }
 
                 Material.SPLASH_POTION -> input.locations.zip(input.directions).forEach {
                     val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
                     potion.item = inputRune
                     potion.velocity = it.second
+                    projectiles.add(potion)
                 }
 
                 Material.FIRE_CHARGE -> {
                     input.locations.zip(input.directions).forEach {
                         val fireball = it.first.world.spawnEntity(it.first, EntityType.SMALL_FIREBALL)
                         fireball.velocity = it.second
+                        projectiles.add(fireball as Projectile) // check this bad boy
                     }
                 }
 
                 else -> {}
             }
+        }
+
+        override fun triggerNext(nextActivation: () -> Unit) {
+            ArtifactListener.trackedProjectile.putAll(projectiles.associateWith { nextActivation })
+            projectiles.clear()
         }
     },
 
@@ -598,15 +608,21 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     ;
 
     protected open val requirement: RuneRequirements = RuneRequirements.NONE
+
+    override fun triggerNext(nextActivation: () -> Unit) {
+        nextActivation()
+    }
     override fun processArtifactActivation(
         inputRune: ItemStack,
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>,
-        player: Player?
+        player: Player?,
+        nextActivation: () -> Unit
     ) {
         requirement.ensureRequirement(input, artifactActivator)
         artifactActivationWithRequirements(inputRune, artifactActivator, input, inputsTrace, player)
+        triggerNext(nextActivation)
     }
 
     protected abstract fun artifactActivationWithRequirements(
@@ -614,7 +630,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>,
-        player: Player?
+        player: Player?,
     )
 
     companion object {
@@ -632,34 +648,14 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
 
             // Resolve rune and apply effects
-            processArtifactActivation(
+            val rune = getArtifactRune(inputRune) ?: return
+            rune.processArtifactActivation(
                 inputRune,
                 artifactActivator,
                 input,
                 inputsTrace,
                 player,
-            )
-            nextActivation()
-        }
-
-        private fun processArtifactActivation(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?,
-        ) {
-            if (inputRune.itemMeta == null) {
-                return
-            }
-
-            // Resolve rune and apply effects
-            getArtifactRune(inputRune)?.processArtifactActivation(
-                inputRune,
-                artifactActivator,
-                input,
-                inputsTrace,
-                player,
+                nextActivation
             )
         }
 
