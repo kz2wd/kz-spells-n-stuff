@@ -6,7 +6,6 @@ import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -21,6 +20,7 @@ import org.bukkit.inventory.ItemStack
 
 class ArtifactListener : Listener {
 
+    @Suppress("unused")
     @EventHandler
     fun onArtifactInteracted(event: PlayerInteractEvent) {
         if (event.item === null) {
@@ -38,6 +38,7 @@ class ArtifactListener : Listener {
         }
     }
 
+    @Suppress("unused")
     @EventHandler
     fun triggerAttackArtifact(event: EntityDamageByEntityEvent) {
 
@@ -56,7 +57,7 @@ class ArtifactListener : Listener {
             val attacked = (event.entity as Player)
 
             val itemsToCheck: List<ItemStack> =
-                attacked.inventory.armorContents!!.filterNotNull() + attacked.inventory.itemInMainHand
+                attacked.inventory.armorContents.filterNotNull() + attacked.inventory.itemInMainHand
             itemsToCheck.forEach {
                 val artifact: Artifact? = Artifact.getArtifact(it)
                 if (artifact !== null) {
@@ -72,6 +73,7 @@ class ArtifactListener : Listener {
         }
     }
 
+    @Suppress("unused")
     @EventHandler
     fun onItemLinkedDestroyed(event: ItemDespawnEvent) {
         val artifact = Artifact.getArtifact(event.entity.itemStack)
@@ -81,6 +83,7 @@ class ArtifactListener : Listener {
     }
 
 
+    @Suppress("unused")
     @EventHandler
     fun onProjectileHit(event: ProjectileHitEvent) {
         Bukkit.broadcast(Component.text("HIT"))
@@ -95,12 +98,11 @@ class ArtifactListener : Listener {
         private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactInput) -> ArtifactInput {
             val inputModifier = { input: ArtifactInput ->
                 if (entity != null) {
-                    input.entities += listOf(entity)
+                    input.entities = listOf(entity)
                 }
                 if (block != null) {
-                    input.locations += listOf(block.location)
+                    input.locations = listOf(block.location)
                 }
-                input.enableRequirements = false
                 input
             }
             return inputModifier
