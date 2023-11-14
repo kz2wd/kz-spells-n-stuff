@@ -11,6 +11,12 @@ class ArtifactInput(
     var entities: List<Entity> = listOf(),
     var directions: List<Vector> = listOf(),
     var enableRequirements: Boolean = true
-)
+) {
+    companion object {
+        fun getSameInput(): (ArtifactInput) -> ArtifactInput {
+            return {input: ArtifactInput -> input}
+        }
+    }
+}
 
 

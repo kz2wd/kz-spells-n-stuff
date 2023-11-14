@@ -9,14 +9,14 @@ interface ArtifactRuneInterface {
 
     // The player is only needed for block placing or destroying event, to get permissions
     fun processArtifactActivation(
-        inputRune: ItemStack,
-        artifactActivator: ArtifactActivator,
-        input: ArtifactInput,
-        inputsTrace: MutableList<ItemStack>,
-        player: Player?,
-        nextActivation: () -> Unit
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?,
+            nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit
     )
 
-    fun triggerNext(nextActivation: () -> Unit)
+    fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit)
 
 }

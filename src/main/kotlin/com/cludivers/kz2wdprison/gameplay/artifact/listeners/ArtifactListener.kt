@@ -1,10 +1,14 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.listeners
 
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.block.Block
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -80,11 +84,26 @@ class ArtifactListener : Listener {
     @EventHandler
     fun onProjectileHit(event: ProjectileHitEvent) {
         Bukkit.broadcast(Component.text("HIT"))
-        trackedProjectile[event.entity]?.invoke()  // We want to take a peek inside the closure to interact with the artifact input
+        trackedProjectile[event.entity]?.invoke(insertBlockOrEntity(event.hitEntity, event.hitBlock))
 
     }
 
     companion object {
-        var trackedProjectile: MutableMap<Projectile, () -> Unit> = emptyMap<Projectile, () -> Unit>().toMutableMap()
+        var trackedProjectile: MutableMap<Projectile, ((ArtifactInput) -> ArtifactInput) -> Unit> =
+                emptyMap<Projectile, ((ArtifactInput) -> ArtifactInput) -> Unit>().toMutableMap()
+
+        private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactInput) -> ArtifactInput {
+            val inputModifier = { input: ArtifactInput ->
+                if (entity != null) {
+                    input.entities += listOf(entity)
+                }
+                if (block != null) {
+                    input.locations += listOf(block.location)
+                }
+                input.enableRequirements = false
+                input
+            }
+            return inputModifier
+        }
     }
 }

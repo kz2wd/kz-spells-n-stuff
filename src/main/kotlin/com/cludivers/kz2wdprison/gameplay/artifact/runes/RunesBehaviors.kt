@@ -456,7 +456,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
         }
 
-        override fun triggerNext(nextActivation: () -> Unit) {
+        override fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit) {
             ArtifactListener.trackedProjectile.putAll(projectiles.associateWith { nextActivation })
             projectiles.clear()
         }
@@ -609,16 +609,16 @@ enum class RunesBehaviors : ArtifactRuneInterface {
 
     protected open val requirement: RuneRequirements = RuneRequirements.NONE
 
-    override fun triggerNext(nextActivation: () -> Unit) {
-        nextActivation()
+    override fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit) {
+        nextActivation(ArtifactInput.getSameInput())
     }
     override fun processArtifactActivation(
-        inputRune: ItemStack,
-        artifactActivator: ArtifactActivator,
-        input: ArtifactInput,
-        inputsTrace: MutableList<ItemStack>,
-        player: Player?,
-        nextActivation: () -> Unit
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>,
+            player: Player?,
+            nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit
     ) {
         requirement.ensureRequirement(input, artifactActivator)
         artifactActivationWithRequirements(inputRune, artifactActivator, input, inputsTrace, player)
@@ -636,12 +636,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     companion object {
 
         fun processArtifactActivation(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?,
-            nextActivation: () -> Unit
+                inputRune: ItemStack,
+                artifactActivator: ArtifactActivator,
+                input: ArtifactInput,
+                inputsTrace: MutableList<ItemStack>,
+                player: Player?,
+                nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit
         ) {
             if (inputRune.itemMeta == null) {
                 return
