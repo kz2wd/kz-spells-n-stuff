@@ -13,8 +13,8 @@ class ArtifactInput(
     var enableRequirements: Boolean = true
 ) {
     companion object {
-        fun getSameInput(): (ArtifactInput) -> ArtifactInput {
-            return {input: ArtifactInput -> input}
+        fun sameInput(input: ArtifactInput): ArtifactInput {
+            return input
         }
     }
 }

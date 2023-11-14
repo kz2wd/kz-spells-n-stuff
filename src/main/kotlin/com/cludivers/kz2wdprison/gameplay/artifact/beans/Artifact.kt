@@ -5,7 +5,6 @@ import com.cludivers.kz2wdprison.framework.persistence.converters.ItemStackConve
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput.Companion.getSameInput
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.artifact.runes.RunesBehaviors
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
@@ -139,19 +138,19 @@ class Artifact {
 
         fun generateActivation(runeIndex: Int): ((ArtifactInput) -> ArtifactInput) -> Unit {
             if (runesOrdered.size <= runeIndex) return {}
-            return { inputModifier: (ArtifactInput) -> ArtifactInput, ->
+            return fun(inputModifier: ((ArtifactInput) -> ArtifactInput)) {
                 RunesBehaviors.processArtifactActivation(
-                    runesOrdered[runeIndex],
-                    artifactActivator,
-                    inputModifier(input),
-                    mutableListOf(),
-                    player,
-                    generateActivation(runeIndex + 1)
+                        runesOrdered[runeIndex],
+                        artifactActivator,
+                        inputModifier(input),
+                        mutableListOf(),
+                        player,
+                        generateActivation(runeIndex + 1)
                 )
             }
         }
 
-        generateActivation(0)(getSameInput())
+        generateActivation(0)(ArtifactInput::sameInput)
 
         return 0f
     }

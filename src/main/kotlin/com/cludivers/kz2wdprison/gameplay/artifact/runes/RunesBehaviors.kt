@@ -610,7 +610,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     protected open val requirement: RuneRequirements = RuneRequirements.NONE
 
     override fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit) {
-        nextActivation(ArtifactInput.getSameInput())
+        nextActivation(ArtifactInput::sameInput)
     }
     override fun processArtifactActivation(
             inputRune: ItemStack,

@@ -57,7 +57,7 @@ class ArtifactListener : Listener {
             val attacked = (event.entity as Player)
 
             val itemsToCheck: List<ItemStack> =
-                attacked.inventory.armorContents.filterNotNull() + attacked.inventory.itemInMainHand
+                attacked.inventory.armorContents!!.filterNotNull() + attacked.inventory.itemInMainHand
             itemsToCheck.forEach {
                 val artifact: Artifact? = Artifact.getArtifact(it)
                 if (artifact !== null) {
@@ -96,16 +96,15 @@ class ArtifactListener : Listener {
                 emptyMap<Projectile, ((ArtifactInput) -> ArtifactInput) -> Unit>().toMutableMap()
 
         private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactInput) -> ArtifactInput {
-            val inputModifier = { input: ArtifactInput ->
+            return fun(input: ArtifactInput): ArtifactInput {
                 if (entity != null) {
                     input.entities = listOf(entity)
                 }
                 if (block != null) {
                     input.locations = listOf(block.location)
                 }
-                input
+                return input
             }
-            return inputModifier
         }
     }
 }
