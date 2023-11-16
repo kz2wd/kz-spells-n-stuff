@@ -16,6 +16,9 @@ interface ArtifactActivator {
 
     fun getAttacked(): Entity?
 
+    // Return a player to check for permissions on his rights, if null, act as if it has no permissions
+    fun getPermission(): Player?
+
     companion object {
         fun playerToCaster(player: Player, attacker: Entity? = null, attacked: Entity? = null): ArtifactActivator {
             return object : ArtifactActivator {
@@ -37,6 +40,10 @@ interface ArtifactActivator {
 
                 override fun getAttacked(): Entity? {
                     return attacked
+                }
+
+                override fun getPermission(): Player {
+                    return player
                 }
             }
         }

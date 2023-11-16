@@ -19,4 +19,6 @@ interface ArtifactRuneInterface {
 
     fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit)
 
+    fun addDuration(input: ArtifactInput)
+
 }

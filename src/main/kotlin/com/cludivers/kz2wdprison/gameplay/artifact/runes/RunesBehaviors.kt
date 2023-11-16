@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.PotionMeta
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
+import java.time.Duration
 import kotlin.math.min
 
 enum class RunesBehaviors : ArtifactRuneInterface {
@@ -25,8 +26,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.entities = (0 until inputRune.amount).map { artifactActivator.getSelf() }
         }
@@ -35,13 +35,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="ENTITIES_IN_SIGHT" defaultstate="collapsed">
     ENTITIES_IN_SIGHT {
+        override val durationBase = Duration.ofSeconds(2)!!
         override val requirement = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
             input.entities =
@@ -52,13 +52,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATION_SIGHT" defaultstate="collapsed">
     LOCATION_SIGHT {
+        override val durationBase = Duration.ofSeconds(1)!!
         override val requirement: RuneRequirements = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
             input.locations = input.entities.filterIsInstance<LivingEntity>()
@@ -69,13 +69,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="EMPTY_LOCATION_SIGHT" defaultstate="collapsed">
     EMPTY_LOCATION_SIGHT {
+        override val durationBase = Duration.ofSeconds(1)!!
         override val requirement: RuneRequirements = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
             input.locations = input.entities.filterIsInstance<LivingEntity>()
@@ -90,8 +90,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             if (input.entities.isEmpty()) {
                 input.entities = listOf(artifactActivator.getSelf())
@@ -108,8 +107,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
             forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
@@ -126,8 +124,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
         }
@@ -141,8 +138,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations = input.entities.map { it.location }
         }
@@ -156,8 +152,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = input.entities.map { it.location.direction }
         }
@@ -166,13 +161,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATIONS_BELOW" defaultstate="collapsed">
     LOCATIONS_BELOW {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.LOCATION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations = input.locations.map { it.subtract(Vector(0, inputRune.amount, 0)) }
         }
@@ -181,13 +176,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATIONS_ABOVE" defaultstate="collapsed">
     LOCATIONS_ABOVE {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.LOCATION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations = input.locations.map { it.add(Vector(0, inputRune.amount, 0)) }
         }
@@ -196,13 +191,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATIONS_IN_FRONT" defaultstate="collapsed">
     LOCATIONS_IN_FRONT {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.LOCATION_DIRECTION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations =
                 input.locations.zip(input.directions)
@@ -213,13 +208,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATI0NS_BEHIND" defaultstate="collapsed">
     LOCATIONS_BEHIND {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.LOCATION_DIRECTION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations =
                 input.locations.zip(input.directions)
@@ -234,13 +229,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATION_AROUND" defaultstate="collapsed">
     LOCATION_AROUND {
+        override val durationBase = Duration.ofSeconds(3)!!
         override val requirement = RuneRequirements.LOCATION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations =
                 locationAround(input.locations.random(), min(inputRune.amount, 3)) // Hard cap to prevent lag
@@ -250,13 +245,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LOCATION_AROUND_FLAT" defaultstate="collapsed">
     LOCATION_AROUND_FLAT {
+        override val durationBase = Duration.ofSeconds(1)!!
         override val requirement = RuneRequirements.LOCATION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations =
                 locationAroundFlat(input.locations.random(), min(inputRune.amount, 10)) // Hard cap to prevent lag
@@ -266,13 +261,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="ENTITIES_AROUND", defaultstate="collapsed">
     ENTITIES_AROUND {
+        override val durationBase = Duration.ofSeconds(3)!!
         override val requirement = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             val a = inputRune.amount.toDouble()
             input.entities = input.entities.map { it.getNearbyEntities(a, a, a) }.flatten()
@@ -282,12 +277,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="DOWN_DIRECTION" defaultstate="collapsed">
     DOWN_DIRECTION {
+        override val durationBase = Duration.ofMillis(200)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = (0 until inputRune.amount).map { Vector(0, -1, 0) }
         }
@@ -296,12 +291,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="UP_DIRECTION" defaultstate="collapsed">
     UP_DIRECTION {
+        override val durationBase = Duration.ofMillis(200)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = (0 until inputRune.amount).map { Vector(0, 1, 0) }
         }
@@ -310,13 +305,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="INVERT_DIRECTION" defaultstate="collapsed">
     INVERT_DIRECTION {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.DIRECTION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = input.directions.map { it.multiply(-1) }
         }
@@ -325,13 +320,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="MULTIPLY_DIRECTION" defaultstate="collapsed">
     MULTIPLY_DIRECTION {
+        override val durationBase = Duration.ofSeconds(1)!!
         override val requirement = RuneRequirements.DIRECTION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = input.directions.map { it.multiply(inputRune.amount) }
         }
@@ -340,13 +335,13 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="DIVIDE_DIRECTION" defaultstate="collapsed">
     DIVIDE_DIRECTION {
+        override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.DIRECTION
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.directions = input.directions.map { it.multiply(1f / (inputRune.amount + 1)) }
         }
@@ -359,8 +354,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacker() }
         }
@@ -374,8 +368,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacked() }
         }
@@ -384,16 +377,14 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="PLACE_BLOCK" defaultstate="collapsed">
     PLACE_BLOCK {
+        override val durationBase = Duration.ofMillis(200)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
-            if (player == null) {
-                return
-            }
+            val player = artifactActivator.getPermission() ?: return
             input.locations.forEach {
                 // Don't really know how to implement it right, I don't think I have enough data in this scope
                 val event = BlockPlaceEvent(
@@ -412,7 +403,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LAUNCH_PROJECTILE" defaultstate="collapsed">
     LAUNCH_PROJECTILE {
@@ -422,8 +412,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?,
+            inputsTrace: MutableList<ItemStack>
         ) {
             when (inputRune.type) {
                 Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.directions)
@@ -435,20 +424,32 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                             1f
                         )
                         projectiles.add(arrow)
+                        Companion.addDuration(Duration.ofSeconds(1), input)
                     }
 
-                Material.SPLASH_POTION -> input.locations.zip(input.directions).forEach {
-                    val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
-                    potion.item = inputRune
-                    potion.velocity = it.second
-                    projectiles.add(potion)
-                }
+                Material.SPLASH_POTION -> input.locations.zip(input.directions)
+                    .forEach {
+                        val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
+                        potion.item = inputRune
+                        potion.velocity = it.second
+                        projectiles.add(potion)
+                        Companion.addDuration(Duration.ofSeconds(1), input)
+                    }
 
                 Material.FIRE_CHARGE -> {
                     input.locations.zip(input.directions).forEach {
                         val fireball = it.first.world.spawnEntity(it.first, EntityType.SMALL_FIREBALL)
                         fireball.velocity = it.second
                         projectiles.add(fireball as Projectile) // check this bad boy
+                        Companion.addDuration(Duration.ofSeconds(1), input)
+                    }
+                }
+
+                Material.SNOWBALL -> {
+                    input.locations.zip(input.directions).forEach {
+                        val snowball = it.first.world.spawnEntity(it.first, EntityType.SNOWBALL)
+                        snowball.velocity = it.second
+                        projectiles.add(snowball as Projectile) // check this bad boy too
                     }
                 }
 
@@ -465,12 +466,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="EAT_FOOD" defaultstate="collapsed">
     EAT_FOOD {
+        override val durationBase = Duration.ofSeconds(10)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.entities.forEach { foodEffect(it, inputRune.type) }
         }
@@ -479,12 +480,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="DRINK_POTION" defaultstate="collapsed">
     DRINK_POTION {
+        override val durationBase = Duration.ofSeconds(10)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>,
-            player: Player?
         ) {
             input.entities.forEach { potionEffect(it, inputRune) }
         }
@@ -501,16 +502,15 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="USE_TOOL" defaultstate="collapsed">
     USE_TOOL {
+        override val durationBase = Duration.ofMillis(200)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>,
-            player: Player?
         ) {
-            if (player == null) {
-                return
-            }
+            val player = artifactActivator.getPermission() ?: return
+
             when (inputRune.type) {
                 Material.DIAMOND_PICKAXE -> {
                     input.locations.forEach {
@@ -545,12 +545,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="SUMMON_ENTITY" defaultstate="collapsed">
     SUMMON_ENTITY {
+        override val durationBase = Duration.ofSeconds(15)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             val entity = entityTypeFromItemStack(inputRune)
             if (entity === null) {
@@ -563,12 +563,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="LIGHTNING_SPARK" defaultstate="collapsed">
     LIGHTNING_SPARK {
+        override val durationBase = Duration.ofSeconds(10)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.locations.forEach { it.world.strikeLightning(it) }
         }
@@ -577,12 +577,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     //</editor-fold>
     //<editor-fold desc="MOVE_RUNE" defaultstate="collapsed">
     MOVE_RUNE {
+        override val durationBase = Duration.ofSeconds(5)!!
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             input.entities.zip(input.directions).forEach {
                 it.first.velocity = it.first.velocity.add(it.second)
@@ -598,8 +598,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>,
-            player: Player?
+            inputsTrace: MutableList<ItemStack>
         ) {
             return
         }
@@ -612,6 +611,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     override fun triggerNext(nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit) {
         nextActivation(ArtifactInput::sameInput)
     }
+
+    open val durationBase: Duration = Duration.ZERO
+    override fun addDuration(input: ArtifactInput) {
+        input.duration = input.duration.plus(durationBase)
+    }
+
     override fun processArtifactActivation(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -621,7 +626,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             nextActivation: ((ArtifactInput) -> ArtifactInput) -> Unit
     ) {
         requirement.ensureRequirement(input, artifactActivator)
-        artifactActivationWithRequirements(inputRune, artifactActivator, input, inputsTrace, player)
+        artifactActivationWithRequirements(inputRune, artifactActivator, input, inputsTrace)
         triggerNext(nextActivation)
     }
 
@@ -630,7 +635,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         artifactActivator: ArtifactActivator,
         input: ArtifactInput,
         inputsTrace: MutableList<ItemStack>,
-        player: Player?,
     )
 
     companion object {
@@ -768,6 +772,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         private fun feedPlayer(player: Player, saturationDelta: Float, foodDelta: Int) {
             player.saturation += saturationDelta
             player.foodLevel += foodDelta
+        }
+
+        private fun addDuration(duration: Duration, input: ArtifactInput) {
+            input.duration = input.duration.plus(duration)
         }
     }
 }

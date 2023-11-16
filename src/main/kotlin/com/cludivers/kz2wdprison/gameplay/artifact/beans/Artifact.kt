@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -24,6 +25,7 @@ import org.bukkit.inventory.ItemStack
 import java.time.Duration
 import java.time.Instant
 import kotlin.jvm.Transient
+import kotlin.math.abs
 
 @Entity
 class Artifact {
@@ -110,18 +112,31 @@ class Artifact {
 
         val currentFlow = inFlow * conductivity * conductivityDebuff
 
-        if (lastUsage != null && Duration.between(lastUsage, Instant.now()) < cooldown) {
-            val activator = artifactActivator.getSelf()
-            if (activator is Player && triggerType == ArtifactTriggers.CLICK) {
-                activator.sendActionBar(
-                    Component.text("********").color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
-                )
-                activator.location.world.playSound(activator, Sound.BLOCK_BEACON_DEACTIVATE, 1f, 0f)
+        if (lastUsage != null) {
+            val remainingReloadTime = Duration.between(lastUsage, Instant.now()) - cooldown
+            if (remainingReloadTime.isNegative) {
+                val activator = artifactActivator.getSelf()
+                if (activator is Player && triggerType == ArtifactTriggers.CLICK) {
+                    activator.sendActionBar(
+                        Component.text(" - *** ${abs(remainingReloadTime.toMillis())} *** - ").color(NamedTextColor.RED)
+                            .decorate(TextDecoration.BOLD)
+                    )
+                    activator.location.world.playSound(activator, Sound.BLOCK_BEACON_DEACTIVATE, .3f, 1f)
+                    activator.location.world.spawnParticle(Particle.ELECTRIC_SPARK, activator.location, 10)
+                }
+                return currentFlow
             }
-
-            return currentFlow
         }
         lastUsage = Instant.now()
+
+        val activator = artifactActivator.getSelf()
+        if (activator is Player && triggerType == ArtifactTriggers.CLICK) {
+            activator.sendActionBar(
+                Component.text(" - *** ^^^^ *** - ").color(NamedTextColor.GREEN)
+            )
+            activator.location.world.playSound(activator, Sound.BLOCK_AMETHYST_BLOCK_RESONATE, .3f, 1f)
+            activator.location.world.spawnParticle(Particle.DRAGON_BREATH, activator.location, 10)
+        }
 
         val input = ArtifactInput(currentFlow)
         val player = if (artifactActivator.getSelf() is Player){
@@ -134,10 +149,12 @@ class Artifact {
             it.value.type != Material.AIR
         }.toList().sortedBy { it.first }.map { it.second }
 
-
-
         fun generateActivation(runeIndex: Int): ((ArtifactInput) -> ArtifactInput) -> Unit {
-            if (runesOrdered.size <= runeIndex) return {}
+            if (runesOrdered.size <= runeIndex) return {
+                PluginConfiguration.session.beginTransaction()
+                this.cooldown = input.duration.plus(cooldownDebuff)
+                PluginConfiguration.session.transaction.commit()
+            }
             return fun(inputModifier: ((ArtifactInput) -> ArtifactInput)) {
                 RunesBehaviors.processArtifactActivation(
                         runesOrdered[runeIndex],
