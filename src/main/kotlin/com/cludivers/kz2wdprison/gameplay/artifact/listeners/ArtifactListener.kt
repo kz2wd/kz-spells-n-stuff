@@ -98,10 +98,10 @@ class ArtifactListener : Listener {
         private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactInput) -> ArtifactInput {
             return fun(input: ArtifactInput): ArtifactInput {
                 if (entity != null) {
-                    input.entities = listOf(entity)
+                    input.entities.add(entity)
                 }
                 if (block != null) {
-                    input.locations = listOf(block.location)
+                    input.locations.add(block.location)
                 }
                 return input
             }

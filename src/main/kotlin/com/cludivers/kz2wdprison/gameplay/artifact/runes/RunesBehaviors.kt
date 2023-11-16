@@ -218,6 +218,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
+            if (input.locations.size == 0 || input.directions.size == 0) return
             val location = input.locations.lastOrNull() ?: return
             val direction = input.directions.lastOrNull() ?: return
             location.add(direction.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount))
@@ -234,6 +235,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
+            if (input.locations.size == 0 || input.directions.size == 0) return
             val location = input.locations.lastOrNull() ?: return
             val direction = input.directions.lastOrNull() ?: return
             location.subtract(direction.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount))
@@ -252,6 +254,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         ) {
             val location = input.locations.removeLastOrNull() ?: return
             input.locations.addAll(locationAround(location, min(inputRune.amount, 3))) // Hard cap to prevent lag
+        }
+
+        private fun locationAround(location: Location, radius: Int): List<Location> {
+            return (-radius..radius).map { locationAroundFlat(location.clone().add(Vector(0, it, 0)), radius) }
+                .flatten()
         }
     },
     //</editor-fold>
@@ -435,58 +442,53 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     LAUNCH_PROJECTILE {
         private var projectiles: MutableList<Projectile> = emptyList<Projectile>().toMutableList()
 
+        private fun launchProjectile(
+            input: ArtifactInput,
+            entityType: EntityType,
+            bonusDuration: Duration
+        ): Projectile? {
+            if (input.locations.size == 0 || input.directions.size == 0) return null
+            val location = input.locations.removeLastOrNull() ?: return null
+            val direction = input.directions.removeLastOrNull() ?: return null
+            val projectile = location.world.spawnEntity(location, entityType) as Projectile
+            projectile.velocity = direction
+            projectiles.add(projectile)
+            Companion.addDuration(bonusDuration, input)
+            return projectile
+        }
+
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            when (inputRune.type) {
-                Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW -> input.locations.zip(input.directions)
-                    .forEach {
-                        val arrow = it.first.world.spawnArrow(
-                            it.first,
-                            it.second,
-                            1f,
-                            1f
-                        )
-                        // set custom properties
-                        when (inputRune.type) {
-//                            Material.SPECTRAL_ARROW -> arrow.type = EntityType.SPECTRAL_ARROW
-//                            Material.TIPPED_ARROW -> arrow.type = EntityType.ARR
-                        }
+            repeat(inputRune.amount) {
+                when (inputRune.type) {
+                    Material.ARROW -> launchProjectile(input, EntityType.ARROW, Duration.ofSeconds(1)) ?: return
+                    Material.SPECTRAL_ARROW -> launchProjectile(input, EntityType.SPECTRAL_ARROW, Duration.ofSeconds(1))
+                        ?: return
 
-                        projectiles.add(arrow)
-                        Companion.addDuration(Duration.ofSeconds(1), input)
+                    Material.TIPPED_ARROW -> {
+                        val projectile = launchProjectile(input, EntityType.ARROW, Duration.ofSeconds(1)) ?: return
+                        val arrow = projectile as Arrow
+                        val blueprint = inputRune as Arrow
+                        arrow.basePotionType = blueprint.basePotionType
                     }
 
-                Material.SPLASH_POTION -> input.locations.zip(input.directions)
-                    .forEach {
-                        val potion = (it.first.world.spawnEntity(it.first, EntityType.SPLASH_POTION) as ThrownPotion)
-                        potion.item = inputRune
-                        potion.velocity = it.second
-                        projectiles.add(potion)
-                        Companion.addDuration(Duration.ofSeconds(1), input)
+                    Material.SPLASH_POTION -> {
+                        val projectile =
+                            launchProjectile(input, EntityType.SPLASH_POTION, Duration.ofSeconds(1)) ?: return
+//                        val potion = projectile as ThrownPotion
+                        // Add potion effects . . .
+//                        potion.effects =
                     }
 
-                Material.FIRE_CHARGE -> {
-                    input.locations.zip(input.directions).forEach {
-                        val fireball = it.first.world.spawnEntity(it.first, EntityType.SMALL_FIREBALL)
-                        fireball.velocity = it.second
-                        projectiles.add(fireball as Projectile) // check this bad boy
-                        Companion.addDuration(Duration.ofSeconds(1), input)
-                    }
+                    Material.FIRE_CHARGE -> launchProjectile(input, EntityType.ARROW, Duration.ofSeconds(1)) ?: return
+                    Material.SNOWBALL -> launchProjectile(input, EntityType.SNOWBALL, Duration.ZERO) ?: return
+
+                    else -> {}
                 }
-
-                Material.SNOWBALL -> {
-                    input.locations.zip(input.directions).forEach {
-                        val snowball = it.first.world.spawnEntity(it.first, EntityType.SNOWBALL)
-                        snowball.velocity = it.second
-                        projectiles.add(snowball as Projectile) // check this bad boy too
-                    }
-                }
-
-                else -> {}
             }
         }
 
@@ -506,7 +508,76 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities.forEach { foodEffect(it, inputRune.type) }
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                foodEffect(entity, inputRune.type)
+            }
+        }
+
+        private fun feedPlayer(player: Player, saturationDelta: Float, foodDelta: Int) {
+            player.saturation += saturationDelta
+            player.foodLevel += foodDelta
+        }
+
+        private fun foodEffect(entity: Entity, material: Material) {
+            if (entity !is Player) {
+                return
+            }
+            when (material) {
+                Material.APPLE -> feedPlayer(entity, 2.4f, 4)
+                Material.BAKED_POTATO -> feedPlayer(entity, 6f, 5)
+                Material.BEETROOT -> feedPlayer(entity, 1.2f, 1)
+                Material.BEETROOT_SOUP -> feedPlayer(entity, 7.2f, 6)
+                Material.BREAD -> feedPlayer(entity, 5f, 6)
+                Material.CAKE -> feedPlayer(entity, 0.4f, 2)
+                Material.CARROT -> feedPlayer(entity, 3.6f, 3)
+                Material.CHORUS_FRUIT -> feedPlayer(entity, 2.4f, 4)
+                Material.COOKED_CHICKEN -> feedPlayer(entity, 7.2f, 6)
+                Material.COOKED_COD -> feedPlayer(entity, 6f, 5)
+                Material.COOKED_MUTTON -> feedPlayer(entity, 9.6f, 6)
+                Material.COOKED_PORKCHOP -> feedPlayer(entity, 12.8f, 8)
+                Material.COOKED_RABBIT -> feedPlayer(entity, 6f, 5)
+                Material.COOKED_SALMON -> feedPlayer(entity, 9.6f, 6)
+                Material.COOKIE -> feedPlayer(entity, 0.4f, 2)
+                Material.DRIED_KELP -> feedPlayer(entity, 0.6f, 1)
+                Material.ENCHANTED_GOLDEN_APPLE -> {
+                    feedPlayer(entity, 9.6f, 4)
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 30 * 20, 3))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 300, 0))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 300, 0))
+                }
+
+                Material.GOLDEN_APPLE -> {
+                    feedPlayer(entity, 9.6f, 4)
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 100, 1))
+                    entity.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, 20 * 120, 0))
+                }
+
+                Material.GLOW_BERRIES -> feedPlayer(entity, 0.4f, 2)
+                Material.GOLDEN_CARROT -> feedPlayer(entity, 14.4f, 6)
+                Material.HONEY_BOTTLE -> feedPlayer(entity, 1.2f, 6)
+                Material.MELON_SLICE -> feedPlayer(entity, 1.2f, 2)
+                Material.MUSHROOM_STEW -> feedPlayer(entity, 7.2f, 6)
+                Material.POISONOUS_POTATO -> feedPlayer(entity, 1.2f, 2)
+                Material.POTATO -> feedPlayer(entity, 0.6f, 1)
+                Material.PUFFERFISH -> feedPlayer(entity, 0.2f, 1)
+                Material.PUMPKIN_PIE -> feedPlayer(entity, 4.8f, 8)
+                Material.RABBIT_STEW -> feedPlayer(entity, 12f, 10)
+                Material.BEEF -> feedPlayer(entity, 1.8f, 3)
+                Material.CHICKEN -> feedPlayer(entity, 1.2f, 2)
+                Material.COD -> feedPlayer(entity, 0.4f, 2)
+                Material.MUTTON -> feedPlayer(entity, 1.2f, 2)
+                Material.PORKCHOP -> feedPlayer(entity, 1.8f, 3)
+                Material.RABBIT -> feedPlayer(entity, 1.8f, 3)
+                Material.SALMON -> feedPlayer(entity, 0.4f, 2)
+                Material.ROTTEN_FLESH -> feedPlayer(entity, 0.8f, 4)
+                Material.SPIDER_EYE -> feedPlayer(entity, 3.2f, 2)
+                Material.COOKED_BEEF -> feedPlayer(entity, 12.8f, 8)
+                Material.SUSPICIOUS_STEW -> feedPlayer(entity, 7.2f, 6)
+                Material.SWEET_BERRIES -> feedPlayer(entity, 0.4f, 2)
+                Material.TROPICAL_FISH -> feedPlayer(entity, 0.2f, 1)
+                else -> {}
+            }
         }
     },
 
@@ -520,7 +591,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>,
         ) {
-            input.entities.forEach { potionEffect(it, inputRune) }
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                potionEffect(entity, inputRune)
+            }
         }
 
         private fun potionEffect(entity: Entity, itemStack: ItemStack) {
@@ -589,10 +663,20 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             if (entity === null) {
                 return
             }
-            input.locations.forEach { it.world.spawnEntity(it, entity) }
+            repeat(inputRune.amount) {
+                val location = input.locations.removeLastOrNull() ?: return
+                location.world.spawnEntity(location, entity)
+            }
+        }
+
+        private fun entityTypeFromItemStack(itemStack: ItemStack): EntityType? {
+            return when (itemStack.type) {
+                Material.COW_SPAWN_EGG -> EntityType.COW
+                Material.CHICKEN_SPAWN_EGG -> EntityType.CHICKEN
+                else -> null
+            }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LIGHTNING_SPARK" defaultstate="collapsed">
     LIGHTNING_SPARK {
@@ -603,10 +687,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations.forEach { it.world.strikeLightning(it) }
+            repeat(inputRune.amount) {
+                val location = input.locations.removeLastOrNull() ?: return
+                location.world.strikeLightning(location)
+            }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="MOVE_RUNE" defaultstate="collapsed">
     MOVE_RUNE {
@@ -617,13 +703,14 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities.zip(input.directions).forEach {
-                it.first.velocity = it.first.velocity.add(it.second)
+            repeat(inputRune.amount) {
+                if (input.entities.size == 0 || input.directions.size == 0) return
+                val entity = input.entities.removeLastOrNull() ?: return
+                val direction = input.directions.removeLastOrNull() ?: return
+                entity.velocity = entity.velocity.add(direction)
             }
         }
-
     },
-
     //</editor-fold>
     //<editor-fold desc="NONE" defaultstate="collapsed">
     NONE {
@@ -660,6 +747,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     ) {
         requirement.ensureRequirement(input, artifactActivator)
         artifactActivationWithRequirements(inputRune, artifactActivator, input, inputsTrace)
+        addDuration(input)
         triggerNext(nextActivation)
     }
 
@@ -724,88 +812,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             }
         }
 
+
         private fun locationAroundFlat(location: Location, radius: Int): List<Location> {
             return (-radius..radius).map { (-radius..radius).map { itt -> Pair(it, itt) } }.flatten()
                 .map { location.clone().add(Vector(it.first, 0, it.second)) }
         }
 
-        private fun locationAround(location: Location, radius: Int): List<Location> {
-            return (-radius..radius).map { locationAroundFlat(location.clone().add(Vector(0, it, 0)), radius) }
-                .flatten()
-        }
-
-        private fun foodEffect(entity: Entity, material: Material) {
-            if (entity !is Player) {
-                return
-            }
-            when (material) {
-                Material.APPLE -> feedPlayer(entity, 2.4f, 4)
-                Material.BAKED_POTATO -> feedPlayer(entity, 6f, 5)
-                Material.BEETROOT -> feedPlayer(entity, 1.2f, 1)
-                Material.BEETROOT_SOUP -> feedPlayer(entity, 7.2f, 6)
-                Material.BREAD -> feedPlayer(entity, 5f, 6)
-                Material.CAKE -> feedPlayer(entity, 0.4f, 2)
-                Material.CARROT -> feedPlayer(entity, 3.6f, 3)
-                Material.CHORUS_FRUIT -> feedPlayer(entity, 2.4f, 4)
-                Material.COOKED_CHICKEN -> feedPlayer(entity, 7.2f, 6)
-                Material.COOKED_COD -> feedPlayer(entity, 6f, 5)
-                Material.COOKED_MUTTON -> feedPlayer(entity, 9.6f, 6)
-                Material.COOKED_PORKCHOP -> feedPlayer(entity, 12.8f, 8)
-                Material.COOKED_RABBIT -> feedPlayer(entity, 6f, 5)
-                Material.COOKED_SALMON -> feedPlayer(entity, 9.6f, 6)
-                Material.COOKIE -> feedPlayer(entity, 0.4f, 2)
-                Material.DRIED_KELP -> feedPlayer(entity, 0.6f, 1)
-                Material.ENCHANTED_GOLDEN_APPLE -> {
-                    feedPlayer(entity, 9.6f, 4)
-                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 30 * 20, 3))
-                    entity.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * 300, 0))
-                    entity.addPotionEffect(PotionEffect(PotionEffectType.FIRE_RESISTANCE, 20 * 300, 0))
-                }
-
-                Material.GOLDEN_APPLE -> {
-                    feedPlayer(entity, 9.6f, 4)
-                    entity.addPotionEffect(PotionEffect(PotionEffectType.REGENERATION, 100, 1))
-                    entity.addPotionEffect(PotionEffect(PotionEffectType.ABSORPTION, 20 * 120, 0))
-                }
-
-                Material.GLOW_BERRIES -> feedPlayer(entity, 0.4f, 2)
-                Material.GOLDEN_CARROT -> feedPlayer(entity, 14.4f, 6)
-                Material.HONEY_BOTTLE -> feedPlayer(entity, 1.2f, 6)
-                Material.MELON_SLICE -> feedPlayer(entity, 1.2f, 2)
-                Material.MUSHROOM_STEW -> feedPlayer(entity, 7.2f, 6)
-                Material.POISONOUS_POTATO -> feedPlayer(entity, 1.2f, 2)
-                Material.POTATO -> feedPlayer(entity, 0.6f, 1)
-                Material.PUFFERFISH -> feedPlayer(entity, 0.2f, 1)
-                Material.PUMPKIN_PIE -> feedPlayer(entity, 4.8f, 8)
-                Material.RABBIT_STEW -> feedPlayer(entity, 12f, 10)
-                Material.BEEF -> feedPlayer(entity, 1.8f, 3)
-                Material.CHICKEN -> feedPlayer(entity, 1.2f, 2)
-                Material.COD -> feedPlayer(entity, 0.4f, 2)
-                Material.MUTTON -> feedPlayer(entity, 1.2f, 2)
-                Material.PORKCHOP -> feedPlayer(entity, 1.8f, 3)
-                Material.RABBIT -> feedPlayer(entity, 1.8f, 3)
-                Material.SALMON -> feedPlayer(entity, 0.4f, 2)
-                Material.ROTTEN_FLESH -> feedPlayer(entity, 0.8f, 4)
-                Material.SPIDER_EYE -> feedPlayer(entity, 3.2f, 2)
-                Material.COOKED_BEEF -> feedPlayer(entity, 12.8f, 8)
-                Material.SUSPICIOUS_STEW -> feedPlayer(entity, 7.2f, 6)
-                Material.SWEET_BERRIES -> feedPlayer(entity, 0.4f, 2)
-                Material.TROPICAL_FISH -> feedPlayer(entity, 0.2f, 1)
-                else -> {}
-            }
-        }
-
-        private fun entityTypeFromItemStack(itemStack: ItemStack): EntityType? {
-            return when (itemStack.type) {
-                Material.COW_SPAWN_EGG -> EntityType.COW
-                else -> null
-            }
-        }
-
-        private fun feedPlayer(player: Player, saturationDelta: Float, foodDelta: Int) {
-            player.saturation += saturationDelta
-            player.foodLevel += foodDelta
-        }
 
         private fun addDuration(duration: Duration, input: ArtifactInput) {
             input.duration = input.duration.plus(duration)

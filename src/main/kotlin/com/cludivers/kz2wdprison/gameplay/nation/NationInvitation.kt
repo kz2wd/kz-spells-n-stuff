@@ -24,7 +24,8 @@ object NationInvitation {
     }
 
     fun sendInvitationNotification(sender: Player, receiver: Player, nation: NationBean){
-        receiver.sendConfirmationMessage("${sender.name} vous à invité à rejoindre la nation ${nation.name!!}",
+        receiver.sendConfirmationMessage(
+            "${sender.name} vous à invité à rejoindre la nation ${nation.name}",
             "/nation join ${sender.name}", "/nation refuse ${sender.name}")
     }
 

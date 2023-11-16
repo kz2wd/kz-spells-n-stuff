@@ -49,7 +49,7 @@ class NationListener : Listener {
             event.player.showTitle(
                 Title.title(
                     Component.text(""),
-                    Component.text(newChunkData.nation!!.name!!), DEFAULT_TIME
+                    Component.text(newChunkData.nation!!.name), DEFAULT_TIME
                 )
             )
         }

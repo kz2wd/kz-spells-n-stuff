@@ -38,7 +38,11 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    CustomShardItems.LOCATION_SIGHT_RUNE.itemStack.asQuantity(10),
+                    CustomShardItems.CASTER_PROJECTILE_RUNE.itemStack,
+                    CustomShardItems.DOUBLE_DIRECTIONS_RUNE.itemStack,
+                    ItemStack(Material.ARROW),
+                    CustomShardItems.LOCATION_AROUND_FLAT_RUNE.itemStack.asQuantity(2),
+                    CustomShardItems.LIGHTNING_SPARK.itemStack.asQuantity(25),
                     ItemStack(Material.DIAMOND_PICKAXE)
                 ),
                 Duration.ofSeconds(2)
@@ -75,7 +79,7 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    CustomShardItems.ENTITY_CASTER_RUNE.itemStack,
+                    CustomShardItems.ENTITY_CASTER_RUNE.itemStack.asQuantity(2),
                     CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
                 ),
