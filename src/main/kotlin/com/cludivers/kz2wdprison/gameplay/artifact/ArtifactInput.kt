@@ -8,9 +8,9 @@ import java.time.Duration
 
 class ArtifactInput(
     var flow: Float = 0f,
-    var locations: List<Location> = listOf(),
-    var entities: List<Entity> = listOf(),
-    var directions: List<Vector> = listOf(),
+    var locations: MutableList<Location> = mutableListOf(),
+    var entities: MutableList<Entity> = mutableListOf(),
+    var directions: MutableList<Vector> = mutableListOf(),
     var enableRequirements: Boolean = true,
     var duration: Duration = Duration.ZERO
 ) {

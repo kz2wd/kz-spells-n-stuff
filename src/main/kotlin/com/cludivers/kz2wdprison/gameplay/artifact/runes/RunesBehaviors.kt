@@ -28,7 +28,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities = (0 until inputRune.amount).map { artifactActivator.getSelf() }
+            repeat(inputRune.amount) { input.entities.add(artifactActivator.getSelf()) }
         }
     },
 
@@ -44,8 +44,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
-            input.entities =
-                input.entities.filterIsInstance<LivingEntity>().mapNotNull { it.getTargetEntity(inputRune.amount) }
+            val entity = input.entities.removeLastOrNull() ?: return
+            input.entities.add((entity as LivingEntity).getTargetEntity(inputRune.amount) ?: return)
+
+
         }
     },
 
@@ -61,8 +63,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
-            input.locations = input.entities.filterIsInstance<LivingEntity>()
-                .mapNotNull { it.getTargetBlockExact(inputRune.amount)?.location }
+            val entity = input.entities.removeLastOrNull() ?: return
+            val block = (entity as LivingEntity).getTargetBlockExact(inputRune.amount) ?: return
+            input.locations.add(block.location)
         }
     },
 
@@ -78,8 +81,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             input.enableRequirements = false
-            input.locations = input.entities.filterIsInstance<LivingEntity>()
-                .mapNotNull { it.getLastTwoTargetBlocks(null, inputRune.amount)[0]?.location }
+            val entity = input.entities.removeLastOrNull() ?: return
+            val block = (entity as LivingEntity).getLastTwoTargetBlocks(null, inputRune.amount)[0]
+            input.locations.add(block.location)
         }
     },
 
@@ -92,11 +96,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            if (input.entities.isEmpty()) {
-                input.entities = listOf(artifactActivator.getSelf())
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                input.locations.add(entity.location)
+                input.directions.add(entity.location.direction)
             }
-            input.locations = input.entities.map { it.location }
-            input.directions = input.entities.map { it.location.direction }
         }
     },
 
@@ -111,8 +115,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         ) {
             var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
             forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
-            input.locations = (0 until inputRune.amount).map { forwardEyeLocation }
-            input.directions = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
+            repeat(inputRune.amount) {
+                input.locations.add(forwardEyeLocation)
+                input.directions.add(artifactActivator.getLocation().direction)
+            }
         }
     },
 
@@ -126,7 +132,9 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = (0 until inputRune.amount).map { artifactActivator.getLocation().direction }
+            repeat(inputRune.amount) {
+                input.directions.add(artifactActivator.getLocation().direction)
+            }
         }
     },
 
@@ -140,7 +148,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations = input.entities.map { it.location }
+            val locationsToAdd: MutableList<Location> = mutableListOf()
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                locationsToAdd.add(entity.location)
+            }
+            input.locations.addAll(locationsToAdd)
         }
     },
 
@@ -154,7 +167,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = input.entities.map { it.location.direction }
+            val directionsToAdd: MutableList<Vector> = mutableListOf()
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                directionsToAdd.add(entity.location.direction)
+            }
+            input.directions.addAll(directionsToAdd)
         }
     },
 
@@ -169,7 +187,8 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations = input.locations.map { it.subtract(Vector(0, inputRune.amount, 0)) }
+            val location = input.locations.lastOrNull() ?: return
+            location.add(0.0, -inputRune.amount.toDouble(), 0.0)
         }
     },
 
@@ -184,10 +203,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations = input.locations.map { it.add(Vector(0, inputRune.amount, 0)) }
+            val location = input.locations.lastOrNull() ?: return
+            location.add(0.0, inputRune.amount.toDouble(), 0.0)
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LOCATIONS_IN_FRONT" defaultstate="collapsed">
     LOCATIONS_IN_FRONT {
@@ -199,12 +218,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations =
-                input.locations.zip(input.directions)
-                    .map { it.first.add(it.second.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount)) }
+            val location = input.locations.lastOrNull() ?: return
+            val direction = input.directions.lastOrNull() ?: return
+            location.add(direction.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount))
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LOCATI0NS_BEHIND" defaultstate="collapsed">
     LOCATIONS_BEHIND {
@@ -216,16 +234,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations =
-                input.locations.zip(input.directions)
-                    .map {
-                        it.first.subtract(
-                            it.second.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount)
-                        )
-                    }
+            val location = input.locations.lastOrNull() ?: return
+            val direction = input.directions.lastOrNull() ?: return
+            location.subtract(direction.multiply(Vector(1, 0, 1)).normalize().multiply(inputRune.amount))
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LOCATION_AROUND" defaultstate="collapsed">
     LOCATION_AROUND {
@@ -237,11 +250,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations =
-                locationAround(input.locations.random(), min(inputRune.amount, 3)) // Hard cap to prevent lag
+            val location = input.locations.removeLastOrNull() ?: return
+            input.locations.addAll(locationAround(location, min(inputRune.amount, 3))) // Hard cap to prevent lag
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="LOCATION_AROUND_FLAT" defaultstate="collapsed">
     LOCATION_AROUND_FLAT {
@@ -253,11 +265,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.locations =
-                locationAroundFlat(input.locations.random(), min(inputRune.amount, 10)) // Hard cap to prevent lag
+            val location = input.locations.removeLastOrNull() ?: return
+            input.locations.addAll(locationAroundFlat(location, min(inputRune.amount, 10)))
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="ENTITIES_AROUND", defaultstate="collapsed">
     ENTITIES_AROUND {
@@ -270,10 +281,10 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             val a = inputRune.amount.toDouble()
-            input.entities = input.entities.map { it.getNearbyEntities(a, a, a) }.flatten()
+            val entity = input.entities.removeLastOrNull() ?: return
+            input.entities.addAll(entity.getNearbyEntities(a, a, a))
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="DOWN_DIRECTION" defaultstate="collapsed">
     DOWN_DIRECTION {
@@ -284,10 +295,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = (0 until inputRune.amount).map { Vector(0, -1, 0) }
+            repeat(inputRune.amount) {
+                input.directions.add(Vector(0, -1, 0))
+            }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="UP_DIRECTION" defaultstate="collapsed">
     UP_DIRECTION {
@@ -298,10 +310,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = (0 until inputRune.amount).map { Vector(0, 1, 0) }
+            repeat(inputRune.amount) {
+                input.directions.add(Vector(0, 1, 0))
+            }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="INVERT_DIRECTION" defaultstate="collapsed">
     INVERT_DIRECTION {
@@ -313,13 +326,17 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = input.directions.map { it.multiply(-1) }
+            val directionsToAdd: MutableList<Vector> = mutableListOf()
+            repeat(inputRune.amount) {
+                val direction = input.directions.removeLastOrNull() ?: return
+                directionsToAdd.add(direction.multiply(-1))
+            }
+            input.directions.addAll(directionsToAdd)
         }
     },
-
     //</editor-fold>
-    //<editor-fold desc="MULTIPLY_DIRECTION" defaultstate="collapsed">
-    MULTIPLY_DIRECTION {
+    //<editor-fold desc="DOUBLE_DIRECTION" defaultstate="collapsed">
+    DOUBLE_DIRECTION {
         override val durationBase = Duration.ofSeconds(1)!!
         override val requirement = RuneRequirements.DIRECTION
         override fun artifactActivationWithRequirements(
@@ -328,13 +345,17 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = input.directions.map { it.multiply(inputRune.amount) }
+            val directionsToAdd: MutableList<Vector> = mutableListOf()
+            repeat(inputRune.amount) {
+                val direction = input.directions.removeLastOrNull() ?: return
+                directionsToAdd.add(direction.multiply(2))
+            }
+            input.directions.addAll(directionsToAdd)
         }
     },
-
     //</editor-fold>
-    //<editor-fold desc="DIVIDE_DIRECTION" defaultstate="collapsed">
-    DIVIDE_DIRECTION {
+    //<editor-fold desc="HALF_DIRECTION" defaultstate="collapsed">
+    HALF_DIRECTION {
         override val durationBase = Duration.ofMillis(200)!!
         override val requirement = RuneRequirements.DIRECTION
         override fun artifactActivationWithRequirements(
@@ -343,10 +364,15 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.directions = input.directions.map { it.multiply(1f / (inputRune.amount + 1)) }
+
+            val directionsToAdd: MutableList<Vector> = mutableListOf()
+            repeat(inputRune.amount) {
+                val direction = input.directions.removeLastOrNull() ?: return
+                directionsToAdd.add(direction.multiply(0.5))
+            }
+            input.directions.addAll(directionsToAdd)
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="ENTITY_ATTACKER" defaultstate="collapsed">
     ENTITY_ATTACKER {
@@ -356,11 +382,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacker() }
+            repeat(inputRune.amount) {
+                input.entities.add(artifactActivator.getAttacker() ?: return)
+            }
         }
-
     },
-
     //</editor-fold>
     //<editor-fold desc="ENTITY_ATTACKED" defaultstate="collapsed">
     ENTITY_ATTACKED {
@@ -370,10 +396,11 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.entities = (0 until inputRune.amount).mapNotNull { artifactActivator.getAttacked() }
+            repeat(inputRune.amount) {
+                input.entities.add(artifactActivator.getAttacked() ?: return)
+            }
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="PLACE_BLOCK" defaultstate="collapsed">
     PLACE_BLOCK {
@@ -385,12 +412,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             val player = artifactActivator.getPermission() ?: return
-            input.locations.forEach {
-                // Don't really know how to implement it right, I don't think I have enough data in this scope
+            repeat(inputRune.amount) {
+                val location = input.locations.removeLastOrNull() ?: return
                 val event = BlockPlaceEvent(
-                    it.block,
-                    it.block.state,
-                    it.block,
+                    location.block,
+                    location.block.state,
+                    location.block,
                     player.inventory.itemInMainHand,
                     player,
                     true,
@@ -398,7 +425,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                 )
                 Bukkit.getPluginManager().callEvent(event)
                 if (!event.isCancelled) {
-                    it.block.type = inputRune.type
+                    location.block.type = inputRune.type
                 }
             }
         }
@@ -423,6 +450,12 @@ enum class RunesBehaviors : ArtifactRuneInterface {
                             1f,
                             1f
                         )
+                        // set custom properties
+                        when (inputRune.type) {
+//                            Material.SPECTRAL_ARROW -> arrow.type = EntityType.SPECTRAL_ARROW
+//                            Material.TIPPED_ARROW -> arrow.type = EntityType.ARR
+                        }
+
                         projectiles.add(arrow)
                         Companion.addDuration(Duration.ofSeconds(1), input)
                     }

@@ -79,7 +79,7 @@ enum class ArtifactItemsTextures {
     MULTIPLY_DIRECTION {
         override val customData: Int = 6012
     },
-    DIVIDE_DIRECTION {
+    HALF_DIRECTION {
         override val customData: Int = 6013
     },
     ENTITIES_AROUND {

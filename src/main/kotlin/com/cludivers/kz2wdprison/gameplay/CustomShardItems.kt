@@ -145,14 +145,14 @@ enum class CustomShardItems {
         override val texture = ArtifactItemsTextures.INVERT_DIRECTION
         override val itemStack: ItemStack = run { setItemStack("Inversion des Directions") }
     },
-    MULTIPLY_DIRECTIONS_RUNE {
-        override val runeBehavior = RunesBehaviors.MULTIPLY_DIRECTION
+    DOUBLE_DIRECTIONS_RUNE {
+        override val runeBehavior = RunesBehaviors.DOUBLE_DIRECTION
         override val texture = ArtifactItemsTextures.MULTIPLY_DIRECTION
         override val itemStack: ItemStack = run { setItemStack("Multiplication des Directions") }
     },
-    DIVIDE_DIRECTIONS_RUNE {
-        override val runeBehavior = RunesBehaviors.DIVIDE_DIRECTION
-        override val texture = ArtifactItemsTextures.DIVIDE_DIRECTION
+    HALF_DIRECTIONS_RUNE {
+        override val runeBehavior = RunesBehaviors.HALF_DIRECTION
+        override val texture = ArtifactItemsTextures.HALF_DIRECTION
         override val itemStack: ItemStack = run { setItemStack("Division des Directions") }
     },
     ENTITY_ATTACKER_RUNE {
