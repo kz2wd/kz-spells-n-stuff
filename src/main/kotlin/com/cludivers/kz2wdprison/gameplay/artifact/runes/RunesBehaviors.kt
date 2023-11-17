@@ -20,6 +20,7 @@ import java.time.Duration
 import kotlin.math.min
 
 enum class RunesBehaviors : ArtifactRuneInterface {
+    // Entities
     //<editor-fold desc="ENTITY_CASTER" defaultstate="collapsed">
     ENTITY_CASTER {
         override fun artifactActivationWithRequirements(
@@ -31,7 +32,34 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             repeat(inputRune.amount) { input.entities.add(artifactActivator.getSelf()) }
         }
     },
-
+    //</editor-fold>
+    //<editor-fold desc="ENTITY_ATTACKER" defaultstate="collapsed">
+    ENTITY_ATTACKER {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.entities.add(artifactActivator.getAttacker() ?: return)
+            }
+        }
+    },
+    //</editor-fold>
+    //<editor-fold desc="ENTITY_ATTACKED" defaultstate="collapsed">
+    ENTITY_ATTACKED {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.entities.add(artifactActivator.getAttacked() ?: return)
+            }
+        }
+    },
     //</editor-fold>
     //<editor-fold desc="ENTITIES_IN_SIGHT" defaultstate="collapsed">
     ENTITIES_IN_SIGHT {
@@ -52,23 +80,69 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     },
 
     //</editor-fold>
-    //<editor-fold desc="LOCATION_SIGHT" defaultstate="collapsed">
-    LOCATION_SIGHT {
-        override val durationBase = Duration.ofSeconds(1)!!
-        override val requirement: RuneRequirements = RuneRequirements.ENTITY
+    //<editor-fold desc="ENTITIES_AROUND", defaultstate="collapsed">
+    ENTITIES_AROUND {
+        override val durationBase = Duration.ofSeconds(3)!!
+        override val requirement = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            input.enableRequirements = false
+            val a = inputRune.amount.toDouble()
             val entity = input.entities.removeLastOrNull() ?: return
-            val block = (entity as LivingEntity).getTargetBlockExact(inputRune.amount) ?: return
-            input.locations.add(block.location)
+            input.entities.addAll(entity.getNearbyEntities(a, a, a))
         }
     },
+    //</editor-fold>
+    //<editor-fold desc="REMOVE_ENTITY", defaultstate="collapsed">
+    REMOVE_ENTITY {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.entities.removeLastOrNull() ?: return
+            }
+        }
+    },
+    //</editor-fold>
+    //<editor-fold desc="COPY_ENTITY", defaultstate="collapsed">
+    COPY_ENTITY {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.entities.add(input.entities.last())
+            }
+        }
+    },
+    //</editor-fold>
 
+    // Locations
+    //<editor-fold desc="ENTITIES_LOCATION">
+    ENTITIES_LOCATION {
+        override val requirement = RuneRequirements.ENTITY
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            val locationsToAdd: MutableList<Location> = mutableListOf()
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                locationsToAdd.add(entity.location)
+            }
+            input.locations.addAll(locationsToAdd)
+        }
+    },
     //</editor-fold>
     //<editor-fold desc="EMPTY_LOCATION_SIGHT" defaultstate="collapsed">
     EMPTY_LOCATION_SIGHT {
@@ -88,91 +162,20 @@ enum class RunesBehaviors : ArtifactRuneInterface {
     },
 
     //</editor-fold>
-    //<editor-fold desc="PROJECTILE_CASTING" defaultstate="collapsed">
-    PROJECTILE_CASTING {
+    //<editor-fold desc="LOCATION_SIGHT" defaultstate="collapsed">
+    LOCATION_SIGHT {
+        override val durationBase = Duration.ofSeconds(1)!!
+        override val requirement: RuneRequirements = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            repeat(inputRune.amount) {
-                val entity = input.entities.removeLastOrNull() ?: return
-                input.locations.add(entity.location)
-                input.directions.add(entity.location.direction)
-            }
-        }
-    },
-
-    //</editor-fold>
-    //<editor-fold desc="CASTER_PROJECTILE" defaultstate="collapsed">
-    CASTER_PROJECTILE {
-        override fun artifactActivationWithRequirements(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
-        ) {
-            var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
-            forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
-            repeat(inputRune.amount) {
-                input.locations.add(forwardEyeLocation)
-                input.directions.add(artifactActivator.getLocation().direction)
-            }
-        }
-    },
-
-    //</editor-fold>
-    //<editor-fold desc="CASTER_DIRECTION" defaultstate="collapsed">
-    CASTER_DIRECTION {
-
-        override fun artifactActivationWithRequirements(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
-        ) {
-            repeat(inputRune.amount) {
-                input.directions.add(artifactActivator.getLocation().direction)
-            }
-        }
-    },
-
-    //</editor-fold>
-    //<editor-fold desc="ENTITIES_POSITION">
-    ENTITIES_POSITION {
-        override val requirement = RuneRequirements.ENTITY
-        override fun artifactActivationWithRequirements(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
-        ) {
-            val locationsToAdd: MutableList<Location> = mutableListOf()
-            repeat(inputRune.amount) {
-                val entity = input.entities.removeLastOrNull() ?: return
-                locationsToAdd.add(entity.location)
-            }
-            input.locations.addAll(locationsToAdd)
-        }
-    },
-
-    //</editor-fold>
-    //<editor-fold desc="ENTITIES_DIRECTION" defaultstate="collapsed">
-    ENTITIES_DIRECTION {
-        override val requirement = RuneRequirements.ENTITY
-        override fun artifactActivationWithRequirements(
-            inputRune: ItemStack,
-            artifactActivator: ArtifactActivator,
-            input: ArtifactInput,
-            inputsTrace: MutableList<ItemStack>
-        ) {
-            val directionsToAdd: MutableList<Vector> = mutableListOf()
-            repeat(inputRune.amount) {
-                val entity = input.entities.removeLastOrNull() ?: return
-                directionsToAdd.add(entity.location.direction)
-            }
-            input.directions.addAll(directionsToAdd)
+            input.enableRequirements = false
+            val entity = input.entities.removeLastOrNull() ?: return
+            val block = (entity as LivingEntity).getTargetBlockExact(inputRune.amount) ?: return
+            input.locations.add(block.location)
         }
     },
 
@@ -277,9 +280,55 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         }
     },
     //</editor-fold>
-    //<editor-fold desc="ENTITIES_AROUND", defaultstate="collapsed">
-    ENTITIES_AROUND {
-        override val durationBase = Duration.ofSeconds(3)!!
+    //<editor-fold desc="REMOVE_LOCATION", defaultstate="collapsed">
+    REMOVE_LOCATION {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.locations.removeLastOrNull() ?: return
+            }
+        }
+    },
+
+    //</editor-fold>
+    //<editor-fold desc="COPY_LOCATION", defaultstate="collapsed">
+    COPY_LOCATION {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.locations.add(input.locations.last())
+            }
+        }
+    },
+    //</editor-fold>
+
+    // Directions
+    //<editor-fold desc="CASTER_DIRECTION" defaultstate="collapsed">
+    CASTER_DIRECTION {
+
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                input.directions.add(artifactActivator.getLocation().direction)
+            }
+        }
+    },
+
+    //</editor-fold>
+    //<editor-fold desc="ENTITIES_DIRECTION" defaultstate="collapsed">
+    ENTITIES_DIRECTION {
         override val requirement = RuneRequirements.ENTITY
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
@@ -287,11 +336,15 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             input: ArtifactInput,
             inputsTrace: MutableList<ItemStack>
         ) {
-            val a = inputRune.amount.toDouble()
-            val entity = input.entities.removeLastOrNull() ?: return
-            input.entities.addAll(entity.getNearbyEntities(a, a, a))
+            val directionsToAdd: MutableList<Vector> = mutableListOf()
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                directionsToAdd.add(entity.location.direction)
+            }
+            input.directions.addAll(directionsToAdd)
         }
     },
+
     //</editor-fold>
     //<editor-fold desc="DOWN_DIRECTION" defaultstate="collapsed">
     DOWN_DIRECTION {
@@ -355,7 +408,7 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             val directionsToAdd: MutableList<Vector> = mutableListOf()
             repeat(inputRune.amount) {
                 val direction = input.directions.removeLastOrNull() ?: return
-                directionsToAdd.add(direction.multiply(2))
+                directionsToAdd.add(direction.add(direction.normalize()))
             }
             input.directions.addAll(directionsToAdd)
         }
@@ -381,8 +434,8 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         }
     },
     //</editor-fold>
-    //<editor-fold desc="ENTITY_ATTACKER" defaultstate="collapsed">
-    ENTITY_ATTACKER {
+    //<editor-fold desc="REMOVE_DIRECTIONS", defaultstate="collapsed">
+    REMOVE_DIRECTION {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -390,13 +443,14 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             repeat(inputRune.amount) {
-                input.entities.add(artifactActivator.getAttacker() ?: return)
+                input.directions.removeLastOrNull() ?: return
             }
         }
     },
+
     //</editor-fold>
-    //<editor-fold desc="ENTITY_ATTACKED" defaultstate="collapsed">
-    ENTITY_ATTACKED {
+    //<editor-fold desc="COPY_DIRECTIONS", defaultstate="collapsed">
+    COPY_DIRECTION {
         override fun artifactActivationWithRequirements(
             inputRune: ItemStack,
             artifactActivator: ArtifactActivator,
@@ -404,11 +458,50 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             inputsTrace: MutableList<ItemStack>
         ) {
             repeat(inputRune.amount) {
-                input.entities.add(artifactActivator.getAttacked() ?: return)
+                input.directions.add(input.directions.last())
             }
         }
     },
     //</editor-fold>
+
+    // Casting projectile
+    //<editor-fold desc="CASTER_PROJECTILE" defaultstate="collapsed">
+    CASTER_PROJECTILE {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            var forwardEyeLocation = (artifactActivator.getSelf() as Player).eyeLocation
+            forwardEyeLocation = forwardEyeLocation.add(forwardEyeLocation.direction)
+            repeat(inputRune.amount) {
+                input.locations.add(forwardEyeLocation)
+                input.directions.add(artifactActivator.getLocation().direction)
+            }
+        }
+    },
+
+    //</editor-fold>
+    //<editor-fold desc="PROJECTILE_CASTING" defaultstate="collapsed">
+    PROJECTILE_CASTING {
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                val entity = input.entities.removeLastOrNull() ?: return
+                input.locations.add(entity.location)
+                input.directions.add(entity.location.direction)
+            }
+        }
+    },
+
+    //</editor-fold>
+
+    // Effect
     //<editor-fold desc="PLACE_BLOCK" defaultstate="collapsed">
     PLACE_BLOCK {
         override val durationBase = Duration.ofMillis(200)!!
@@ -497,7 +590,6 @@ enum class RunesBehaviors : ArtifactRuneInterface {
             projectiles.clear()
         }
     },
-
     //</editor-fold>
     //<editor-fold desc="EAT_FOOD" defaultstate="collapsed">
     EAT_FOOD {
@@ -712,6 +804,28 @@ enum class RunesBehaviors : ArtifactRuneInterface {
         }
     },
     //</editor-fold>
+    //<editor-fold desc="TELEPORT_RUNE" defaultstate="collapsed">
+    TELEPORT_RUNE {
+        override val durationBase = Duration.ofSeconds(10)!!
+        override fun artifactActivationWithRequirements(
+            inputRune: ItemStack,
+            artifactActivator: ArtifactActivator,
+            input: ArtifactInput,
+            inputsTrace: MutableList<ItemStack>
+        ) {
+            repeat(inputRune.amount) {
+                if (input.entities.size == 0 || input.locations.size == 0) return
+                val entity = input.entities.removeLastOrNull() ?: return
+                val location = input.locations.removeLastOrNull() ?: return
+                location.direction = entity.location.direction
+                entity.teleport(location)
+            }
+        }
+    },
+    //</editor-fold>
+
+
+    // None
     //<editor-fold desc="NONE" defaultstate="collapsed">
     NONE {
         override fun artifactActivationWithRequirements(

@@ -49,7 +49,7 @@ enum class ArtifactItemsTextures {
     CASTER_DIRECTION {
         override val customData: Int = 5006
     },
-    ENTITIES_POSITION {
+    ENTITIES_LOCATION {
         override val customData: Int = 6000
     },
     ENTITIES_DIRECTION {
@@ -76,7 +76,7 @@ enum class ArtifactItemsTextures {
     INVERT_DIRECTION {
         override val customData: Int = 6011
     },
-    MULTIPLY_DIRECTION {
+    DOUBLE_DIRECTION {
         override val customData: Int = 6012
     },
     HALF_DIRECTION {

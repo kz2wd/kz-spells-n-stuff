@@ -176,10 +176,6 @@ class Artifact {
     fun generateEditorMenu(): StoringMenu {
         val inventorySize = 5 * 9
         val itemStackSlots = (0 until inventorySize - 9)
-        // Keep it there, I'll need it later
-//        val itemStackSlots =
-//            (1 until 5).map { (1 * it until 5 * it).toList() }.reduce { acc, ints -> acc + ints } - 22
-
         val fillingSlots = (0 until inventorySize) - itemStackSlots
         val slots: Set<Int> = (itemStackSlots).toSet()
         val editor = object : StoringMenu(slots, true) {

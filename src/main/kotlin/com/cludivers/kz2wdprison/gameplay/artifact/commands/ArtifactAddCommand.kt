@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.commands
 
-import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
+import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component
 import org.bukkit.ChatColor
@@ -21,6 +21,7 @@ class ArtifactAddCommand(parentName: String) : SubCommand(parentName) {
         }
 
         if (args.isEmpty()) {
+            sender.sendMessage(usage("create", "trigger_type"))
             return false
         }
 

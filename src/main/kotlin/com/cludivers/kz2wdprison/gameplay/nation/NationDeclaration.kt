@@ -19,7 +19,7 @@ object NationDeclaration {
                 "quit" to QuitNation(),
                 "claim" to NationClaim(),
                 "info" to NationInfo(),
-                "claim" to AddClaimPoint(),
+                "get_claim_point" to AddClaimPoint(),
                 "fill" to AddShardsToNation(),
                 "attack" to AttackNation(),
                 "show_attacks" to ShowPendingAttacks(),

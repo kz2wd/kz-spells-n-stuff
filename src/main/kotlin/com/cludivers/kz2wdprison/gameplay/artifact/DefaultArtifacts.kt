@@ -21,7 +21,7 @@ enum class DefaultArtifacts {
                 ArtifactTriggers.ATTACKING,
                 listOf(
                     CustomShardItems.ENTITY_ATTACKED_RUNE.itemStack,
-                    CustomShardItems.ENTITIES_POSITION_RUNE.itemStack,
+                    CustomShardItems.ENTITIES_LOCATION_RUNE.itemStack,
                     CustomShardItems.LIGHTNING_SPARK.itemStack,
                 ),
                 Duration.ofSeconds(2)
@@ -39,7 +39,7 @@ enum class DefaultArtifacts {
                 ArtifactTriggers.CLICK,
                 listOf(
                     CustomShardItems.CASTER_PROJECTILE_RUNE.itemStack,
-                    CustomShardItems.DOUBLE_DIRECTIONS_RUNE.itemStack,
+                    CustomShardItems.DOUBLE_DIRECTION_RUNE.itemStack,
                     ItemStack(Material.ARROW),
                     CustomShardItems.LOCATION_AROUND_FLAT_RUNE.itemStack.asQuantity(2),
                     CustomShardItems.LIGHTNING_SPARK.itemStack.asQuantity(25),
@@ -59,9 +59,9 @@ enum class DefaultArtifacts {
                 ),
                 ArtifactTriggers.CLICK,
                 listOf(
-                    CustomShardItems.ENTITIES_IN_SIGHT_RUNE.itemStack.asQuantity(10),
-                    CustomShardItems.ENTITIES_POSITION_RUNE.itemStack,
-                    CustomShardItems.LOCATIONS_ABOVE_RUNE.itemStack.asQuantity(5),
+                    CustomShardItems.ENTITY_IN_SIGHT_RUNE.itemStack.asQuantity(10),
+                    CustomShardItems.ENTITIES_LOCATION_RUNE.itemStack,
+                    CustomShardItems.LOCATION_ABOVE_RUNE.itemStack.asQuantity(5),
                     CustomShardItems.DOWN_DIRECTION_RUNE.itemStack,
                     ItemStack(Material.ARROW)
 
@@ -118,7 +118,7 @@ enum class DefaultArtifacts {
                 listOf(
                     CustomShardItems.ENTITY_ATTACKER_RUNE.itemStack,
                     CustomShardItems.ENTITIES_DIRECTION_RUNE.itemStack,
-                    CustomShardItems.INVERT_DIRECTIONS_RUNE.itemStack,
+                    CustomShardItems.INVERT_DIRECTION_RUNE.itemStack,
                     CustomShardItems.MOVE_RUNE.itemStack
                 ),
                 Duration.ofSeconds(2)
