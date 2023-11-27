@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.listeners
 
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactExecution
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import net.kyori.adventure.text.Component
@@ -92,11 +92,11 @@ class ArtifactListener : Listener {
     }
 
     companion object {
-        var trackedProjectile: MutableMap<Projectile, ((ArtifactInput) -> ArtifactInput) -> Unit> =
-                emptyMap<Projectile, ((ArtifactInput) -> ArtifactInput) -> Unit>().toMutableMap()
+        var trackedProjectile: MutableMap<Projectile, ((ArtifactExecution) -> ArtifactExecution) -> Unit> =
+            emptyMap<Projectile, ((ArtifactExecution) -> ArtifactExecution) -> Unit>().toMutableMap()
 
-        private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactInput) -> ArtifactInput {
-            return fun(input: ArtifactInput): ArtifactInput {
+        private fun insertBlockOrEntity(entity: Entity?, block: Block?): (ArtifactExecution) -> ArtifactExecution {
+            return fun(input: ArtifactExecution): ArtifactExecution {
                 if (entity != null) {
                     input.entities.add(entity)
                 }

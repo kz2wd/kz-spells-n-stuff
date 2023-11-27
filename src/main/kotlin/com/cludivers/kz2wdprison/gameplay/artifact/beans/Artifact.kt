@@ -4,9 +4,8 @@ import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistence.converters.ItemStackConverter
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDebuffs
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactExecution
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactTriggers
-import com.cludivers.kz2wdprison.gameplay.artifact.runes.RunesBehaviors
 import com.cludivers.kz2wdprison.gameplay.menu.StoringMenu
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespaces
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
@@ -138,7 +137,6 @@ class Artifact {
             activator.location.world.spawnParticle(Particle.DRAGON_BREATH, activator.location, 10)
         }
 
-        val input = ArtifactInput(currentFlow)
         val player = if (artifactActivator.getSelf() is Player){
             artifactActivator.getSelf() as Player
         } else {
@@ -149,25 +147,13 @@ class Artifact {
             it.value.type != Material.AIR
         }.toList().sortedBy { it.first }.map { it.second }
 
-        fun generateActivation(runeIndex: Int): ((ArtifactInput) -> ArtifactInput) -> Unit {
-            if (runesOrdered.size <= runeIndex) return {
-                PluginConfiguration.session.beginTransaction()
-                this.cooldown = input.duration.plus(cooldownDebuff)
-                PluginConfiguration.session.transaction.commit()
-            }
-            return fun(inputModifier: ((ArtifactInput) -> ArtifactInput)) {
-                RunesBehaviors.processArtifactActivation(
-                        runesOrdered[runeIndex],
-                        artifactActivator,
-                        inputModifier(input),
-                        mutableListOf(),
-                        player,
-                        generateActivation(runeIndex + 1)
-                )
-            }
-        }
-
-        generateActivation(0)(ArtifactInput::sameInput)
+        ArtifactExecution(
+            activator = artifactActivator,
+            player = player,
+            inputRune = ItemStack(Material.AIR),
+            runesOrdered = runesOrdered,
+            artifact = this,
+        ).nextActivation()
 
         return 0f
     }

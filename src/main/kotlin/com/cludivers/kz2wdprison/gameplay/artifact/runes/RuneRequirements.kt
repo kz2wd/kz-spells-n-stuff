@@ -1,50 +1,49 @@
 package com.cludivers.kz2wdprison.gameplay.artifact.runes
 
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactActivator
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactInput
+import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactExecution
 
 enum class RuneRequirements {
     NONE {
-        override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
+        override fun ensureRequirement(execution: ArtifactExecution) {
             // empty :D
         }
     },
     ENTITY {
-        override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
-            if (!input.enableRequirements) return
-            if (input.entities.isEmpty()) {
-                input.entities.add(activator.getSelf())
+        override fun ensureRequirement(execution: ArtifactExecution) {
+            if (!execution.enableRequirements) return
+            if (execution.entities.isEmpty()) {
+                execution.entities.add(execution.activator.getSelf())
             }
         }
     },
     LOCATION {
-        override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
-            if (!input.enableRequirements) return
-            if (input.locations.isNotEmpty()) return
-            if (input.entities.isNotEmpty()) {
-                input.locations.add(input.entities.last().location)
+        override fun ensureRequirement(execution: ArtifactExecution) {
+            if (!execution.enableRequirements) return
+            if (execution.locations.isNotEmpty()) return
+            if (execution.entities.isNotEmpty()) {
+                execution.locations.add(execution.entities.last().location)
             } else {
-                input.locations.add(activator.getSelf().location)
+                execution.locations.add(execution.activator.getSelf().location)
             }
         }
     },
     DIRECTION {
-        override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
-            if (!input.enableRequirements) return
-            if (input.directions.isNotEmpty()) return
-            if (input.entities.isNotEmpty()) {
-                input.directions.add(input.entities.last().location.direction)
+        override fun ensureRequirement(execution: ArtifactExecution) {
+            if (!execution.enableRequirements) return
+            if (execution.directions.isNotEmpty()) return
+            if (execution.entities.isNotEmpty()) {
+                execution.directions.add(execution.entities.last().location.direction)
             } else {
-                input.directions.add(activator.getSelf().location.direction)
+                execution.directions.add(execution.activator.getSelf().location.direction)
             }
         }
     },
     LOCATION_DIRECTION {
-        override fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator) {
-            LOCATION.ensureRequirement(input, activator)
-            DIRECTION.ensureRequirement(input, activator)
+        override fun ensureRequirement(execution: ArtifactExecution) {
+            LOCATION.ensureRequirement(execution)
+            DIRECTION.ensureRequirement(execution)
         }
     };
 
-    abstract fun ensureRequirement(input: ArtifactInput, activator: ArtifactActivator)
+    abstract fun ensureRequirement(execution: ArtifactExecution)
 }
