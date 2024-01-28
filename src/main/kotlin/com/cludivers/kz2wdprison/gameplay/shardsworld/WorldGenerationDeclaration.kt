@@ -1,13 +1,13 @@
-package com.cludivers.kz2wdprison.gameplay.worldgeneration
+package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.WorldGenerator
-import com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.command.TravelWorldsCommand
-import com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.command.WorldGeneratorCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.command.TravelWorldsCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.command.WorldGeneratorCommand
+import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
 object WorldGenerationDeclaration {
-    fun declare(plugin: JavaPlugin) {
+    fun declare(plugin: JavaPlugin, server: Server) {
         WorldGenerator.plugin = plugin
 
 
@@ -20,6 +20,8 @@ object WorldGenerationDeclaration {
         )
         plugin.getCommand(commandName)?.setExecutor(commandExecutor)
         plugin.getCommand(commandName)?.tabCompleter = commandExecutor
+
+        server.pluginManager.registerEvents(ShardsWorldListener(), plugin)
 
     }
 }

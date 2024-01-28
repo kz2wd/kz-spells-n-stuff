@@ -2,13 +2,15 @@ package com.cludivers.kz2wdprison.gameplay.nation
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.gameplay.nation.commands.*
+import com.cludivers.kz2wdprison.gameplay.nation.listeners.NationListener
+import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
 object NationDeclaration {
 
     const val NATION_COMMAND_NAME = "nation"
 
-    fun declare(plugin: JavaPlugin) {
+    fun declare(plugin: JavaPlugin, server: Server) {
 
         val nationCommandsExecutor = MainCommandExecutor(
             mapOf(
@@ -28,5 +30,7 @@ object NationDeclaration {
 
         plugin.getCommand(NATION_COMMAND_NAME)?.setExecutor(nationCommandsExecutor)
         plugin.getCommand(NATION_COMMAND_NAME)?.tabCompleter = nationCommandsExecutor
+
+        server.pluginManager.registerEvents(NationListener(), plugin)
     }
 }

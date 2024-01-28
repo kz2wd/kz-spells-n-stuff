@@ -5,7 +5,7 @@ import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
 import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.nation.beans.*
-import com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.WorldRules
+import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldRules
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources

@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.command
+package com.cludivers.kz2wdprison.gameplay.shardsworld.command
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
 import net.kyori.adventure.text.Component

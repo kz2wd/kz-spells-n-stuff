@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator
+package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import net.kyori.adventure.util.TriState
 import org.bukkit.Bukkit

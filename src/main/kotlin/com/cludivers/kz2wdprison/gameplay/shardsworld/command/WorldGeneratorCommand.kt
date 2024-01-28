@@ -1,7 +1,7 @@
-package com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.command
+package com.cludivers.kz2wdprison.gameplay.shardsworld.command
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
-import com.cludivers.kz2wdprison.gameplay.worldgeneration.worldgenerator.WorldGenerator
+import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldGenerator
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
