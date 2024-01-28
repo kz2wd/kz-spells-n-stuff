@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.world.mines.beans
+package com.cludivers.kz2wdprison.gameplay.mines.beans
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

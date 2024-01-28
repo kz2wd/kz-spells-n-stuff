@@ -1,5 +1,6 @@
-package com.cludivers.kz2wdprison.gameplay.world.cuboid
+package com.cludivers.kz2wdprison.gameplay.worldgeometry.cuboid
 
+import com.cludivers.kz2wdprison.gameplay.worldgeometry.BlockPattern
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import kotlin.math.max

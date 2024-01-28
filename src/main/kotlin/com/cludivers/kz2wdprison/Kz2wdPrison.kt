@@ -4,9 +4,10 @@ import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
 import com.cludivers.kz2wdprison.gameplay.attributes.AttributesDeclaration
 import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
+import com.cludivers.kz2wdprison.gameplay.mines.MinesDeclaration
 import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
 import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
-import com.cludivers.kz2wdprison.gameplay.world.mines.MinesDeclaration
+import com.cludivers.kz2wdprison.gameplay.worldgeneration.WorldGenerationDeclaration
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -24,6 +25,7 @@ class Kz2wdPrison : JavaPlugin() {
         NationDeclaration.declare(this)
         ArtifactDeclaration.declare(this)
         AttributesDeclaration.declare(this)
+        WorldGenerationDeclaration.declare(this)
 
     }
 

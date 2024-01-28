@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.world.cuboid
+package com.cludivers.kz2wdprison.gameplay.worldgeometry
 
 import org.bukkit.Material
 import java.util.*

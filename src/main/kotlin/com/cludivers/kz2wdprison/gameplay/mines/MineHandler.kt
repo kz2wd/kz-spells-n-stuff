@@ -1,4 +1,4 @@
-package com.cludivers.kz2wdprison.gameplay.world.mines
+package com.cludivers.kz2wdprison.gameplay.mines
 
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
