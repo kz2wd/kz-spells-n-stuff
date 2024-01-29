@@ -1,19 +1,14 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld
 
-import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import org.bukkit.Bukkit
-import org.bukkit.World
+import jakarta.persistence.Embeddable
+import net.kyori.adventure.text.Component
+import kotlin.math.cos
+import kotlin.math.ln
+import kotlin.math.sqrt
+import kotlin.random.Random
 
-@Entity
+@Embeddable
 class WorldRules {
-    @Id
-    @GeneratedValue
-    var id: Long? = null
-
-    var linkedWorld: String? = null
 
     // weatherType
 
@@ -29,27 +24,65 @@ class WorldRules {
 
     // playerEntityEffect
 
-    var playerHealthScalingPercentage: Int = 100
-    var playerDamageScalingPercentage: Int = 100
+    var allowPvp: Boolean = false
+
+    var playerInflictedDamageScalingPercentage: Int = 100
+    var playerReceivedDamageScalingPercentage: Int = 100
     var playerHungerPercentage: Int = 100
+
+    var entityRegenerationScalingPercentage: Int = 100
 
     // MobsEntityEffect
 
     var mobSpawning: Boolean = true
     var mobGriefing: Boolean = true
-    var mobHealthScalingPercentage: Int = 100
-    var mobDamageScalingPercentage: Int = 100
+    var mobInflictedDamageScalingPercentage: Int = 100
+    var mobReceivedDamageScalingPercentage: Int = 100
 
-    companion object {
-
-        fun fetchAllAssignedWorldRules(): Map<World, WorldRules> {
-            return PluginConfiguration.session
-                .createQuery("from WorldRules where linkedWorld is not null", WorldRules::class.java)
-                .list()
-                .map { Bukkit.getWorld(it.linkedWorld!!) to it }
-                .mapNotNull { it.first?.let { world -> Pair(world, it.second) } }
-                .toMap()
-        }
+    fun showWorldRules(): Component {
+        return Component.text(
+            "Modifications : $allowModifications\n" +
+                    "Shard looting : $shardsLootingPercentage %\n" +
+                    "Pvp : $allowPvp\n" +
+                    "Player inflicted damage : $playerInflictedDamageScalingPercentage %\n" +
+                    "Player received damage $playerReceivedDamageScalingPercentage %\n" +
+                    "Player hunger percentage $playerHungerPercentage %\n" +
+                    "Entity regeneration $entityRegenerationScalingPercentage %\n" +
+                    "Mob spawn : $mobSpawning\n" +
+                    "Mob grief : $mobGriefing\n" +
+                    "Mob inflicted damage $mobInflictedDamageScalingPercentage %\n" +
+                    "Mob received damage $mobReceivedDamageScalingPercentage %\n"
+        )
     }
 
+    // fallingBehavior: FallingBehavior = FallingBehavior.None
+    companion object {
+        private fun generateNormalDistribution(mean: Double, stdDev: Double, random: Random): () -> Double {
+            return {
+                val u1 = random.nextDouble()
+                val u2 = random.nextDouble()
+                mean + stdDev * sqrt(-2 * ln(u1)) * cos(2 * Math.PI * u2)
+            }
+        }
+
+        fun generatePseudoRandomRules(seed: Int, generalDifficultyFactor: Float): WorldRules {
+            val rules = WorldRules()
+            val random = Random(seed)
+            val normalDistribution = generateNormalDistribution(
+                100.0,
+                10.0 * generalDifficultyFactor,
+                random
+            )
+
+            rules.shardsLootingPercentage = normalDistribution().toInt()
+            rules.playerInflictedDamageScalingPercentage = normalDistribution().toInt()
+            rules.playerReceivedDamageScalingPercentage = normalDistribution().toInt()
+            rules.playerHungerPercentage = normalDistribution().toInt()
+            rules.entityRegenerationScalingPercentage = normalDistribution().toInt()
+            rules.mobInflictedDamageScalingPercentage = normalDistribution().toInt()
+            rules.mobReceivedDamageScalingPercentage = normalDistribution().toInt()
+
+            return rules
+        }
+    }
 }

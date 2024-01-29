@@ -9,8 +9,19 @@ import org.bukkit.command.CommandSender
 
 class WorldGeneratorCommand(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
-        WorldGenerator.generateNewWorld()
-        sender.sendMessage(Component.text("New shardland generated!!!").color(NamedTextColor.GREEN))
+        if (args.isEmpty()) {
+            sender.sendMessage(Component.text("Specify a name").color(NamedTextColor.RED))
+            return false
+        }
+        val name = args[0]
+        sender.sendMessage(Component.text("Starting world generation . . .").color(NamedTextColor.GREEN))
+        try {
+            WorldGenerator.generateNewWorld(name)
+        } catch (e: Exception) {
+            sender.sendMessage(Component.text("An error occurred : ${e.message}").color(NamedTextColor.RED))
+            return false
+        }
+
         return true
     }
 

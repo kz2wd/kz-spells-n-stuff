@@ -2,30 +2,35 @@ package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import io.papermc.paper.event.block.PlayerShearBlockEvent
 import org.bukkit.World
+import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.*
-import org.bukkit.event.entity.CreatureSpawnEvent
-import org.bukkit.event.entity.FoodLevelChangeEvent
+import org.bukkit.event.entity.*
 
 class ShardsWorldListener : Listener {
 
-    private val worldsRules: MutableMap<World, WorldRules> = WorldRules.fetchAllAssignedWorldRules().toMutableMap()
     private val defaultRules: WorldRules = WorldRules()
 
     private fun getRules(world: World): WorldRules {
-        return worldsRules[world] ?: defaultRules
+        return WorldState.getWorldState(world)?.worldRules ?: defaultRules
     }
 
     private fun <T> handleCancellableBlockEvent(event: T) where T : BlockEvent, T : Cancellable {
-        handleCancellableEvent(event) { event.block.world }
+        handleWorldModification(event) { event.block.world }
     }
 
-    private fun <T> handleCancellableEvent(event: T, getWorld: () -> World) where T : Event, T : Cancellable {
-        val rules = getRules(getWorld())
-        if (!rules.allowModifications) {
+    private fun <T> handleWorldModification(event: T, getWorld: () -> World) where T : Event, T : Cancellable {
+        handleCancellableEvent(event) { !getRules(getWorld()).allowModifications }
+    }
+
+    private fun <T> handleCancellableEvent(
+        event: T,
+        getCancellingCondition: () -> Boolean
+    ) where T : Event, T : Cancellable {
+        if (getCancellingCondition()) {
             event.isCancelled = true
         }
     }
@@ -52,15 +57,17 @@ class ShardsWorldListener : Listener {
 
     @EventHandler
     fun onBlockShear(event: PlayerShearBlockEvent) {
-        handleCancellableEvent(event) { event.block.world }
+        handleWorldModification(event) { event.block.world }
+    }
+
+    @EventHandler
+    fun onModification(event: EntityChangeBlockEvent) {
+        handleWorldModification(event) { event.block.world }
     }
 
     @EventHandler
     fun onMobSpawn(event: CreatureSpawnEvent) {
-        val rules = getRules(event.location.world)
-        if (!rules.mobSpawning) {
-            event.isCancelled = true
-        }
+        handleCancellableEvent(event) { !getRules(event.location.world).mobSpawning }
     }
 
     @EventHandler
@@ -73,4 +80,33 @@ class ShardsWorldListener : Listener {
         event.foodLevel *= rules.playerHungerPercentage / 100
     }
 
+    @EventHandler
+    fun onPlayerRegen(event: EntityRegainHealthEvent) {
+        event.amount *= getRules(event.entity.world).entityRegenerationScalingPercentage / 100
+    }
+
+    @EventHandler
+    fun onEntityDamage(event: EntityDamageEvent) {
+        if (event.entity is Player) {
+            event.damage *= getRules(event.entity.world).playerReceivedDamageScalingPercentage / 100
+        } else {
+            event.damage *= getRules(event.entity.world).mobReceivedDamageScalingPercentage / 100
+        }
+    }
+
+    @EventHandler
+    fun onEntityDamage(event: EntityDamageByEntityEvent) {
+        if (event.damager is Player) {
+            event.damage *= getRules(event.entity.world).playerInflictedDamageScalingPercentage / 100
+        } else {
+            event.damage *= getRules(event.entity.world).mobInflictedDamageScalingPercentage / 100
+        }
+    }
+
+    @EventHandler
+    fun onPlayerPvp(event: EntityDamageByEntityEvent) {
+        if (event.damager is Player && event.entity is Player) {
+            handleCancellableEvent(event) { !getRules(event.entity.world).allowPvp }
+        }
+    }
 }
