@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.io.File
 
 plugins {
     java
@@ -70,45 +71,83 @@ tasks.test {
     useJUnitPlatform()
 }
 
+fun getFile(propertyName: String, environmentName: String, isMissingCritical: Boolean): String {
+    val file: String? = project.findProperty(propertyName) as? String ?: System.getenv(environmentName)
+    handleMissingProperty(propertyName, file, isMissingCritical)
+    return file ?: ""
+}
+
+fun handleMissingProperty(propertyName: String, file: String?, isMissingCritical: Boolean) {
+    if (file != null){
+        return
+    }
+
+    val errorMessage: String = if (isMissingCritical) {
+        "Mandatory property $propertyName missing. Use -P$propertyName=<file>"
+    } else {
+        "Property $propertyName not specified. Use -P$propertyName=<file>"
+    }
+    if (isMissingCritical){
+        throw GradleException(errorMessage)
+    } else {
+        logger.warn(errorMessage)
+    }
+}
+
+
+fun getServerJar(): String {
+    return getFile("serverJar", "SERVER_JAR", true)
+}
+
+fun getServerDirectory(): String {
+    return getFile("serverDir", "SERVER_DIR", true)
+}
+
 tasks.register<Copy>("deployPlugin") {
     description = "Custom deployment task"
     dependsOn("shadowJar")
 
     // Specify the destination directory based on a property or environment variable
-    val deployDirProperty = project.findProperty("deployDir")
-    val deployDirEnv = System.getenv("DEPLOY_DIR")
 
-    val destinationDir = deployDirProperty as? String ?: deployDirEnv
-
-    if (destinationDir == null) {
-        throw GradleException("Deployment destination directory not specified. Use -PdeployDir=<directory>")
-    }
+    val serverDir = getServerDirectory()
 
     // Explicitly specify the inputs (JAR file) for the task
     from(project.buildDir.resolve("libs/$shadowJarFileName"))
 
-    into(destinationDir)
+    into("$serverDir/plugins/")
 
     doLast {
-        println("Jar moved to: $destinationDir")// Execute a command using jcmd to reload the server
-        val process = ProcessBuilder("jcmd", "pid", "command", "reload", "confirm")
-            .directory(File(destinationDir))
-            .start()
-
-        val reader = BufferedReader(InputStreamReader(process.inputStream))
-        var line: String?
-
-        while (reader.readLine().also { line = it } != null) {
-            println(line)
-        }
-
-        val exitCode = process.waitFor()
-        if (exitCode == 0) {
-            println("Server reloaded successfully.")
-        } else {
-            println("Failed to reload server. Exit code: $exitCode")
-        }
+        println("Jar deployed to: $serverDir/plugins/")
     }
+}
+
+tasks.register<JavaExec>("startServer") {
+    description = "Start the server"
+
+    val serverDir = getServerDirectory()
+    val serverJar = getServerJar()
+
+    val launchCommand = "java -jar $serverJar"
+
+    val process = ProcessBuilder(launchCommand)
+        .directory(File(serverDir))
+        .start()
+
+    // Optionally provide input to the process
+//    if (project.hasProperty("reload")) {
+//        process.outputStream.bufferedWriter().use { it.write(reloadCommand) }
+//    }
+
+    val exitCode = process.waitFor()
+    if (exitCode == 0) {
+        println("Server reloaded/relaunched successfully.")
+    } else {
+        println("Failed to reload/relaunch server. Exit code: $exitCode")
+    }
+
+    main = "-jar"
+    classpath = files("$serverDir/$serverJar")
+
 }
 
 
