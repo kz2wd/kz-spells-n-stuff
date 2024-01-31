@@ -2,12 +2,14 @@ package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import net.kyori.adventure.util.TriState
 import org.bukkit.Bukkit
+import org.bukkit.Bukkit.getLogger
 import org.bukkit.Material
 import org.bukkit.WorldCreator
 import org.bukkit.generator.ChunkGenerator
 import org.bukkit.generator.WorldInfo
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
+import java.util.logging.Level
 
 object WorldGenerator {
 
@@ -28,10 +30,12 @@ object WorldGenerator {
                 chunkZ: Int,
                 chunkData: ChunkData
             ) {
-                val radius = 5
-                if ((chunkZ + chunkX) * (chunkZ + chunkX) > radius * radius) {
-                    return super.generateSurface(worldInfo, random, chunkX, chunkZ, chunkData)
-                }
+//                val radius = 5
+//                if ((chunkZ * chunkZ) + (chunkX + chunkX) > radius * radius) {
+//                    return
+//                }
+                chunkData.setBlock(0, 0, 50, Material.DIRT)
+                chunkData.setBlock(1, 1, 50, Material.DIRT)
                 for (i in 0 until 16) {
                     for (j in 0 until 16) {
 
@@ -39,18 +43,18 @@ object WorldGenerator {
                         chunkData.setBlock(i, j, 51, Material.DIRT)
                         chunkData.setBlock(i, j, 52, Material.DIRT)
                         chunkData.setBlock(i, j, 53, Material.GRASS_BLOCK)
-                    }
 
+                    }
                 }
             }
         }
 
-        val customChunkGenerator = CustomChunkGenerator()
 
         class CustomWorldCreator : WorldCreator(worldName) {
 
             override fun generator(): ChunkGenerator {
-                return customChunkGenerator
+                getLogger().log(Level.INFO, "CustomChunkGenerator is used!");
+                return CustomChunkGenerator()
             }
 
             override fun keepSpawnLoaded(): TriState {
