@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 plugins {
     java
@@ -12,6 +14,8 @@ plugins {
 group = "com.cludivers"
 description = "kz2wdPrison"
 version = "1.0-SNAPSHOT"
+
+val shadowJarFileName = "kzSpells.jar"
 
 repositories {
     mavenCentral()
@@ -58,13 +62,56 @@ tasks.withType<ShadowJar> {
         include(dependency("org.hibernate.common:hibernate-commons-annotations:6.0.2.Final"))
         include(dependency("org.antlr:antlr4-runtime:4.10"))
 
-        archiveFileName.set("kzSpells.jar")
+        archiveFileName.set(shadowJarFileName)
     }
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.register<Copy>("deployPlugin") {
+    description = "Custom deployment task"
+    dependsOn("shadowJar")
+
+    // Specify the destination directory based on a property or environment variable
+    val deployDirProperty = project.findProperty("deployDir")
+    val deployDirEnv = System.getenv("DEPLOY_DIR")
+
+    val destinationDir = deployDirProperty as? String ?: deployDirEnv
+
+    if (destinationDir == null) {
+        throw GradleException("Deployment destination directory not specified. Use -PdeployDir=<directory>")
+    }
+
+    // Explicitly specify the inputs (JAR file) for the task
+    from(project.buildDir.resolve("libs/$shadowJarFileName"))
+
+    into(destinationDir)
+
+    doLast {
+        println("Jar moved to: $destinationDir")// Execute a command using jcmd to reload the server
+        val process = ProcessBuilder("jcmd", "pid", "command", "reload", "confirm")
+            .directory(File(destinationDir))
+            .start()
+
+        val reader = BufferedReader(InputStreamReader(process.inputStream))
+        var line: String?
+
+        while (reader.readLine().also { line = it } != null) {
+            println(line)
+        }
+
+        val exitCode = process.waitFor()
+        if (exitCode == 0) {
+            println("Server reloaded successfully.")
+        } else {
+            println("Failed to reload server. Exit code: $exitCode")
+        }
+    }
+}
+
+
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
