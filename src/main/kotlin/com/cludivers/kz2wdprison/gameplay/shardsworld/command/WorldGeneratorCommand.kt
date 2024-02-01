@@ -16,7 +16,7 @@ class WorldGeneratorCommand(parentName: String) : SubCommand(parentName) {
         val name = args[0]
         sender.sendMessage(Component.text("Starting world generation . . .").color(NamedTextColor.GREEN))
         try {
-            WorldGenerator.generateNewWorld(name)
+            WorldGenerator.generateNewPlot(name)
         } catch (e: Exception) {
             sender.sendMessage(Component.text("An error occurred : ${e.message}").color(NamedTextColor.RED))
             return false

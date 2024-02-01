@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld.command
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
-import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldState
+import com.cludivers.kz2wdprison.gameplay.shardsworld.PlotState
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
@@ -15,15 +15,15 @@ class WorldInfoCommand(parentName: String) : SubCommand(parentName) {
             return false
         }
 
-        val worldState: WorldState? = WorldState.getWorldState(sender.world)
-        if (worldState == null) {
+        val plotState: PlotState? = PlotState.getPlotState(sender.location)
+        if (plotState == null) {
             sender.sendMessage(
-                Component.text("Your current world has no information attached").color(NamedTextColor.YELLOW)
+                Component.text("Your current land has no information attached").color(NamedTextColor.YELLOW)
             )
             return false
         }
 
-        sender.sendMessage(worldState.showInfo())
+        sender.sendMessage(plotState.showInfo())
 
         return false
     }

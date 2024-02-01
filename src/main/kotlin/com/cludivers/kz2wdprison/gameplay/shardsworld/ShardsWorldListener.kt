@@ -12,10 +12,10 @@ import org.bukkit.event.entity.*
 
 class ShardsWorldListener : Listener {
 
-    private val defaultRules: WorldRules = WorldRules()
+    private val defaultRules: PlotRules = PlotRules()
 
-    private fun getRules(world: World): WorldRules {
-        return WorldState.getWorldState(world)?.worldRules ?: defaultRules
+    private fun getRules(world: World): PlotRules {
+        return PlotState.getPlotState(world)?.plotRules ?: defaultRules
     }
 
     private fun <T> handleCancellableBlockEvent(event: T) where T : BlockEvent, T : Cancellable {

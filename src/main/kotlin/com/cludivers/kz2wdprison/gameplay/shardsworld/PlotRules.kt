@@ -8,7 +8,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 @Embeddable
-class WorldRules {
+class PlotRules {
 
     // weatherType
 
@@ -65,8 +65,8 @@ class WorldRules {
             }
         }
 
-        fun generatePseudoRandomRules(seed: Int, generalDifficultyFactor: Float): WorldRules {
-            val rules = WorldRules()
+        fun generatePseudoRandomRules(seed: Int, generalDifficultyFactor: Float): PlotRules {
+            val rules = PlotRules()
             val random = Random(seed)
             val normalDistribution = generateNormalDistribution(
                 100.0,

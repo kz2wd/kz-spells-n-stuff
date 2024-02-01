@@ -5,8 +5,8 @@ import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
 import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.gameplay.artifact.beans.Artifact
 import com.cludivers.kz2wdprison.gameplay.nation.beans.*
-import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldRules
-import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldState
+import com.cludivers.kz2wdprison.gameplay.shardsworld.PlotRules
+import com.cludivers.kz2wdprison.gameplay.shardsworld.PlotState
 import org.bukkit.configuration.file.FileConfiguration
 import org.hibernate.SessionFactory
 import org.hibernate.boot.MetadataSources
@@ -25,8 +25,8 @@ class HibernateConfigurationHandler {
                 PermissionGroup::class.java,
                 Artifact::class.java,
                 NationAttack::class.java,
-                WorldRules::class.java,
-                WorldState::class.java,
+                PlotRules::class.java,
+                PlotState::class.java,
             )
 
             val serviceRegistryBuilder = if (config != null && PluginConfiguration.isDatabaseConnected) {
