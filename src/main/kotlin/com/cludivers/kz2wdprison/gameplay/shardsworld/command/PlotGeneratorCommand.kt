@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-class WorldGeneratorCommand(parentName: String) : SubCommand(parentName) {
+class PlotGeneratorCommand(parentName: String) : SubCommand(parentName) {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {
             sender.sendMessage(Component.text("Specify a name").color(NamedTextColor.RED))

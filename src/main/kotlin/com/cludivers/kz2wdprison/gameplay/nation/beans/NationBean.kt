@@ -1,5 +1,6 @@
 package com.cludivers.kz2wdprison.gameplay.nation.beans
 
+import com.cludivers.kz2wdprison.framework.configuration.FetchAfterDatabaseInit
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean
 import com.cludivers.kz2wdprison.framework.persistence.beans.player.PlayerBean.Companion.getData
@@ -126,39 +127,27 @@ class NationBean {
 
     companion object {
 
-        // A bit painful, but I can't instantiate it directly, as the session is not built
-        private fun buildNameToNationMap(): MutableMap<String, NationBean> {
+        @FetchAfterDatabaseInit
+        private fun fetchNations() {
             val query = PluginConfiguration.session.createQuery("from NationBean", NationBean::class.java)
-            return query.list().associateBy { it.name }.toMutableMap()
+            nationsFromName = query.list().associateBy { it.name }.toMutableMap()
         }
 
-        private var nationsFromName: MutableMap<String, NationBean>? = null
+        private lateinit var nationsFromName: MutableMap<String, NationBean>
         fun getNationFromName(name: String): NationBean? {
-            if (nationsFromName == null) {
-                nationsFromName = buildNameToNationMap()
-            }
-            return nationsFromName!![name]
+            return nationsFromName[name]
         }
 
         fun getNationMatching(name: String): Map<String, NationBean> {
-            if (nationsFromName == null) {
-                nationsFromName = buildNameToNationMap()
-            }
-            return nationsFromName!!.filter { name in it.key }
+            return nationsFromName.filter { name in it.key }
         }
 
         private fun addNationName(nationBean: NationBean) {
-            if (nationsFromName == null) {
-                nationsFromName = buildNameToNationMap()
-            }
-            nationsFromName!![nationBean.name] = nationBean
+            nationsFromName[nationBean.name] = nationBean
         }
 
         private fun removeNationName(nationBean: NationBean) {
-            if (nationsFromName == null) {
-                nationsFromName = buildNameToNationMap()
-            }
-            nationsFromName!!.remove(nationBean.name)
+            nationsFromName.remove(nationBean.name)
         }
 
         private fun instantiateAndPersistDefaultNation(owner: PlayerBean, name: String): NationBean {

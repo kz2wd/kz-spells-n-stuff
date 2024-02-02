@@ -1,9 +1,9 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import com.cludivers.kz2wdprison.gameplay.commands.MainCommandExecutor
-import com.cludivers.kz2wdprison.gameplay.shardsworld.command.TravelWorldsCommand
-import com.cludivers.kz2wdprison.gameplay.shardsworld.command.WorldGeneratorCommand
-import com.cludivers.kz2wdprison.gameplay.shardsworld.command.WorldInfoCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.command.PlotGeneratorCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.command.PlotInfoCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.command.TravelPlotsCommand
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -15,15 +15,15 @@ object WorldGenerationDeclaration {
         val commandName = "shardland"
         val commandExecutor = MainCommandExecutor(
             mapOf(
-                "generate" to WorldGeneratorCommand(commandName),
-                "travel" to TravelWorldsCommand(commandName),
-                "info" to WorldInfoCommand(commandName)
+                "generate" to PlotGeneratorCommand(commandName),
+                "travel" to TravelPlotsCommand(commandName),
+                "info" to PlotInfoCommand(commandName)
             )
         )
         plugin.getCommand(commandName)?.setExecutor(commandExecutor)
         plugin.getCommand(commandName)?.tabCompleter = commandExecutor
 
-        server.pluginManager.registerEvents(ShardsWorldListener(), plugin)
+        server.pluginManager.registerEvents(PlotsListener(), plugin)
 
     }
 }

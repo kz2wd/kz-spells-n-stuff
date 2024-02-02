@@ -1,7 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld
 
 import io.papermc.paper.event.block.PlayerShearBlockEvent
-import org.bukkit.World
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
@@ -10,20 +10,20 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.*
 import org.bukkit.event.entity.*
 
-class ShardsWorldListener : Listener {
+class PlotsListener : Listener {
 
     private val defaultRules: PlotRules = PlotRules()
 
-    private fun getRules(world: World): PlotRules {
-        return PlotState.getPlotState(world)?.plotRules ?: defaultRules
+    private fun getRules(location: Location): PlotRules {
+        return PlotState.getPlotState(location)?.plotRules ?: defaultRules
     }
 
     private fun <T> handleCancellableBlockEvent(event: T) where T : BlockEvent, T : Cancellable {
-        handleWorldModification(event) { event.block.world }
+        handleWorldModification(event) { event.block.location }
     }
 
-    private fun <T> handleWorldModification(event: T, getWorld: () -> World) where T : Event, T : Cancellable {
-        handleCancellableEvent(event) { !getRules(getWorld()).allowModifications }
+    private fun <T> handleWorldModification(event: T, getLocation: () -> Location) where T : Event, T : Cancellable {
+        handleCancellableEvent(event) { !getRules(getLocation()).allowModifications }
     }
 
     private fun <T> handleCancellableEvent(
@@ -57,17 +57,17 @@ class ShardsWorldListener : Listener {
 
     @EventHandler
     fun onBlockShear(event: PlayerShearBlockEvent) {
-        handleWorldModification(event) { event.block.world }
+        handleWorldModification(event) { event.block.location }
     }
 
     @EventHandler
     fun onModification(event: EntityChangeBlockEvent) {
-        handleWorldModification(event) { event.block.world }
+        handleWorldModification(event) { event.block.location }
     }
 
     @EventHandler
     fun onMobSpawn(event: CreatureSpawnEvent) {
-        handleCancellableEvent(event) { !getRules(event.location.world).mobSpawning }
+        handleCancellableEvent(event) { !getRules(event.location).mobSpawning }
     }
 
     @EventHandler
@@ -76,37 +76,37 @@ class ShardsWorldListener : Listener {
         if (foodDelta > 0) {
             return
         }
-        val rules = getRules(event.entity.world)
+        val rules = getRules(event.entity.location)
         event.foodLevel *= rules.playerHungerPercentage / 100
     }
 
     @EventHandler
     fun onPlayerRegen(event: EntityRegainHealthEvent) {
-        event.amount *= getRules(event.entity.world).entityRegenerationScalingPercentage / 100
+        event.amount *= getRules(event.entity.location).entityRegenerationScalingPercentage / 100
     }
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent) {
         if (event.entity is Player) {
-            event.damage *= getRules(event.entity.world).playerReceivedDamageScalingPercentage / 100
+            event.damage *= getRules(event.entity.location).playerReceivedDamageScalingPercentage / 100
         } else {
-            event.damage *= getRules(event.entity.world).mobReceivedDamageScalingPercentage / 100
+            event.damage *= getRules(event.entity.location).mobReceivedDamageScalingPercentage / 100
         }
     }
 
     @EventHandler
     fun onEntityDamage(event: EntityDamageByEntityEvent) {
         if (event.damager is Player) {
-            event.damage *= getRules(event.entity.world).playerInflictedDamageScalingPercentage / 100
+            event.damage *= getRules(event.entity.location).playerInflictedDamageScalingPercentage / 100
         } else {
-            event.damage *= getRules(event.entity.world).mobInflictedDamageScalingPercentage / 100
+            event.damage *= getRules(event.entity.location).mobInflictedDamageScalingPercentage / 100
         }
     }
 
     @EventHandler
     fun onPlayerPvp(event: EntityDamageByEntityEvent) {
         if (event.damager is Player && event.entity is Player) {
-            handleCancellableEvent(event) { !getRules(event.entity.world).allowPvp }
+            handleCancellableEvent(event) { !getRules(event.entity.location).allowPvp }
         }
     }
 }

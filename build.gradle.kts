@@ -1,8 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.File
 
 plugins {
     java
@@ -30,6 +27,7 @@ dependencies {
     implementation("org.hibernate:hibernate-core:6.1.1.Final")
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("com.h2database:h2:2.2.224")
+    implementation(kotlin("reflect"))
 
     testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
@@ -45,6 +43,7 @@ java {
 tasks.withType<ShadowJar> {
     dependencies {
         // Kotlin
+        include(dependency("org.jetbrains.kotlin:.*"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib:1.6.21"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.21"))
         include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.21"))

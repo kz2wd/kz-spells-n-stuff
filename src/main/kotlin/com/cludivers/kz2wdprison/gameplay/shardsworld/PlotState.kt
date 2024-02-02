@@ -1,10 +1,12 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld
 
+import com.cludivers.kz2wdprison.framework.configuration.FetchAfterDatabaseInit
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
 import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
+import org.bukkit.World
 import kotlin.random.Random
 
 @Entity
@@ -28,7 +30,7 @@ class PlotState() {
 
     var plotX: Int? = null
 
-    var plotY: Int? = null
+    var plotZ: Int? = null
 
     constructor(linkedWorld: String) : this() {
         this.plotName = linkedWorld
@@ -42,33 +44,57 @@ class PlotState() {
         return plotRules.showWorldRules()
     }
 
+    fun worldPlotCoordinates(world: World, y: Double): Location? {
+        if (plotX == null || plotZ == null) return null
+        val worldLoc = plotLocationToWorldLocation(Pair(plotX!!, plotZ!!))
+        return Location(world, worldLoc.first.toDouble(), y, worldLoc.second.toDouble())
+    }
+
 
     companion object {
 
         private const val RESERVED_PLOT_SIZE: Int = 4096
-        private fun locationToPlotLocation(location: Location): Pair<Int, Int> {
+
+        private fun plotLocationToWorldLocation(location: Pair<Int, Int>): Pair<Int, Int> {
+            return Pair(location.first * RESERVED_PLOT_SIZE, location.second * RESERVED_PLOT_SIZE)
+        }
+
+        private fun worldLocationToPlotLocation(location: Location): Pair<Int, Int> {
             return Pair(location.blockX / RESERVED_PLOT_SIZE, location.blockZ / RESERVED_PLOT_SIZE)
         }
 
-        private var plotsState: MutableMap<Pair<Int, Int>, PlotState> = mutableMapOf()
+        private lateinit var plotsState: MutableMap<Pair<Int, Int>, PlotState>
 
         fun getPlotState(location: Location): PlotState? {
-            return plotsState[locationToPlotLocation(location)]
+            return plotsState[worldLocationToPlotLocation(location)]
+        }
+
+        fun getPlotFromPlotLocation(plotX: Int, plotZ: Int): PlotState? {
+            return plotsState[Pair(plotX, plotZ)]
         }
 
         fun getPlotRules(location: Location): PlotRules? {
-            return plotsState[locationToPlotLocation(location)]?.plotRules
+            return plotsState[worldLocationToPlotLocation(location)]?.plotRules
+        }
+
+        fun getAllPLots(): List<PlotState> {
+            return plotsState.values.toList()
+        }
+
+        fun plotFromName(name: String): PlotState? {
+            return plotsState.values.firstOrNull { it.plotName == name }
         }
 
         private const val DEFAULT_UNASSIGNED_NAME = ""
 
 
-        fun fetchPlotsState() {
+        @FetchAfterDatabaseInit
+        private fun fetchPlotsState() {
             plotsState = PluginConfiguration.session
                 .createQuery("from PlotState", PlotState::class.java)
                 .list()
-                .filter { it.plotX != null && it.plotY != null }
-                .associateBy { Pair(it.plotX!!, it.plotY!!) }.toMutableMap()
+                .filter { it.plotX != null && it.plotZ != null }
+                .associateBy { Pair(it.plotX!!, it.plotZ!!) }.toMutableMap()
         }
 
         private val lastGeneratedPosition: Pair<Int, Int>? = null
@@ -77,7 +103,7 @@ class PlotState() {
         private fun generateFreeCoordinates(): Pair<Int, Int> {
             // For now, simple stupid
 
-            var generated = Pair(Random.nextInt(), Random.nextInt())
+            var generated = Pair(Random.nextInt(-100, 100), Random.nextInt(-100, 100))
             while (generated in plotsState.keys) {
                 generated = Pair(Random.nextInt(), Random.nextInt())
             }
@@ -86,12 +112,19 @@ class PlotState() {
 
         fun registerNewPlot(plotName: String, generalDifficultyFactor: Float) {
             // Resolve free Plot coordinates
-            plotsState[generateFreeCoordinates()] = newPersistentWorldState(plotName, generalDifficultyFactor)
+            val freeCoord = generateFreeCoordinates()
+            plotsState[freeCoord] = newPersistentWorldState(plotName, freeCoord, generalDifficultyFactor)
         }
 
-        private fun newPersistentWorldState(linkedWorld: String, generalDifficultyFactor: Float): PlotState {
+        private fun newPersistentWorldState(
+            plotName: String,
+            coordinates: Pair<Int, Int>,
+            generalDifficultyFactor: Float
+        ): PlotState {
             PluginConfiguration.session.beginTransaction()
-            val newPlotState = PlotState(linkedWorld)
+            val newPlotState = PlotState(plotName)
+            newPlotState.plotX = coordinates.first
+            newPlotState.plotZ = coordinates.second
 
             newPlotState.plotRules =
                 PlotRules.generatePseudoRandomRules(newPlotState.getSeed(), generalDifficultyFactor)

@@ -29,7 +29,6 @@ class Kz2wdPrison : JavaPlugin() {
         WorldGenerationDeclaration.declare(this, server)
 
         server.pluginManager.registerEvents(MenuListener, this)
-
     }
 
     override fun onDisable() {
