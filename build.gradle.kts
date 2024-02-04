@@ -29,6 +29,10 @@ dependencies {
     implementation("com.h2database:h2:2.2.224")
     implementation(kotlin("reflect"))
 
+    implementation(platform("com.intellectualsites.bom:bom-newest:1.40")) // Ref: https://github.com/IntellectualSites/bom
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") { isTransitive = false }
+
     testImplementation("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation(kotlin("test"))
@@ -126,7 +130,7 @@ tasks.register<JavaExec>("startServer") {
     val serverDir = getServerDirectory()
     val serverJar = getServerJar()
 
-    val launchCommand = "java -jar $serverJar"
+    val launchCommand = "java -jar $serverDir/$serverJar"
 
     val process = ProcessBuilder(launchCommand)
         .directory(File(serverDir))

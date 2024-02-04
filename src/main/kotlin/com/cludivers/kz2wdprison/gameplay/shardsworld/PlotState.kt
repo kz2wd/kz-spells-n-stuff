@@ -3,6 +3,8 @@ package com.cludivers.kz2wdprison.gameplay.shardsworld
 import com.cludivers.kz2wdprison.framework.configuration.FetchAfterDatabaseInit
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
+import com.sk89q.worldedit.math.BlockVector3
+import com.sk89q.worldedit.regions.CuboidRegion
 import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
@@ -48,6 +50,15 @@ class PlotState() {
         if (plotX == null || plotZ == null) return null
         val worldLoc = plotLocationToWorldLocation(Pair(plotX!!, plotZ!!))
         return Location(world, worldLoc.first.toDouble(), y, worldLoc.second.toDouble())
+    }
+
+    fun getCuboidRegion(): CuboidRegion {
+        val flatCoord = plotLocationToWorldLocation(Pair(plotX!!, plotZ!!))
+        return CuboidRegion(
+            BlockVector3.at(flatCoord.first, -64, flatCoord.second),
+            BlockVector3.at(flatCoord.first + RESERVED_PLOT_SIZE, 320, flatCoord.second + RESERVED_PLOT_SIZE)
+        )
+
     }
 
 
@@ -110,13 +121,15 @@ class PlotState() {
             return generated
         }
 
-        fun registerNewPlot(plotName: String, generalDifficultyFactor: Float) {
+        fun registerNewPlot(plotName: String, generalDifficultyFactor: Float): PlotState {
             // Resolve free Plot coordinates
             val freeCoord = generateFreeCoordinates()
-            plotsState[freeCoord] = newPersistentWorldState(plotName, freeCoord, generalDifficultyFactor)
+            val plotState = newPersistentPlotState(plotName, freeCoord, generalDifficultyFactor)
+            plotsState[freeCoord] = plotState
+            return plotState
         }
 
-        private fun newPersistentWorldState(
+        private fun newPersistentPlotState(
             plotName: String,
             coordinates: Pair<Int, Int>,
             generalDifficultyFactor: Float
