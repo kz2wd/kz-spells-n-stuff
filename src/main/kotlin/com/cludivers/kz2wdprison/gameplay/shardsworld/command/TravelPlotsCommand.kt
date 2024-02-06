@@ -34,7 +34,7 @@ class TravelPlotsCommand(parentName: String) : SubCommand(parentName) {
         }
 
         sender.sendMessage(Component.text("Teleportation Starting now !").color(NamedTextColor.GREEN))
-        val destinationLocation = destination.worldPlotCoordinates(Bukkit.getWorld("world")!!, 150.0)
+        val destinationLocation = destination.worldPlotCenterCoordinates(Bukkit.getWorld("world")!!, 150.0)
         if (destinationLocation == null) {
             // should never happen but just in case
             sender.sendMessage(Component.text("Provided destination has no valid location, impossible to teleport"))

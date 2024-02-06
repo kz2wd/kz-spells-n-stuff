@@ -13,5 +13,5 @@ commands:
     description: artifact utility
   intrinsic:
     description: intrinsic utility
-  shardland:
-    description: shardland utility
+  plot:
+    description: plot utility

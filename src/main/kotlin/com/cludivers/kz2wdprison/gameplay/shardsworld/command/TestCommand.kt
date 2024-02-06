@@ -27,7 +27,7 @@ class TestCommand(parentName: String) : SubCommand(parentName) {
             val z = args[2].toInt()
             val size = args[3].toInt()
 
-            WorldGenerator.generateCylinder(BlockVector3.at(x, y, z), size.toDouble(), BlockTypes.STONE!!, sender.world)
+            WorldGenerator.generateSphere(BlockVector3.at(x, y, z), size.toDouble(), BlockTypes.STONE!!, sender.world)
 
             sender.sendMessage(
                 Component.text("Successfully generated a sphere at $x $y $z of size $size !")

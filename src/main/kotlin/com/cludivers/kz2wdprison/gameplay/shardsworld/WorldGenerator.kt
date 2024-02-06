@@ -23,25 +23,30 @@ object WorldGenerator {
         val createdPlot = PlotState.registerNewPlot(plotName, 1.0f)
 
 
-        generateCylinder(
-            createdPlot.getCuboidRegion().center.toBlockPoint(),
+        generatePlotTerrain(createdPlot)
+
+    }
+
+    fun generatePlotTerrain(plot: PlotState) {
+        generateSphere(
+            plot.getCuboidRegion().center.toBlockPoint(),
             10.0,
             BlockTypes.MOSS_BLOCK!!,
             Bukkit.getWorld("world")!!
         )
-
     }
 
-    fun generateCylinder(center: Location, size: Double, block: BlockType, world: World) {
-        generateCylinder(BukkitAdapter.asBlockVector(center), size, block, world)
+    fun generateSphere(center: Location, size: Double, block: BlockType, world: World) {
+        generateSphere(BukkitAdapter.asBlockVector(center), size, block, world)
     }
 
-    fun generateCylinder(center: BlockVector3, size: Double, block: BlockType, world: World) {
+    fun generateSphere(center: BlockVector3, size: Double, block: BlockType, world: World) {
         TaskManager.taskManager().async {
             val editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))
 
             val sphereRegion = SphereRegionFactory().createCenteredAt(center, size)
             editSession.setBlocks(sphereRegion, block)
+
 
             // Flush the edit session to apply changes
             editSession.flushQueue()

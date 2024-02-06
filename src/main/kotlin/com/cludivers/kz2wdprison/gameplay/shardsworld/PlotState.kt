@@ -9,6 +9,7 @@ import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.util.Vector
 import kotlin.random.Random
 
 @Entity
@@ -52,6 +53,12 @@ class PlotState() {
         return Location(world, worldLoc.first.toDouble(), y, worldLoc.second.toDouble())
     }
 
+    fun worldPlotCenterCoordinates(world: World, y: Double): Location? {
+        val loc = worldPlotCoordinates(world, y) ?: return null
+        loc.add(Vector(RESERVED_PLOT_SIZE / 2, 0, RESERVED_PLOT_SIZE / 2))
+        return loc
+    }
+
     fun getCuboidRegion(): CuboidRegion {
         val flatCoord = plotLocationToWorldLocation(Pair(plotX!!, plotZ!!))
         return CuboidRegion(
@@ -60,7 +67,6 @@ class PlotState() {
         )
 
     }
-
 
     companion object {
 

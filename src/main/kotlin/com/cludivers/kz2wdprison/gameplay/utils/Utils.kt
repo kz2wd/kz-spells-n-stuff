@@ -6,6 +6,8 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import java.util.logging.Level
+import java.util.logging.Logger
 
 object Utils {
 
@@ -29,6 +31,17 @@ object Utils {
         meta.displayName(name)
         item.setItemMeta(meta)
         return item
+    }
+    fun getRandomString(length: Int): String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
+    fun <T> debug(any: T): T {
+        Logger.getGlobal().log(Level.INFO, any.toString())
+        return any
     }
 
 }
