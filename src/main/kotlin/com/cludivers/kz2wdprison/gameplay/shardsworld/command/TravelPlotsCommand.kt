@@ -16,15 +16,24 @@ class TravelPlotsCommand(parentName: String) : SubCommand(parentName) {
             return false
         }
 
-        if (args.size < 2) {
-            sender.sendMessage(Component.text("Please specify a (X, Z) location.").color(NamedTextColor.RED))
-            return false
-        }
-        val destX = args[0].toIntOrNull()
-        val destZ = args[1].toIntOrNull()
-        if (destX == null || destZ == null) {
-            sender.sendMessage(Component.text("Invalid coordinate number").color(NamedTextColor.RED))
-            return false
+        val destX: Int?
+        val destZ: Int?
+        if (args.isEmpty()) {
+            sender.sendMessage(Component.text("Using current coordinates").color(NamedTextColor.GREEN))
+            val inWorld = PlotState.worldLocationToPlotLocation(sender.location)
+            destX = inWorld.first
+            destZ = inWorld.second
+        } else {
+            if (args.size < 2) {
+                sender.sendMessage(Component.text("Please specify a (X, Z) location.").color(NamedTextColor.RED))
+                return false
+            }
+            destX = args[0].toIntOrNull()
+            destZ = args[1].toIntOrNull()
+            if (destX == null || destZ == null) {
+                sender.sendMessage(Component.text("Invalid coordinate number").color(NamedTextColor.RED))
+                return false
+            }
         }
 
         val destination = PlotState.getPlotFromPlotLocation(destX, destZ)
@@ -34,7 +43,7 @@ class TravelPlotsCommand(parentName: String) : SubCommand(parentName) {
         }
 
         sender.sendMessage(Component.text("Teleportation Starting now !").color(NamedTextColor.GREEN))
-        val destinationLocation = destination.worldPlotCenterCoordinates(Bukkit.getWorld("world")!!, 150.0)
+        val destinationLocation = destination.getSpawnLocation(Bukkit.getWorld("world")!!)
         if (destinationLocation == null) {
             // should never happen but just in case
             sender.sendMessage(Component.text("Provided destination has no valid location, impossible to teleport"))

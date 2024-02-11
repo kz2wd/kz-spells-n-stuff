@@ -82,6 +82,8 @@ class PlotRules {
             rules.mobInflictedDamageScalingPercentage = normalDistribution().toInt()
             rules.mobReceivedDamageScalingPercentage = normalDistribution().toInt()
 
+            rules.allowModifications = true
+
             return rules
         }
     }

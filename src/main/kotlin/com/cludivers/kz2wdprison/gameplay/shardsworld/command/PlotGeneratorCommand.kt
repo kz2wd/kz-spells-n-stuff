@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.gameplay.shardsworld.command
 
 import com.cludivers.kz2wdprison.gameplay.commands.SubCommand
+import com.cludivers.kz2wdprison.gameplay.shardsworld.GenerationShapes
 import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldGenerator
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -15,8 +16,9 @@ class PlotGeneratorCommand(parentName: String) : SubCommand(parentName) {
         }
         val name = args[0]
         sender.sendMessage(Component.text("Starting world generation . . .").color(NamedTextColor.GREEN))
+        val shape: GenerationShapes = GenerationShapes.values().random()
         try {
-            WorldGenerator.generateNewPlot(name)
+            WorldGenerator.generateNewPlot(name, shape)
         } catch (e: Exception) {
             sender.sendMessage(Component.text("An error occurred : ${e.message}").color(NamedTextColor.RED))
             return false

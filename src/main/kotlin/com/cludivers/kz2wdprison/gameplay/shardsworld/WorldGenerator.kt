@@ -30,17 +30,21 @@ import kotlin.random.Random
 object WorldGenerator {
 
     lateinit var plugin: JavaPlugin
-    fun generateNewPlot(plotName: String) {
+
+    fun generateNewPlot(plotName: String, shape: GenerationShapes) {
         if (plotName.isBlank()) {
             throw Exception("Blank name cannot be accepted")
         }
-
         val createdPlot = PlotState.registerNewPlot(plotName, 1.0f)
+        generatePlotTerrain(createdPlot, shape)
+    }
 
-
-        generatePlotTerrain(createdPlot)
-
-
+    fun generateNewPlot(plotName: String, coordinates: Pair<Int, Int>, shape: GenerationShapes) {
+        if (plotName.isBlank()) {
+            throw Exception("Blank name cannot be accepted")
+        }
+        val createdPlot = PlotState.registerNewPlot(plotName, coordinates, 1.0f)
+        generatePlotTerrain(createdPlot, shape)
     }
 
     fun runTaskManager(editSession: EditSession, tasks: List<(EditSession) -> Unit>) {
@@ -63,7 +67,7 @@ object WorldGenerator {
 
     }
 
-    fun generatePlotTerrain(plot: PlotState) {
+    fun generatePlotTerrain(plot: PlotState, shape: GenerationShapes) {
 
         val seed = Random.nextInt()
         val generationArea = CuboidRegion.fromCenter(plot.getCuboidRegion().center.toBlockPoint(), 100)
@@ -73,9 +77,11 @@ object WorldGenerator {
                 { editSession ->
                     Operations.completeBlindly(RegionVisitor(generationArea, BlockReplace(editSession, BlockTypes.AIR)))
                 },
-                GenerationShapes.TORUS.getGeneration(generationArea, BlockTypes.STONE!!, false, seed),
+                { editSession -> editSession.flushQueue() },
+                shape.getGeneration(generationArea, BlockTypes.STONE!!, false, seed),
+                { editSession -> editSession.flushQueue() },
                 { editSession -> editSession.naturalizeCuboidBlocks(generationArea) },
-                { editSession -> editSession.makeForest(generationArea, 0.05, TreeGenerator.TreeType.CHERRY) }
+                { editSession -> editSession.makeForest(generationArea, 0.005, TreeGenerator.TreeType.CHERRY) }
             )
 
         val editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(Bukkit.getWorld("world")))

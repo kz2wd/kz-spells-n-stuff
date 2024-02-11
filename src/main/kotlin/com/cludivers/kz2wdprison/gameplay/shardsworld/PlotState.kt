@@ -36,6 +36,10 @@ class PlotState() {
 
     var plotZ: Int? = null
 
+    var spawnOffsetX: Int = RESERVED_PLOT_SIZE / 2
+    var spawnOffsetY: Int = 128
+    var spawnOffsetZ: Int = RESERVED_PLOT_SIZE / 2
+
     constructor(linkedWorld: String) : this() {
         this.plotName = linkedWorld
     }
@@ -69,6 +73,15 @@ class PlotState() {
 
     }
 
+    fun getSpawnLocation(world: World): Location? {
+        if (plotX == null || plotZ == null) return null
+        val inWorld = plotLocationToWorldLocation(Pair(plotX!!, plotZ!!))
+        return Location(
+            world, (inWorld.first + spawnOffsetX).toDouble(), spawnOffsetY.toDouble(),
+            (inWorld.second + spawnOffsetZ).toDouble()
+        )
+    }
+
     companion object {
 
         private const val RESERVED_PLOT_SIZE: Int = 4096
@@ -77,7 +90,7 @@ class PlotState() {
             return Pair(location.first * RESERVED_PLOT_SIZE, location.second * RESERVED_PLOT_SIZE)
         }
 
-        private fun worldLocationToPlotLocation(location: Location): Pair<Int, Int> {
+        fun worldLocationToPlotLocation(location: Location): Pair<Int, Int> {
             val posX =
                 if (location.blockX < 0) location.blockX / RESERVED_PLOT_SIZE - 1 else location.blockX / RESERVED_PLOT_SIZE
             val posZ =
@@ -135,9 +148,13 @@ class PlotState() {
         fun registerNewPlot(plotName: String, generalDifficultyFactor: Float): PlotState {
             // Resolve free Plot coordinates
             val freeCoord = generateFreeCoordinates()
-            val plotState = newPersistentPlotState(plotName, freeCoord, generalDifficultyFactor)
-            plotsState[freeCoord] = plotState
-            debug("Adding plotstate at coord $freeCoord")
+            return registerNewPlot(plotName, freeCoord, generalDifficultyFactor)
+        }
+
+        fun registerNewPlot(plotName: String, coordinates: Pair<Int, Int>, generalDifficultyFactor: Float): PlotState {
+            val plotState = newPersistentPlotState(plotName, coordinates, generalDifficultyFactor)
+            plotsState[coordinates] = plotState
+            debug("Adding plotstate at coord $coordinates")
             return plotState
         }
 
