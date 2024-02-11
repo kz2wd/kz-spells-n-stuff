@@ -3,6 +3,7 @@ package com.cludivers.kz2wdprison.gameplay.shardsworld
 import com.cludivers.kz2wdprison.framework.configuration.FetchAfterDatabaseInit
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.gameplay.nation.beans.NationBean
+import com.cludivers.kz2wdprison.gameplay.utils.Utils.debug
 import com.sk89q.worldedit.math.BlockVector3
 import com.sk89q.worldedit.regions.CuboidRegion
 import jakarta.persistence.*
@@ -77,7 +78,11 @@ class PlotState() {
         }
 
         private fun worldLocationToPlotLocation(location: Location): Pair<Int, Int> {
-            return Pair(location.blockX / RESERVED_PLOT_SIZE, location.blockZ / RESERVED_PLOT_SIZE)
+            val posX =
+                if (location.blockX < 0) location.blockX / RESERVED_PLOT_SIZE - 1 else location.blockX / RESERVED_PLOT_SIZE
+            val posZ =
+                if (location.blockZ < 0) location.blockZ / RESERVED_PLOT_SIZE - 1 else location.blockZ / RESERVED_PLOT_SIZE
+            return Pair(posX, posZ)
         }
 
         private lateinit var plotsState: MutableMap<Pair<Int, Int>, PlotState>
@@ -132,6 +137,7 @@ class PlotState() {
             val freeCoord = generateFreeCoordinates()
             val plotState = newPersistentPlotState(plotName, freeCoord, generalDifficultyFactor)
             plotsState[freeCoord] = plotState
+            debug("Adding plotstate at coord $freeCoord")
             return plotState
         }
 

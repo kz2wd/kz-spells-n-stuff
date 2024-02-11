@@ -19,7 +19,6 @@ class RegenerateCurrentPlotCommand(parentName: String) : SubCommand(parentName) 
 
 
         val plot = PlotState.getPlotState(sender.location)
-
         if (plot == null) {
             sender.sendMessage(Component.text("Generating a new world").color(NamedTextColor.YELLOW))
             WorldGenerator.generateNewPlot(Utils.getRandomString(8))
