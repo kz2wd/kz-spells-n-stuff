@@ -1,14 +1,14 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.gameplay.artifact.ArtifactDeclaration
-import com.cludivers.kz2wdprison.gameplay.attributes.AttributesDeclaration
-import com.cludivers.kz2wdprison.gameplay.listeners.ListenersDeclaration
-import com.cludivers.kz2wdprison.gameplay.menu.MenuListener
-import com.cludivers.kz2wdprison.gameplay.mines.MinesDeclaration
-import com.cludivers.kz2wdprison.gameplay.namespaces.CustomNamespacesManager
-import com.cludivers.kz2wdprison.gameplay.nation.NationDeclaration
-import com.cludivers.kz2wdprison.gameplay.shardsworld.WorldGenerationDeclaration
+import com.cludivers.kz2wdprison.configuration.PluginConfiguration
+import com.cludivers.kz2wdprison.artifact.ArtifactDeclaration
+import com.cludivers.kz2wdprison.attributes.AttributesDeclaration
+import com.cludivers.kz2wdprison.listeners.ListenersDeclaration
+import com.cludivers.kz2wdprison.menu.MenuListener
+import com.cludivers.kz2wdprison.mines.MinesDeclaration
+import com.cludivers.kz2wdprison.namespaces.CustomNamespacesManager
+import com.cludivers.kz2wdprison.nation.NationDeclaration
+import com.cludivers.kz2wdprison.shardsworld.WorldGenerationDeclaration
 import org.bukkit.plugin.java.JavaPlugin
 
 
