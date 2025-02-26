@@ -16,9 +16,9 @@ import kotlin.random.Random
 class AttributeItem {
     companion object {
 
-        val shardPowerRatio = .01
+        private const val SHARD_POWER_RATIO = .0001
 
-        fun makeAttributeItem(itemStack: ItemStack, baseShards: Int = 0, maxShards: Int = 1000) {
+        fun makeAttributeItem(itemStack: ItemStack, baseShards: Int = 0, maxShards: Int = 10000) {
             val attributes = IntrinsicAttributes.values().mapNotNull {
                 if (Random.nextBoolean()) it to Random.nextDouble() else null
             }.toMap()
@@ -62,7 +62,7 @@ class AttributeItem {
                         it.first.relatedAttribute,
                         AttributeModifier(
                             it.first.relatedAttribute.translationKey(),
-                            it.first.intrinsicToGenericValue(it.second!! * shardPowerStored * shardPowerRatio),
+                            it.first.intrinsicToGenericValue(it.second!! * shardPowerStored * SHARD_POWER_RATIO),
                             AttributeModifier.Operation.ADD_NUMBER
                         )
                     )

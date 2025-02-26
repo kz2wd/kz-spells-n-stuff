@@ -15,7 +15,6 @@ object ShardsDeclaration {
                 "amount" to CheckShardsAmount(shardCommandName),
             )
         )
-
         plugin.getCommand(shardCommandName)?.setExecutor(shardCommandExecutor)
         plugin.getCommand(shardCommandName)?.tabCompleter = shardCommandExecutor
 
