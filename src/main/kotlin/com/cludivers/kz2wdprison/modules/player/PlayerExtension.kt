@@ -10,6 +10,7 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
+import org.apache.maven.building.Source
 import org.bukkit.entity.Player
 
 fun Player.bossBarDisplay(text: Component, progress: Float, color: BossBar.Color = BossBar.Color.PURPLE,
@@ -84,5 +85,15 @@ fun Player.giveShards(shards: Double) {
     PluginConfiguration.session.transaction.commit()
     val sound = Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.PLAYER, 0.5f, 1f)
     this.notifyPlayer(Component.text("+${shards.toInt()} (${this.getData().shards.toInt()})").color(NamedTextColor.GREEN), sound)
+}
+
+fun Player.tryTakeShards(shards: Double): Boolean {
+    if (this.getData().shards < shards) { return false }
+    PluginConfiguration.session.beginTransaction()
+    this.getData().shards -= shards
+    PluginConfiguration.session.transaction.commit()
+    val sound = Sound.sound(org.bukkit.Sound.BLOCK_DISPENSER_FAIL, Sound.Source.PLAYER, 0.5f, 1f)
+    this.notifyPlayer(Component.text("-${shards.toInt()} (${this.getData().shards.toInt()})").color(NamedTextColor.RED), sound)
+    return true
 }
 

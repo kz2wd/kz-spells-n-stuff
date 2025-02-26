@@ -29,7 +29,6 @@ class Kz2wdPrison : JavaPlugin() {
         ArtifactDeclaration.declare(this, server)
         AttributesDeclaration.declare(this)
         WorldGenerationDeclaration.declare(this, server)
-
     }
 
     override fun onDisable() {
