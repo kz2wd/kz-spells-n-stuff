@@ -1,14 +1,14 @@
 package com.cludivers.kz2wdprison
 
-import com.cludivers.kz2wdprison.configuration.PluginConfiguration
-import com.cludivers.kz2wdprison.artifact.ArtifactDeclaration
-import com.cludivers.kz2wdprison.attributes.AttributesDeclaration
-import com.cludivers.kz2wdprison.listeners.ListenersDeclaration
-import com.cludivers.kz2wdprison.menu.MenuListener
-import com.cludivers.kz2wdprison.mines.MinesDeclaration
-import com.cludivers.kz2wdprison.namespaces.CustomNamespacesManager
-import com.cludivers.kz2wdprison.nation.NationDeclaration
-import com.cludivers.kz2wdprison.shardsworld.WorldGenerationDeclaration
+import com.cludivers.kz2wdprison.modules.attributes.AttributesDeclaration
+import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
+import com.cludivers.kz2wdprison.modules.menus.MenuDeclaration
+import com.cludivers.kz2wdprison.modules.mines.MinesDeclaration
+import com.cludivers.kz2wdprison.framework.namespaces.CustomNamespacesManager
+import com.cludivers.kz2wdprison.modules.artifact.ArtifactDeclaration
+import com.cludivers.kz2wdprison.modules.nation.NationDeclaration
+import com.cludivers.kz2wdprison.modules.shards.ShardsDeclaration
+import com.cludivers.kz2wdprison.modules.shardsworld.WorldGenerationDeclaration
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -21,14 +21,14 @@ class Kz2wdPrison : JavaPlugin() {
 
         CustomNamespacesManager.initAllNamespacedKeys(this)
 
-        ListenersDeclaration.declare(this, server)
+        ShardsDeclaration.declare(this, server)
+        MenuDeclaration.declare(this, server)
         MinesDeclaration.declare(this)
         NationDeclaration.declare(this, server)
         ArtifactDeclaration.declare(this, server)
         AttributesDeclaration.declare(this)
         WorldGenerationDeclaration.declare(this, server)
 
-        server.pluginManager.registerEvents(MenuListener, this)
     }
 
     override fun onDisable() {

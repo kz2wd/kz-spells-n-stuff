@@ -15,3 +15,5 @@ commands:
     description: intrinsic utility
   plot:
     description: plot utility
+  shards:
+    description: shard utility
