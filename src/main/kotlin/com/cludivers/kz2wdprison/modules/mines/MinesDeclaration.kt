@@ -1,6 +1,7 @@
 package com.cludivers.kz2wdprison.modules.mines
 
 import com.cludivers.kz2wdprison.framework.commands.MainCommandExecutor
+import com.cludivers.kz2wdprison.framework.commands.ServerCommand.Companion.initializeCommands
 import com.cludivers.kz2wdprison.modules.mines.commands.MineListCommand
 import com.cludivers.kz2wdprison.modules.mines.commands.MineResetCommand
 import com.cludivers.kz2wdprison.modules.mines.worldgeometry.BlockPattern
@@ -35,7 +36,6 @@ object MinesDeclaration {
                 "reset" to MineResetCommand(mineHandler, mineCommandName)
             ),
         )
-
         plugin.getCommand(mineCommandName)?.setExecutor(mineCommandsExecutor)
         plugin.getCommand(mineCommandName)?.tabCompleter = mineCommandsExecutor
 

@@ -28,6 +28,7 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("com.h2database:h2:2.2.224")
     implementation(kotlin("reflect"))
+    implementation("io.github.classgraph:classgraph:4.8.179")
 
     implementation(platform("com.intellectualsites.bom:bom-newest:1.40")) // Ref: https://github.com/IntellectualSites/bom
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
@@ -67,6 +68,8 @@ tasks.withType<ShadowJar> {
         include(dependency("net.bytebuddy:byte-buddy:1.12.9"))
         include(dependency("org.hibernate.common:hibernate-commons-annotations:6.0.2.Final"))
         include(dependency("org.antlr:antlr4-runtime:4.10"))
+
+        include(dependency("io.github.classgraph:classgraph:4.8.179"))
 
         archiveFileName.set(shadowJarFileName)
     }

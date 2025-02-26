@@ -15,8 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin
 @Suppress("unused")
 class Kz2wdPrison : JavaPlugin() {
 
-
     override fun onEnable() {
+        plugin = this
+
         PluginConfiguration.loadConfigurationAndDatabase(config)
 
         CustomNamespacesManager.initAllNamespacedKeys(this)
@@ -33,6 +34,10 @@ class Kz2wdPrison : JavaPlugin() {
 
     override fun onDisable() {
         PluginConfiguration.closeConnections()
+    }
+
+    companion object {
+        lateinit var plugin: JavaPlugin
     }
 
 }
