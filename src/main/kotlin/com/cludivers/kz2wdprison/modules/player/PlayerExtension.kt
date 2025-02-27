@@ -4,14 +4,15 @@ import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.modules.player.PlayerBean.Companion.getData
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.apache.maven.building.Source
+import org.bukkit.Sound
 import org.bukkit.entity.Player
+import kotlin.math.roundToInt
 
 fun Player.bossBarDisplay(text: Component, progress: Float, color: BossBar.Color = BossBar.Color.PURPLE,
                           overlay: BossBar.Overlay = BossBar.Overlay.PROGRESS){
@@ -74,17 +75,25 @@ fun Player.requestShards(args: Array<String>, index: Int): Int? {
     return shardAmount
 }
 
-fun Player.notifyPlayer(notification: Component, sound: Sound) {
-    this.sendActionBar(notification)
-    this.playSound(sound)
+fun Player.notifyPlayer(notification: Component, sound: Sound? = null, volume: Float, inChat: Boolean = false) {
+    if (inChat) {
+        this.sendMessage(notification)
+    } else {
+        this.sendActionBar(notification)
+    }
+    if (sound == null) return
+    this.playSound(this, sound, volume, 1.0f)
+}
+
+fun Player.giveShards(shards: Int) {
+    this.giveShards(shards.toDouble())
 }
 
 fun Player.giveShards(shards: Double) {
     PluginConfiguration.session.beginTransaction()
     this.getData().shards += shards
     PluginConfiguration.session.transaction.commit()
-    val sound = Sound.sound(Key.key("entity.experience_orb.pickup"), Sound.Source.PLAYER, 0.5f, 1f)
-    this.notifyPlayer(Component.text("+${shards.toInt()} (${this.getData().shards.toInt()})").color(NamedTextColor.GREEN), sound)
+    this.notifyPlayer(Component.text("+${shards.toInt()} (${this.getData().shards.roundToInt()})").color(NamedTextColor.GREEN), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .3f)
 }
 
 fun Player.tryTakeShards(shards: Double): Boolean {
@@ -92,8 +101,7 @@ fun Player.tryTakeShards(shards: Double): Boolean {
     PluginConfiguration.session.beginTransaction()
     this.getData().shards -= shards
     PluginConfiguration.session.transaction.commit()
-    val sound = Sound.sound(org.bukkit.Sound.BLOCK_DISPENSER_FAIL, Sound.Source.PLAYER, 0.5f, 1f)
-    this.notifyPlayer(Component.text("-${shards.toInt()} (${this.getData().shards.toInt()})").color(NamedTextColor.RED), sound)
+    this.notifyPlayer(Component.text("-${shards.toInt()} (${this.getData().shards.roundToInt()})").color(NamedTextColor.RED), Sound.BLOCK_DISPENSER_FAIL, .3f)
     return true
 }
 

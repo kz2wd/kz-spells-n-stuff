@@ -64,7 +64,7 @@ class ShardListener(private val server: Server, private val plugin: JavaPlugin) 
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
-        val transaction = PluginConfiguration.session.beginTransaction()
+
         val playerData = event.player.getData()
         if (playerData.connectionAmount < 1) {
             Bukkit.broadcast(
@@ -77,11 +77,12 @@ class ShardListener(private val server: Server, private val plugin: JavaPlugin) 
         } else {
             event.player.sendMessage(Component.text("Rebonjour ").append(playerNameFancy(event.player)))
         }
-        playerData.connectionAmount += 1
 
         connectionWarning()
         notInProductionMessage(event.player)
 
+        val transaction = PluginConfiguration.session.beginTransaction()
+        playerData.connectionAmount += 1
         transaction.commit()
     }
 

@@ -57,7 +57,7 @@ class NationAttack {
             PluginConfiguration.session.persist(attack)
             PluginConfiguration.session.transaction.commit()
 
-            target.messagePlayers(
+            target.notifyPlayers(
                 Component.text("Une attaque à été lancée contre votre nation.").appendNewline().append(
                     attack.compactDescription()
                 )

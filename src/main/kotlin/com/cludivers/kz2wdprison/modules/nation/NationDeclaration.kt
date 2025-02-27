@@ -2,6 +2,7 @@ package com.cludivers.kz2wdprison.modules.nation
 
 import com.cludivers.kz2wdprison.framework.commands.MainCommandExecutor
 import com.cludivers.kz2wdprison.modules.nation.commands.*
+import com.cludivers.kz2wdprison.modules.nation.listeners.NationListener
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -24,12 +25,14 @@ object NationDeclaration {
                 "fill" to AddShardsToNation(),
                 "attack" to AttackNation(),
                 "show_attacks" to ShowPendingAttacks(),
+                "spawn_core" to SpawnNationCore(),
             )
         )
 
         plugin.getCommand(NATION_COMMAND_NAME)?.setExecutor(nationCommandsExecutor)
         plugin.getCommand(NATION_COMMAND_NAME)?.tabCompleter = nationCommandsExecutor
 
-//        server.pluginManager.registerEvents(NationListener(), plugin)
+        server.pluginManager.registerEvents(NationListener(), plugin)
+
     }
 }

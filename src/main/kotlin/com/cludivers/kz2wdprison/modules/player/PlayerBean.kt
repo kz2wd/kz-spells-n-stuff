@@ -6,6 +6,7 @@ import com.cludivers.kz2wdprison.modules.nation.beans.PermissionGroup
 import jakarta.persistence.*
 import org.bukkit.entity.Player
 import org.hibernate.exception.ConstraintViolationException
+import java.util.logging.Logger
 
 @Entity
 class PlayerBean {
@@ -43,7 +44,12 @@ class PlayerBean {
             var playerData = playerBeanRequest()
 
             if (playerData == null) {
-                val transaction = PluginConfiguration.session.beginTransaction()
+                val transaction = PluginConfiguration.session.transaction
+
+                if (!transaction.isActive) {
+                    transaction.begin()
+                }
+
                 playerData = PlayerBean()
                 playerData.uuid = player.uniqueId.toString()
                 // In case of race condition !

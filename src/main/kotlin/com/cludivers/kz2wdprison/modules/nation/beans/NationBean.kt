@@ -5,11 +5,14 @@ import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.modules.nation.NationInvitation
 import com.cludivers.kz2wdprison.modules.player.PlayerBean
 import com.cludivers.kz2wdprison.modules.player.PlayerBean.Companion.getData
+import com.cludivers.kz2wdprison.modules.player.notifyPlayer
 import com.cludivers.kz2wdprison.modules.player.sendErrorMessage
 import com.cludivers.kz2wdprison.modules.player.sendSuccessMessage
+import com.cludivers.kz2wdprison.modules.shardsworld.PlotState
 import jakarta.persistence.*
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.hibernate.annotations.CreationTimestamp
 import java.sql.Date
@@ -37,10 +40,8 @@ class NationBean {
     var criminals: MutableList<PlayerBean>? = null
 
     @OneToMany
-    var chunks: MutableList<ChunkBean>? = null
+    var plots: MutableList<PlotState>? = null
 
-    @OneToMany
-    var plots: MutableList<NationPlot>? = null
 
     @OneToOne
     var defaultAreaRules: AreaPermission? = null
@@ -71,7 +72,7 @@ class NationBean {
         val residentAmount: Int = if (residents.isNullOrEmpty()) 0 else residents!!.map {
             if (!it.players.isNullOrEmpty()) it.players!!.size else 0
         }.reduce { acc, i -> acc + i }
-        return "$name, ${residentAmount + 1} citoyens, ${chunks?.size} chunks\n${residents!!.map { it.description() }.joinToString("\n")}"
+        return "$name, ${residentAmount + 1} citoyens, ${plots?.size} plots\n${residents!!.map { it.description() }.joinToString("\n")}"
     }
 
     fun changeOwner(newOwner: PlayerBean){
@@ -115,14 +116,14 @@ class NationBean {
             group.nationPermission = null
             PluginConfiguration.session.remove(nationPerm)
         }
-        this.chunks!!.forEach {
-            it.nation = null
+        this.plots!!.forEach {
+            it.plotX = null
         }
     }
 
     // If player resolution from uuid is bad, this function will suck, performance wise
-    fun messagePlayers(content: Component) {
-        residents?.forEach { group -> group.players?.forEach { Bukkit.getPlayer(it.uuid!!)?.sendMessage(content) } }
+    fun notifyPlayers(content: Component, sound: Sound? = null) {
+        residents?.forEach { group -> group.players?.forEach { Bukkit.getPlayer(it.uuid!!)?.notifyPlayer(content, sound, 1f, true) } }
     }
 
     companion object {
@@ -161,7 +162,6 @@ class NationBean {
                 PermissionGroup.getPersistentDefaultCitizenPermissionGroup(),
                 PermissionGroup.getPersistentDefaultOfficerPermissionGroup()
             )
-            nation.chunks = mutableListOf()
             nation.level = 1
             nation.plots = mutableListOf()
             PluginConfiguration.session.persist(nation)
@@ -267,7 +267,7 @@ class NationBean {
             this.sendSuccessMessage("Vous avez quitté votre nation")
         }
 
-        fun Player.claimChunk() {
+        fun Player.claimPlot() {
             val playerData = this.getData()
             val playerNation = playerData.nation
             if (playerNation !is NationBean) {
@@ -280,9 +280,17 @@ class NationBean {
                 return
             }
 
-            val chunkData = ChunkBean.getChunkBean(this.chunk)
-            if (chunkData.nation is NationBean) {
-                this.sendErrorMessage("Ce chunk n'est pas disponible")
+            val plotState = PlotState.getPlotState(this.location)
+            if (plotState == null) {
+                this.sendErrorMessage("Ce plot n'existe pas...")
+                return
+            }
+            if (plotState.owningNation is NationBean) {
+                if (plotState.owningNation == playerNation) {
+                    this.sendErrorMessage("Your nation already own this island.")
+                } else {
+                    this.sendErrorMessage("This island is not available")
+                }
                 return
             }
 
@@ -294,8 +302,8 @@ class NationBean {
             PluginConfiguration.session.beginTransaction()
 
             playerNation.chunkClaimTokens -= 1
-            playerNation.chunks!!.add(chunkData)
-            chunkData.nation = playerNation
+            playerNation.plots!!.add(plotState)
+            plotState.owningNation = playerNation
             PluginConfiguration.session.transaction.commit()
 
             this.sendSuccessMessage("Le chunk à bien été approprié")

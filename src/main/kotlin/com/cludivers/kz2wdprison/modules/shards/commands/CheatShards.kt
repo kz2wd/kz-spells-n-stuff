@@ -1,13 +1,17 @@
-package com.cludivers.kz2wdprison.modules.events.commands
+package com.cludivers.kz2wdprison.modules.shards.commands
 
+import com.cludivers.kz2wdprison.framework.commands.MainCommandNames
+import com.cludivers.kz2wdprison.framework.commands.ServerCommand
 import com.cludivers.kz2wdprison.framework.commands.SubCommand
-import net.kyori.adventure.text.Component
+import com.cludivers.kz2wdprison.modules.player.giveShards
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
-class CurrentEventCommand(parentName: String) : SubCommand(parentName) {
+@Suppress("unused")
+@ServerCommand("cheat", MainCommandNames.SHARDS)
+class CheatShards: SubCommand(MainCommandNames.SHARDS) {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
 
@@ -15,7 +19,9 @@ class CurrentEventCommand(parentName: String) : SubCommand(parentName) {
             return false
         }
 
-        sender.sendMessage(Component.text())
+        val request = args[0].toIntOrNull() ?: 0
+
+        sender.giveShards(request)
 
         return true
     }
@@ -25,7 +31,7 @@ class CurrentEventCommand(parentName: String) : SubCommand(parentName) {
         command: Command,
         label: String,
         args: Array<String>
-    ): MutableList<String>? {
-        return null
+    ): MutableList<String> {
+        return mutableListOf("100000")
     }
 }

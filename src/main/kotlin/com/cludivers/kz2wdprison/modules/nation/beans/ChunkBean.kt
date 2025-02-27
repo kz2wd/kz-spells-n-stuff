@@ -15,8 +15,6 @@ class ChunkBean {
 
     var zCoord: Int? = null
 
-    @ManyToOne
-    var nation: NationBean? = null
 
     companion object {
 

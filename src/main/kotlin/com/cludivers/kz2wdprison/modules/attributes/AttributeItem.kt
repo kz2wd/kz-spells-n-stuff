@@ -75,8 +75,7 @@ class AttributeItem {
 
         fun addShards(item: ItemStack, addedShardPower: Int): Int {
             val meta = item.itemMeta
-            val shardPowerStored =
-                CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.getData(meta) ?: return addedShardPower
+            val shardPowerStored = getShardsAmount(item)
             val maxShardPower = CustomNamespacesManager.int[CustomNamespaces.MAX_SHARDS_STORAGE]!!.getData(meta)
                 ?: return addedShardPower
             val amountAvailable = maxShardPower - shardPowerStored
@@ -92,7 +91,7 @@ class AttributeItem {
 
         fun removeShards(item: ItemStack, removedShardPower: Int) {
             val meta = item.itemMeta
-            val shardPowerStored = CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.getData(meta) ?: return
+            val shardPowerStored = getShardsAmount(item)
             val reductionAmount = min(shardPowerStored, removedShardPower)
             CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.setData(
                 meta,
@@ -100,6 +99,18 @@ class AttributeItem {
             )
             item.itemMeta = meta
             updateItemAttributes(item)
+        }
+
+        fun getShardsAmount(item: ItemStack): Int {
+            val meta = item.itemMeta
+            return CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.getData(meta) ?: 0
+        }
+
+        fun getMissingShardsAmount(item: ItemStack): Int {
+            val meta = item.itemMeta
+            val max = CustomNamespacesManager.int[CustomNamespaces.MAX_SHARDS_STORAGE]!!.getData(meta) ?: 0
+            val current = CustomNamespacesManager.int[CustomNamespaces.SHARDS_STORED]!!.getData(meta) ?: 0
+            return max - current
         }
 
         private fun updateItemStackDescription(item: ItemStack) {

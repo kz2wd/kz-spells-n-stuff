@@ -2,14 +2,9 @@ package com.cludivers.kz2wdprison.framework.configuration
 
 import com.cludivers.kz2wdprison.framework.configuration.database.LocalDatabase
 import com.cludivers.kz2wdprison.framework.configuration.database.RemoteDatabase
-import com.cludivers.kz2wdprison.modules.nation.beans.AreaPermission
-import com.cludivers.kz2wdprison.modules.nation.beans.ChunkBean
-import com.cludivers.kz2wdprison.modules.nation.beans.NationBean
-import com.cludivers.kz2wdprison.modules.nation.beans.NationPlot
-import com.cludivers.kz2wdprison.modules.nation.beans.PermissionGroup
-import com.cludivers.kz2wdprison.modules.nation.beans.NationAttack
 import com.cludivers.kz2wdprison.modules.player.PlayerBean
 import com.cludivers.kz2wdprison.modules.artifact.Artifact
+import com.cludivers.kz2wdprison.modules.nation.beans.*
 import com.cludivers.kz2wdprison.modules.shardsworld.PlotState
 import com.cludivers.kz2wdprison.modules.shardsworld.rules.PlotRules
 import org.bukkit.configuration.file.FileConfiguration
@@ -25,8 +20,7 @@ class HibernateConfigurationHandler {
                 PlayerBean::class.java,
                 AreaPermission::class.java,
                 ChunkBean::class.java,
-                com.cludivers.kz2wdprison.modules.nation.beans.NationPermission::class.java,
-                NationPlot::class.java,
+                NationPermission::class.java,
                 PermissionGroup::class.java,
                 Artifact::class.java,
                 NationAttack::class.java,

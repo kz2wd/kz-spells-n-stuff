@@ -22,7 +22,7 @@ class ArtifactDemoCommand(parentName: String) : SubCommand(parentName) {
 
         (DefaultArtifacts.values().size + 1 .. DefaultArtifacts.values().size + 10).forEach {
             val item = Utils.buildItemStack(Component.text("Powered armor"), Material.IRON_LEGGINGS)
-            AttributeItem.makeAttributeItem(item, 4000, 10000)
+            AttributeItem.makeAttributeItem(item, 50000, 1000000)
             inventory.setItem(it, item)
         }
 
