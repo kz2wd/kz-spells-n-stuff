@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     `maven-publish`
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.hibernate.orm") version "6.1.1.Final"
 }
@@ -41,6 +41,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
     testImplementation(kotlin("test"))
     testImplementation("org.apache.logging.log4j:log4j-core:2.20.0")
+
 
 }
 

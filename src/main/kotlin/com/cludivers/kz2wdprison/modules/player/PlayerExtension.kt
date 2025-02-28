@@ -2,20 +2,23 @@ package com.cludivers.kz2wdprison.modules.player
 
 import com.cludivers.kz2wdprison.Kz2wdPrison
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
+import com.cludivers.kz2wdprison.framework.utils.Utils.buildItemStack
 import com.cludivers.kz2wdprison.modules.player.PlayerBean.Companion.getData
+import com.cludivers.kz2wdprison.modules.shards.CustomShardItems
 import com.cludivers.kz2wdprison.modules.shards.gamble.LootBox
-import dev.triumphteam.gui.builder.item.ItemBuilder
 import dev.triumphteam.gui.components.GuiType
 import dev.triumphteam.gui.guis.Gui
+import dev.triumphteam.gui.guis.GuiItem
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Bukkit
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import kotlin.math.roundToInt
 
 
@@ -106,7 +109,10 @@ fun Player.tryTakeShards(shards: Int): Boolean {
 }
 
 fun Player.tryTakeShards(shards: Double): Boolean {
-    if (this.getData().shards < shards) { return false }
+    if (this.getData().shards < shards) {
+        this.playSound(this, Sound.BLOCK_STONE_BREAK, 1.0f, 1.0f)
+        return false
+    }
     PluginConfiguration.session.beginTransaction()
     this.getData().shards -= shards
     PluginConfiguration.session.transaction.commit()
@@ -123,8 +129,8 @@ fun Player.openLootboxesMenu() {
         .create()
 
     LootBox.ALL_LOOTBOXES.forEach { lootbox ->
-        val lootboxSelector = ItemBuilder.from(lootbox.material)
-        val guiItem = lootboxSelector.asGuiItem { _ -> this.tryPull(lootbox) }
+        val guiItem = lootbox.getGuiPreview()
+        guiItem.setAction { _ -> this.tryPull(lootbox) }
         lootboxesChoice.addItem(guiItem)
     }
 
@@ -146,12 +152,80 @@ fun Player.tryPull(source: LootBox): Boolean {
         .create()
     gui.addItem(pulledItem)
 
+    fun ensurePlayerReceiveItem() {
+        val itemStack = gui.inventory.getItem(0) ?: return
+        this.giveOrDropItem(itemStack)
+    }
+
+    fun getShardsIndicator(): GuiItem {
+        val shardsAmount = GuiItem(CustomShardItems.SHARDS.itemStack.withName("You have ${this.getData().shards.toInt()} shards"))
+        shardsAmount.setAction {
+            it.isCancelled = true
+        }
+        return shardsAmount
+    }
+
+    val rerollButton = GuiItem(buildItemStack(Component.text("Reroll (${source.pullCost} shards)"), Material.GOLD_BLOCK))
+    rerollButton.setAction {
+        ensurePlayerReceiveItem()
+        gui.inventory.setItem(0, ItemStack(Material.AIR))
+        if (!this.tryTakeShards(source.pullCost)) {
+            return@setAction
+        }
+        gui.addItem(source.pull())
+        gui.updateItem(7, getShardsIndicator())
+        it.isCancelled = true
+    }
+    gui.setItem(6, rerollButton)
+
+    val shardsAmountItem = getShardsIndicator()
+    gui.setItem(7, shardsAmountItem)
+
+
+    val goBackButton = GuiItem(buildItemStack(Component.text("Back"), Material.OAK_DOOR))
+    goBackButton.setAction {
+        Bukkit.getScheduler().runTaskLater(Kz2wdPrison.plugin, Runnable {
+            this.openLootboxesMenu()
+        }, 1)
+        it.isCancelled = true
+    }
+
+    gui.setItem(8, goBackButton)
+
     gui.open(this)
     gui.setCloseGuiAction { Bukkit.getScheduler().runTaskLater(Kz2wdPrison.plugin, Runnable {
-        this.openLootboxesMenu()
+        ensurePlayerReceiveItem()
     }, 1) }
+
+    gui.filler.fill(GuiItem(Material.BLACK_STAINED_GLASS_PANE))
 
     this.playSound(this, Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 0.5f, 1f)
     return true
+}
+
+private fun ItemStack.withName(s: String): ItemStack {
+    val clonedItem = this.clone()
+    val meta: ItemMeta = clonedItem.itemMeta ?: return clonedItem
+    val clonedMeta = meta.clone()
+    clonedMeta.displayName(Component.text(s))
+    clonedItem.itemMeta = clonedMeta
+    return clonedItem
+}
+
+fun Player.giveOrDropItem(itemStack: ItemStack) {
+    // Try to add the item to the player's inventory
+    val remainingItems = inventory.addItem(itemStack).values
+
+    // If there are remaining items, drop them on the ground
+    if (remainingItems.isNotEmpty()) {
+        for (item in remainingItems) {
+            dropItem(item, location)
+        }
+    }
+}
+
+fun dropItem(itemStack: ItemStack, location: Location) {
+    val world: World = location.world
+    world.dropItem(location, itemStack)
 }
 

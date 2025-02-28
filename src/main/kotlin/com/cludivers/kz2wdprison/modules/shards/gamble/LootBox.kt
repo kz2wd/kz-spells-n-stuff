@@ -1,5 +1,7 @@
 package com.cludivers.kz2wdprison.modules.shards.gamble
 
+import com.cludivers.kz2wdprison.framework.utils.Utils.buildItemStack
+import dev.triumphteam.gui.guis.GuiItem
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
@@ -44,6 +46,12 @@ class LootBox(val name: Component, val material: Material, val pullCost: Int, it
             .append(Component.text(" (", NamedTextColor.RED))
             .append(Component.text(this.pullCost.toString(), Style.style(TextDecoration.BOLD)))
             .append(Component.text(")", NamedTextColor.RED))
+    }
+
+    fun getGuiPreview(): GuiItem {
+        val preview = buildItemStack(name, material)
+
+        return GuiItem(preview)
     }
 
     companion object {
@@ -91,8 +99,34 @@ class LootBox(val name: Component, val material: Material, val pullCost: Int, it
                 GambleLoot(Material.ENCHANTED_GOLDEN_APPLE, 1, 10, 1),
             ),  3, 15,500)
 
+        val ORE_LOOTBOX = LootBox(Component.text("Ore Lootbox").decorate(TextDecoration.ITALIC), Material.RAW_IRON,
+            300, listOf(
+                GambleLoot(Material.COBBLESTONE),
+                GambleLoot(Material.RAW_IRON),
+                GambleLoot(Material.RAW_IRON_BLOCK, _weight = 50),
+                GambleLoot(Material.COAL),
+                GambleLoot(Material.COAL_BLOCK, _weight = 50),
+                GambleLoot(Material.RAW_COPPER),
+                GambleLoot(Material.RAW_COPPER_BLOCK, _weight = 50),
+                GambleLoot(Material.LAPIS_LAZULI, 5, 32, _weight = 50),
+                GambleLoot(Material.LAPIS_BLOCK, 1, 32, _weight = 30),
+                GambleLoot(Material.REDSTONE, 5, 32, _weight = 60),
+                GambleLoot(Material.REDSTONE_BLOCK, 1, 20, _weight = 30),
+                GambleLoot(Material.RAW_GOLD, 10, 20, _weight = 50),
+                GambleLoot(Material.RAW_GOLD_BLOCK, 10, 20, _weight = 20),
+                GambleLoot(Material.DIAMOND, 3, 10, _weight = 20),
+                GambleLoot(Material.DIAMOND_BLOCK, 1, 10, _weight = 10),
+                GambleLoot(Material.EMERALD, 1, 10, _weight = 15),
+                GambleLoot(Material.EMERALD_BLOCK, 1, 10, _weight = 15),
+                GambleLoot(Material.DIAMOND_BLOCK, 32, 64, _weight = 3),
+                GambleLoot(Material.NETHERITE_SCRAP, 2, 16, _weight = 10),
+                GambleLoot(Material.NETHERITE_INGOT, 1, 4, _weight = 5),
+                GambleLoot(Material.NETHERITE_BLOCK, 1, 3, _weight = 1),
 
-    val ALL_LOOTBOXES = listOf(BASIC_LOOTBOX, LOG_LOOTBOX, FOOD_LOOTBOX)
+            ),  12, 32,100)
+
+
+    val ALL_LOOTBOXES = listOf(BASIC_LOOTBOX, LOG_LOOTBOX, FOOD_LOOTBOX, ORE_LOOTBOX)
 
     }
 
