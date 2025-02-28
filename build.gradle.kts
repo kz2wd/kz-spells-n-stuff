@@ -29,6 +29,7 @@ dependencies {
     implementation("com.h2database:h2:2.2.224")
     implementation(kotlin("reflect"))
     implementation("io.github.classgraph:classgraph:4.8.179")
+    implementation("dev.triumphteam:triumph-gui:3.1.11")
 
     implementation(platform("com.intellectualsites.bom:bom-newest:1.40")) // Ref: https://github.com/IntellectualSites/bom
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core")
@@ -70,6 +71,7 @@ tasks.withType<ShadowJar> {
         include(dependency("org.antlr:antlr4-runtime:4.10"))
 
         include(dependency("io.github.classgraph:classgraph:4.8.179"))
+        include(dependency("dev.triumphteam:triumph-gui:3.1.11"))
 
         archiveFileName.set(shadowJarFileName)
     }

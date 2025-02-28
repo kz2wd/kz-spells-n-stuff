@@ -1,20 +1,23 @@
 package com.cludivers.kz2wdprison.modules.player
 
+import com.cludivers.kz2wdprison.Kz2wdPrison
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.modules.player.PlayerBean.Companion.getData
-import com.cludivers.kz2wdprison.modules.shards.gamble.GambleList
+import com.cludivers.kz2wdprison.modules.shards.gamble.LootBox
+import dev.triumphteam.gui.builder.item.ItemBuilder
+import dev.triumphteam.gui.components.GuiType
+import dev.triumphteam.gui.guis.Gui
 import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
-import org.apache.maven.building.Source
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
+
 
 fun Player.bossBarDisplay(text: Component, progress: Float, color: BossBar.Color = BossBar.Color.PURPLE,
                           overlay: BossBar.Overlay = BossBar.Overlay.PROGRESS){
@@ -111,15 +114,43 @@ fun Player.tryTakeShards(shards: Double): Boolean {
     return true
 }
 
-fun Player.tryPull(source: GambleList): Boolean {
+fun Player.openLootboxesMenu() {
+    val lootboxesChoice = Gui.gui()
+        .title(Component.text("Lootbox selection"))
+        .disableAllInteractions()
+        .type(GuiType.CHEST)
+        .rows(6)
+        .create()
+
+    LootBox.ALL_LOOTBOXES.forEach { lootbox ->
+        val lootboxSelector = ItemBuilder.from(lootbox.material)
+        val guiItem = lootboxSelector.asGuiItem { _ -> this.tryPull(lootbox) }
+        lootboxesChoice.addItem(guiItem)
+    }
+
+    lootboxesChoice.open(this)
+}
+
+fun Player.tryPull(source: LootBox): Boolean {
     if (!this.tryTakeShards(source.pullCost)) {
         this.sendMessage(source.getPullErrorMessage())
         return false
     }
     val pulledItem = source.pull()
-    val inventory = Bukkit.createInventory(this, 9, source.name)
-    inventory.setItem(4, pulledItem) // Place the pulled item at the center
-    this.openInventory(inventory)
+
+    val gui = Gui.storage()
+        .title(source.name)
+        .rows(1)
+        .disableItemPlace()
+        .disableItemSwap()
+        .create()
+    gui.addItem(pulledItem)
+
+    gui.open(this)
+    gui.setCloseGuiAction { Bukkit.getScheduler().runTaskLater(Kz2wdPrison.plugin, Runnable {
+        this.openLootboxesMenu()
+    }, 1) }
+
     this.playSound(this, Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 0.5f, 1f)
     return true
 }
