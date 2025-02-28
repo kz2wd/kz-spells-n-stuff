@@ -1,10 +1,12 @@
 package com.cludivers.kz2wdprison.modules.shardsworld
 
+import com.cludivers.kz2wdprison.Kz2wdPrison.Companion.MAIN_WORLD
 import com.cludivers.kz2wdprison.framework.configuration.FetchAfterDatabaseInit
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.framework.utils.Utils.debug
 import com.cludivers.kz2wdprison.modules.nation.beans.NationBean
 import com.cludivers.kz2wdprison.modules.shardsworld.rules.PlotRules
+import com.cludivers.kz2wdprison.modules.shardsworld.rules.RulesBoolean
 import com.sk89q.worldedit.math.BlockVector3
 import com.sk89q.worldedit.regions.CuboidRegion
 import jakarta.persistence.*
@@ -101,10 +103,14 @@ class PlotState() {
         }
 
         fun worldLocationToPlotLocation(location: Location): Pair<Int, Int> {
+            return worldLocationToPlotLocation(location.blockX, location.blockZ)
+        }
+
+        private fun worldLocationToPlotLocation(x: Int, z: Int): Pair<Int, Int> {
             val posX =
-                if (location.blockX < 0) location.blockX / RESERVED_PLOT_SIZE - 1 else location.blockX / RESERVED_PLOT_SIZE
+                if (x < 0) x / RESERVED_PLOT_SIZE - 1 else x / RESERVED_PLOT_SIZE
             val posZ =
-                if (location.blockZ < 0) location.blockZ / RESERVED_PLOT_SIZE - 1 else location.blockZ / RESERVED_PLOT_SIZE
+                if (z < 0) z / RESERVED_PLOT_SIZE - 1 else z / RESERVED_PLOT_SIZE
             return Pair(posX, posZ)
         }
 
@@ -112,6 +118,10 @@ class PlotState() {
 
         fun getPlotState(location: Location): PlotState? {
             return plotsState[worldLocationToPlotLocation(location)]
+        }
+
+        fun getPlotState(x: Int, z: Int): PlotState? {
+            return plotsState[worldLocationToPlotLocation(x, z)]
         }
 
         fun getPlotFromPlotLocation(plotX: Int, plotZ: Int): PlotState? {
@@ -184,6 +194,18 @@ class PlotState() {
             PluginConfiguration.session.persist(newPlotState)
             PluginConfiguration.session.transaction.commit()
             return newPlotState
+        }
+
+        lateinit var SPAWN_PLOT: PlotState
+
+        @FetchAfterDatabaseInit
+        fun setSpawn() {
+            SPAWN_PLOT = getPlotState(0, 0) ?: registerNewPlot("Spawn", Pair(0, 0), 0.0f)
+            SPAWN_PLOT.plotRules.rulesBoolean[RulesBoolean.ALLOW_PVP] = false
+            SPAWN_PLOT.plotRules.rulesBoolean[RulesBoolean.MOB_SPAWNING] = false
+            SPAWN_PLOT.plotRules.rulesBoolean[RulesBoolean.MOB_GRIEFING] = false
+            SPAWN_PLOT.plotRules.rulesBoolean[RulesBoolean.ALLOW_MODIFICATION] = false
+            SPAWN_PLOT.getSpawnLocation(MAIN_WORLD)
         }
     }
 
