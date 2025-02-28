@@ -2,6 +2,7 @@ package com.cludivers.kz2wdprison.modules.player
 
 import com.cludivers.kz2wdprison.framework.configuration.PluginConfiguration
 import com.cludivers.kz2wdprison.modules.player.PlayerBean.Companion.getData
+import com.cludivers.kz2wdprison.modules.shards.gamble.GambleList
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
@@ -10,6 +11,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.apache.maven.building.Source
+import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import kotlin.math.roundToInt
@@ -96,12 +98,29 @@ fun Player.giveShards(shards: Double) {
     this.notifyPlayer(Component.text("+${shards.toInt()} (${this.getData().shards.roundToInt()})").color(NamedTextColor.GREEN), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, .3f)
 }
 
+fun Player.tryTakeShards(shards: Int): Boolean {
+    return this.tryTakeShards(shards.toDouble())
+}
+
 fun Player.tryTakeShards(shards: Double): Boolean {
     if (this.getData().shards < shards) { return false }
     PluginConfiguration.session.beginTransaction()
     this.getData().shards -= shards
     PluginConfiguration.session.transaction.commit()
     this.notifyPlayer(Component.text("-${shards.toInt()} (${this.getData().shards.roundToInt()})").color(NamedTextColor.RED), Sound.BLOCK_DISPENSER_FAIL, .3f)
+    return true
+}
+
+fun Player.tryPull(source: GambleList): Boolean {
+    if (!this.tryTakeShards(source.pullCost)) {
+        this.sendMessage(source.getPullErrorMessage())
+        return false
+    }
+    val pulledItem = source.pull()
+    val inventory = Bukkit.createInventory(this, 9, source.name)
+    inventory.setItem(4, pulledItem) // Place the pulled item at the center
+    this.openInventory(inventory)
+    this.playSound(this, Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 0.5f, 1f)
     return true
 }
 
