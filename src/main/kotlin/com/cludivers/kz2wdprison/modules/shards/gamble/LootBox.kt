@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class LootBox(val name: Component, val material: Material, val pullCost: Int, itemsAndWeights: List<GambleLoot>, private val defaultMin: Int? = null, private val defaultMax: Int? = null, private val defaultWeight: Int? = null) {
+class LootBox(val name: Component, val material: Material, val pullCost: Int, private val itemsAndWeights: List<GambleLoot>, private val defaultMin: Int? = null, private val defaultMax: Int? = null, private val defaultWeight: Int? = null) {
 
     private val cumulativeWeights: MutableList<Pair<GambleLoot, Int>> = mutableListOf()
     private val finalWeightSum: Int
@@ -40,6 +40,10 @@ class LootBox(val name: Component, val material: Material, val pullCost: Int, it
         return cumulativeWeights[index].first.get()
     }
 
+    fun getDropPercents(): List<Pair<GambleLoot, Float>> {
+        return itemsAndWeights.associateWith { it.weight.toFloat() / finalWeightSum * 100 }.toList()
+    }
+
     fun getPullErrorMessage(): Component {
         return Component.text("You don't have enough shards for ", NamedTextColor.RED)
             .append(this.name)
@@ -49,7 +53,9 @@ class LootBox(val name: Component, val material: Material, val pullCost: Int, it
     }
 
     fun getGuiPreview(): GuiItem {
-        val preview = buildItemStack(name, material)
+        val lore: MutableList<Component> = getDropPercents().map { Component.text("${it.first.material.name}: ${"%.2f".format(it.second)}%") }.toMutableList()
+        val previewInfo = name.append(Component.text(" | $pullCost Shards").decoration(TextDecoration.BOLD, true))
+        val preview = buildItemStack(previewInfo, material, lore = lore)
 
         return GuiItem(preview)
     }

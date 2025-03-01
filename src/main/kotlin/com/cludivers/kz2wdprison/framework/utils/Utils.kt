@@ -22,11 +22,14 @@ object Utils {
 
     }
 
-    fun buildItemStack(name: Component, material: Material, customData: Int? = null): ItemStack {
+    fun buildItemStack(name: Component, material: Material, customData: Int? = null, lore: MutableList<Component>? = null) : ItemStack {
         val item = ItemStack(material)
         val meta = item.itemMeta
         if (customData != null){
             meta.setCustomModelData(customData)
+        }
+        if (lore != null) {
+            meta.lore(lore)
         }
         meta.displayName(name)
         item.setItemMeta(meta)

@@ -4,7 +4,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
-class GambleLoot(private val material: Material, private var _min: Int? = null, private var _max: Int? = null, private var _weight: Int? = null) {
+class GambleLoot(val material: Material, private var _min: Int? = null, private var _max: Int? = null, private var _weight: Int? = null) {
 
     var weight: Int
         get() = _weight ?: DEFAULT_WEIGHT
