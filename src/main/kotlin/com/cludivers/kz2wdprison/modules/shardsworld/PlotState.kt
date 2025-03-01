@@ -142,7 +142,6 @@ class PlotState() {
 
         private const val DEFAULT_UNASSIGNED_NAME = ""
 
-
         @FetchAfterDatabaseInit
         private fun fetchPlotsState() {
             plotsState = PluginConfiguration.session
@@ -150,6 +149,10 @@ class PlotState() {
                 .list()
                 .filter { it.plotX != null && it.plotZ != null }
                 .associateBy { Pair(it.plotX!!, it.plotZ!!) }.toMutableMap()
+
+            // Set spawn here once plotState is init
+            // I feel like using Delegates could be a better way than the @FetchAfterDatabaseInit annotation
+            setSpawn()
         }
 
         private val lastGeneratedPosition: Pair<Int, Int>? = null
@@ -198,7 +201,6 @@ class PlotState() {
 
         lateinit var SPAWN_PLOT: PlotState
 
-        @FetchAfterDatabaseInit
         fun setSpawn() {
             SPAWN_PLOT = getPlotState(0, 0) ?: registerNewPlot("Spawn", Pair(0, 0), 0.0f)
             SPAWN_PLOT.plotRules.rulesBoolean[RulesBoolean.ALLOW_PVP] = false
